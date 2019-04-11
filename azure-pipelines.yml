@@ -24,15 +24,15 @@ jobs:
   - task: PublishTestResults@2
     displayName: 'Publish Test Results'
     inputs:
-      testResultsFiles: 'functions/test-*.xml'
+      testResultsFiles: 'test-*.xml'
     condition: succeededOrFailed()
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish code coverage'
     inputs:
       codeCoverageTool: Cobertura
-      summaryFileLocation: 'functions/cov-nosetests.xml'
-      reportDirectory: 'functions/cov-nosetests-html'
+      summaryFileLocation: 'cov-nosetests.xml'
+      reportDirectory: 'cov-nosetests-html'
     condition: succeededOrFailed()
 
 - job: 'Deploy'

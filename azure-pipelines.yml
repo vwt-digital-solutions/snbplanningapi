@@ -19,7 +19,6 @@ jobs:
   - script: |
      pip3 install tox
      tox
-    workingDirectory: functions
     displayName: 'Run tests'
 
   - task: PublishTestResults@2

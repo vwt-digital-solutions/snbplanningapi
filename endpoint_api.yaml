@@ -1,0 +1,94 @@
+swagger: '2.0'
+info:
+  title: snbplanningtool
+  description: Endpoint to retreive the latest car locations
+  contact:
+    name: VolkerWessels Telecom - Digital Ambition Team
+    url: 'https://vwt-digital.github.io/'
+    email: opensource@vwt.digital
+  license:
+    name: GNU GPLv3
+    url: 'https://www.gnu.org/licenses/gpl.txt'
+  version: 1.0.0
+  x-audience: company-internal
+  x-api-id: e2a63575-f436-4e31-8f34-fadbad0d9693
+host: PROJECT_ID.appspot.com
+produces:
+  - application/json
+paths:
+  /cars:
+    get:
+      summary: Get car locations
+      description: Get a list of all car geolocations
+      responses:
+        '200':
+          description: Successful response - returns an array of locations
+          schema:
+            $ref: '#/definitions/Cars'
+definitions:
+  Cars:
+    title: Root Type for Cars
+    description: Set of Cars
+    required:
+      - data
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Car'
+    example:
+      data:
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+              - 5.3
+              - 52.6
+          properties:
+            license_plate: AA-BB-11
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+              - 5.4
+              - 52.5
+  Car:
+    description: Information about a car
+    required:
+      - type
+      - geometry
+    type: object
+    properties:
+      geometry:
+        $ref: '#/definitions/Geometry'
+      type:
+        type: string
+    example:
+      type: Feature
+      geometry:
+        type: Point
+        coordinates:
+          - 5.3
+          - 52.6
+      properties:
+        license_plate: AA-BB-11
+  Geometry:
+    description: Geometry element
+    required:
+      - coordinates
+      - type
+    type: object
+    properties:
+      type:
+        enum:
+          - Point
+      coordinates:
+        type: array
+        items:
+          type: number
+    example: |-
+      type: "Point",
+      coordinates:
+        - 5.2,
+        - 52.4

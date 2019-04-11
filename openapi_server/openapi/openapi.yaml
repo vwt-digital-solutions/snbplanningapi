@@ -1,0 +1,99 @@
+openapi: 3.0.1
+info:
+  contact:
+    email: opensource@vwt.digital
+    name: VolkerWessels Telecom - Digital Ambition Team
+    url: https://vwt-digital.github.io/
+  description: Endpoint to retreive the latest car locations
+  license:
+    name: GNU GPLv3
+    url: https://www.gnu.org/licenses/gpl.txt
+  title: snbplanningtool
+  version: 1.0.0
+  x-audience: company-internal
+  x-api-id: e2a63575-f436-4e31-8f34-fadbad0d9693
+servers:
+- url: //PROJECT_ID.appspot.com/
+paths:
+  /cars:
+    get:
+      description: Get a list of all car geolocations
+      operationId: cars_get
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cars'
+          description: Successful response - returns an array of locations
+      summary: Get car locations
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+components:
+  schemas:
+    Cars:
+      description: Set of Cars
+      example:
+        data:
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+            - 5.3
+            - 52.6
+          properties:
+            license_plate: AA-BB-11
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+            - 5.4
+            - 52.5
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Car'
+          type: array
+      required:
+      - data
+      title: Root Type for Cars
+      type: object
+    Car:
+      description: Information about a car
+      example:
+        type: Feature
+        geometry:
+          type: Point
+          coordinates:
+          - 5.3
+          - 52.6
+        properties:
+          license_plate: AA-BB-11
+      properties:
+        geometry:
+          $ref: '#/components/schemas/Geometry'
+        type:
+          type: string
+      required:
+      - geometry
+      - type
+      type: object
+    Geometry:
+      description: Geometry element
+      example: |-
+        type: "Point",
+        coordinates:
+          - 5.2,
+          - 52.4
+      properties:
+        type:
+          enum:
+          - Point
+          type: string
+        coordinates:
+          items:
+            type: number
+          type: array
+      required:
+      - coordinates
+      - type
+      type: object

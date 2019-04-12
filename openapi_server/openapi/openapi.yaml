@@ -31,9 +31,10 @@ paths:
 components:
   schemas:
     Cars:
-      description: Set of Cars
+      description: Collection of Cars
       example:
-        data:
+        type: FeatureCollection
+        features:
         - type: Feature
           geometry:
             type: Point
@@ -48,14 +49,17 @@ components:
             coordinates:
             - 5.4
             - 52.5
+          properties: {}
       properties:
-        data:
+        type:
+          type: string
+        features:
           items:
             $ref: '#/components/schemas/Car'
           type: array
       required:
-      - data
-      title: Root Type for Cars
+      - features
+      - type
       type: object
     Car:
       description: Information about a car
@@ -73,8 +77,12 @@ components:
           $ref: '#/components/schemas/Geometry'
         type:
           type: string
+        properties:
+          properties: {}
+          type: object
       required:
       - geometry
+      - properties
       - type
       type: object
     Geometry:

@@ -1,5 +1,7 @@
 .idea/
 
+.openapi-generator/
+
 cov-nosetests-html/
 cov-*.xml
 test-*.xml

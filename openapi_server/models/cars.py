@@ -17,21 +17,26 @@ class Cars(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, data=None):  # noqa: E501
+    def __init__(self, type=None, features=None):  # noqa: E501
         """Cars - a model defined in OpenAPI
 
-        :param data: The data of this Cars.  # noqa: E501
-        :type data: List[Car]
+        :param type: The type of this Cars.  # noqa: E501
+        :type type: str
+        :param features: The features of this Cars.  # noqa: E501
+        :type features: List[Car]
         """
         self.openapi_types = {
-            'data': List[Car]
+            'type': str,
+            'features': List[Car]
         }
 
         self.attribute_map = {
-            'data': 'data'
+            'type': 'type',
+            'features': 'features'
         }
 
-        self._data = data
+        self._type = type
+        self._features = features
 
     @classmethod
     def from_dict(cls, dikt) -> 'Cars':
@@ -45,24 +50,47 @@ class Cars(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def data(self):
-        """Gets the data of this Cars.
+    def type(self):
+        """Gets the type of this Cars.
 
 
-        :return: The data of this Cars.
+        :return: The type of this Cars.
+        :rtype: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type):
+        """Sets the type of this Cars.
+
+
+        :param type: The type of this Cars.
+        :type type: str
+        """
+        if type is None:
+            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
+
+        self._type = type
+
+    @property
+    def features(self):
+        """Gets the features of this Cars.
+
+
+        :return: The features of this Cars.
         :rtype: List[Car]
         """
-        return self._data
+        return self._features
 
-    @data.setter
-    def data(self, data):
-        """Sets the data of this Cars.
+    @features.setter
+    def features(self, features):
+        """Sets the features of this Cars.
 
 
-        :param data: The data of this Cars.
-        :type data: List[Car]
+        :param features: The features of this Cars.
+        :type features: List[Car]
         """
-        if data is None:
-            raise ValueError("Invalid value for `data`, must not be `None`")  # noqa: E501
+        if features is None:
+            raise ValueError("Invalid value for `features`, must not be `None`")  # noqa: E501
 
-        self._data = data
+        self._features = features

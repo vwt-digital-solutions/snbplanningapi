@@ -17,26 +17,31 @@ class Car(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, geometry=None, type=None):  # noqa: E501
+    def __init__(self, geometry=None, type=None, properties=None):  # noqa: E501
         """Car - a model defined in OpenAPI
 
         :param geometry: The geometry of this Car.  # noqa: E501
         :type geometry: Geometry
         :param type: The type of this Car.  # noqa: E501
         :type type: str
+        :param properties: The properties of this Car.  # noqa: E501
+        :type properties: object
         """
         self.openapi_types = {
             'geometry': Geometry,
-            'type': str
+            'type': str,
+            'properties': object
         }
 
         self.attribute_map = {
             'geometry': 'geometry',
-            'type': 'type'
+            'type': 'type',
+            'properties': 'properties'
         }
 
         self._geometry = geometry
         self._type = type
+        self._properties = properties
 
     @classmethod
     def from_dict(cls, dikt) -> 'Car':
@@ -94,3 +99,26 @@ class Car(Model):
             raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
 
         self._type = type
+
+    @property
+    def properties(self):
+        """Gets the properties of this Car.
+
+
+        :return: The properties of this Car.
+        :rtype: object
+        """
+        return self._properties
+
+    @properties.setter
+    def properties(self, properties):
+        """Sets the properties of this Car.
+
+
+        :param properties: The properties of this Car.
+        :type properties: object
+        """
+        if properties is None:
+            raise ValueError("Invalid value for `properties`, must not be `None`")  # noqa: E501
+
+        self._properties = properties

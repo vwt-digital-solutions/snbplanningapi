@@ -27,18 +27,21 @@ paths:
             $ref: '#/definitions/Cars'
 definitions:
   Cars:
-    title: Root Type for Cars
-    description: Set of Cars
+    description: Collection of Cars
     required:
-      - data
+      - type
+      - features
     type: object
     properties:
-      data:
+      type:
+        type: string
+      features:
         type: array
         items:
           $ref: '#/definitions/Car'
     example:
-      data:
+      type: FeatureCollection
+      features:
         - type: Feature
           geometry:
             type: Point
@@ -53,17 +56,21 @@ definitions:
             coordinates:
               - 5.4
               - 52.5
+          properties: {}
   Car:
     description: Information about a car
     required:
       - type
       - geometry
+      - properties
     type: object
     properties:
       geometry:
         $ref: '#/definitions/Geometry'
       type:
         type: string
+      properties:
+        type: object
     example:
       type: Feature
       geometry:

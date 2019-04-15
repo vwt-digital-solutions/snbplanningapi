@@ -3,6 +3,8 @@ from threading import Thread
 import connexion
 from flask_cors import CORS
 
+import config
+
 from openapi_server import encoder
 from . import car_locations_db_handler
 
@@ -13,6 +15,6 @@ app.add_api('openapi.yaml',
             pythonic_params=True)
 CORS(app.app)
 
-
-thread = Thread(target=car_locations_db_handler.read_topic)
-thread.start()
+if hasattr(config, 'TOPIC_PROJECT_ID'):
+    thread = Thread(target=car_locations_db_handler.read_topic)
+    thread.start()

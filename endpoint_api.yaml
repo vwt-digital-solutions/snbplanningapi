@@ -13,6 +13,9 @@ info:
   x-audience: company-internal
   x-api-id: e2a63575-f436-4e31-8f34-fadbad0d9693
 host: PROJECT_ID.appspot.com
+security:
+- OAuth2AzureAD:
+    - snbplanningtool.read
 produces:
   - application/json
 paths:
@@ -99,3 +102,13 @@ definitions:
       coordinates:
         - 5.2,
         - 52.4
+securityDefinitions:
+  OAuth2AzureAD:
+    type: oauth2
+    description: OAuth through Azure AD
+    flow: implicit
+    authorizationUrl: 'https://azuread.url'
+    scopes:
+      snbplanningtool.read: Read access to snbplanningapi.
+    x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
+    x-scopeValidateFunc: connexion.decorators.security.validate_scope

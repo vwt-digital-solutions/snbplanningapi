@@ -17,8 +17,9 @@ jobs:
       versionSpec: '>= 3.6'
 
   - script: |
-     pip3 install tox
-     tox
+      pip3 install tox
+      cp config.example.py config.py
+      tox
     displayName: 'Run tests'
 
   - task: PublishTestResults@2

@@ -5,7 +5,6 @@ import logging
 
 
 def read_topic():
-    print('Background thread started')
     client = pubsub_v1.SubscriberClient()
     subscription = client.subscription_path(config.TOPIC_PROJECT_ID,
                                             config.SUBSCRIPTION_NAME)

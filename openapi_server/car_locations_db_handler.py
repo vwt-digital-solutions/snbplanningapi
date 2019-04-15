@@ -1,7 +1,9 @@
-from google.cloud import pubsub_v1, datastore
-from . import config
 import json
 import logging
+
+from google.cloud import pubsub_v1, datastore
+
+from . import config
 
 
 def read_topic():

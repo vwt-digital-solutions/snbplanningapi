@@ -1,4 +1,7 @@
+import logging
+
 from flask import jsonify
+from google.cloud import datastore
 
 
 def cars_get():  # noqa: E501
@@ -9,34 +12,18 @@ def cars_get():  # noqa: E501
 
     :rtype: Cars
     """
-    exampleresult = {
+    db_client = datastore.Client()
+    query = db_client.query(kind='CarLocation')
+    query_iter = query.fetch()
+    result = {
         "type": "FeatureCollection",
-        "features": [
-            {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [
-                        5.3,
-                        52.6
-                    ]
-                },
-                "properties": {
-                    "license_plate": "AA-BB-11"
-                }
-            },
-            {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [
-                        5.4,
-                        52.5
-                    ]
-                },
-                "properties": {}
-            }
-        ]
+        "features": []
     }
+    for entity in query_iter:
+        logging.info('{}'.format(entity))
+        result['features'].append({
+            "type": "Feature",
+            "geometry": entity['geometry']
+        })
 
-    return jsonify(exampleresult)
+    return jsonify(result)

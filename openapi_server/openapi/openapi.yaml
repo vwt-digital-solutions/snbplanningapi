@@ -16,7 +16,7 @@ servers:
 - url: //PROJECT_ID.appspot.com/
 security:
 - OAuth2AzureAD:
-    - snbplanningtool.read
+    - snbplanningapi.read
 paths:
   /cars:
     get:
@@ -115,7 +115,7 @@ components:
         implicit:
           authorizationUrl: https://azuread.url
           scopes:
-            snbplanningtool.read: Read access to snbplanningapi.
+            snbplanningapi.read: Read access to snbplanningapi.
       type: oauth2
       x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
       x-scopeValidateFunc: connexion.decorators.security.validate_scope

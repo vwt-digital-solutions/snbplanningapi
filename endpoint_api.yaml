@@ -15,7 +15,7 @@ info:
 host: PROJECT_ID.appspot.com
 security:
 - OAuth2AzureAD:
-    - snbplanningtool.read
+    - snbplanningapi.read
 produces:
   - application/json
 paths:
@@ -109,6 +109,6 @@ securityDefinitions:
     flow: implicit
     authorizationUrl: 'https://azuread.url'
     scopes:
-      snbplanningtool.read: Read access to snbplanningapi.
+      snbplanningapi.read: Read access to snbplanningapi.
     x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
     x-scopeValidateFunc: connexion.decorators.security.validate_scope

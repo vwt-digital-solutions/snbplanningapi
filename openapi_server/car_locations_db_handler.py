@@ -21,9 +21,14 @@ def read_topic():
                 entity = db_client.get(loc_key)
                 if entity is None:
                     entity = datastore.Entity(key=loc_key)
-                entity.update({
-                    "geometry": mdata['geometry']
-                })
-                db_client.put(entity)
-                logging.info('Populate location {} - {}'.format(entity.key, entity))
+                if 'when' not in entity or entity['when'] < mdata['when']:
+                    entity.update({
+                        "geometry": mdata['geometry'],
+                         "when": mdata['when']
+                    })
+                    db_client.put(entity)
+                    logging.info('Populate location {} - {}'.format(entity.key, entity))
+                else:
+                    logging.info('Skipping {} - late notification {}/{}'
+                                 .format(mdata['token'], mdata['when'], entity['when']))
     pass

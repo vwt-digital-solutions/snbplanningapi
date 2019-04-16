@@ -24,7 +24,7 @@ def read_topic():
                 if 'when' not in entity or entity['when'] < mdata['when']:
                     entity.update({
                         "geometry": mdata['geometry'],
-                         "when": mdata['when']
+                        "when": mdata['when']
                     })
                     db_client.put(entity)
                     logging.info('Populate location {} - {}'.format(entity.key, entity))

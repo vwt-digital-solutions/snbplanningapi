@@ -23,7 +23,8 @@ def cars_get():  # noqa: E501
         logging.info('{}'.format(entity))
         result['features'].append({
             "type": "Feature",
-            "geometry": entity['geometry']
+            "geometry": entity['geometry'],
+            "properties": {}
         })
 
     return jsonify(result)

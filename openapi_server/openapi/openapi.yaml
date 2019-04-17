@@ -14,9 +14,9 @@ info:
   x-api-id: e2a63575-f436-4e31-8f34-fadbad0d9693
 servers:
 - url: //PROJECT_ID.appspot.com/
-#security:
-  #- OAuth2AzureAD:
-  #  - snbplanningapi.read
+security:
+- OAuth2AzureAD:
+    - snbplanningapi.read
 paths:
   /cars:
     get:
@@ -108,14 +108,14 @@ components:
       - coordinates
       - type
       type: object
-#  securitySchemes:
-#    OAuth2AzureAD:
-#      description: OAuth through Azure AD
-#      flows:
-#        implicit:
-#          authorizationUrl: https://azuread.url
-#          scopes:
-#            snbplanningapi.read: Read access to snbplanningapi.
-#      type: oauth2
-#      x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
-#      x-scopeValidateFunc: connexion.decorators.security.validate_scope
+  securitySchemes:
+    OAuth2AzureAD:
+      description: OAuth through Azure AD
+      flows:
+        implicit:
+          authorizationUrl: https://azuread.url
+          scopes:
+            snbplanningapi.read: Read access to snbplanningapi.
+      type: oauth2
+      x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
+      x-scopeValidateFunc: connexion.decorators.security.validate_scope

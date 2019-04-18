@@ -16,12 +16,19 @@ servers:
 - url: //PROJECT_ID.appspot.com/
 security:
 - OAuth2AzureAD:
-    - snbplanningapi.read
+  - snbplanningapi.read
 paths:
   /cars:
     get:
       description: Get a list of all car geolocations
       operationId: cars_get
+      parameters:
+      - description: Time offset range in hours for retrieving entries
+        in: query
+        name: offset
+        schema:
+          default: 168
+          type: integer
       responses:
         200:
           content:

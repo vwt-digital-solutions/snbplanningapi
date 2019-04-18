@@ -23,6 +23,13 @@ paths:
     get:
       summary: Get car locations
       description: Get a list of all car geolocations
+      parameters:
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
       responses:
         '200':
           description: Successful response - returns an array of locations

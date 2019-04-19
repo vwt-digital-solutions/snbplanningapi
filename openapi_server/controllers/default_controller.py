@@ -15,6 +15,9 @@ def cars_get(offset):  # noqa: E501
     """
 
     offsetDate = datetime.datetime.utcnow() - datetime.timedelta(hours=offset)
+    offsetDate = offsetDate.isoformat()
+
+    print(offsetDate)
 
     db_client = datastore.Client()
     query = db_client.query(kind='CarLocation')

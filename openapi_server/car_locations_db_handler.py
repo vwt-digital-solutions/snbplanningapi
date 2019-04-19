@@ -31,4 +31,5 @@ def read_topic():
                 else:
                     logging.info('Skipping {} - late notification {}/{}'
                                  .format(mdata['token'], mdata['when'], entity['when']))
+            message.ack()
     pass

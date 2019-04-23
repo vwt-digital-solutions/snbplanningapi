@@ -33,5 +33,6 @@ def read_topic():
                     logging.info('Skipping {} - late notification {}/{}'
                                  .format(mdata['token'], mdata['when'], entity['when']))
             ack_ids.append(message.ack_id)
-        client.acknowledge(subscription, ack_ids)
+        if ack_ids:
+            client.acknowledge(subscription, ack_ids)
     pass

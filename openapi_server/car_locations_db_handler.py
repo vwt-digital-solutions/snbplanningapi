@@ -14,6 +14,7 @@ def read_topic():
     logging.info('Start pooling car locations')
     while True:
         response = client.pull(subscription, 10)
+        ack_ids = []
         for message in response.received_messages:
             mdata = json.loads(message.message.data)
             if 'token' in mdata:
@@ -31,5 +32,6 @@ def read_topic():
                 else:
                     logging.info('Skipping {} - late notification {}/{}'
                                  .format(mdata['token'], mdata['when'], entity['when']))
-            message.ack()
+            ack_ids.append(message.ack_id)
+        client.acknowledge(subscription, ack_ids)
     pass

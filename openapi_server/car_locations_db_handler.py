@@ -2,6 +2,7 @@ import json
 import logging
 
 from google.cloud import pubsub_v1, datastore
+from google.api_core import exceptions
 
 import config
 
@@ -13,7 +14,11 @@ def read_topic():
     db_client = datastore.Client()
     logging.info('Start pooling car locations')
     while True:
-        response = client.pull(subscription, 10)
+        try:
+            response = client.pull(subscription, 10)
+        except exceptions.DeadlineExceeded:
+            continue
+
         ack_ids = []
         for message in response.received_messages:
             mdata = json.loads(message.message.data)

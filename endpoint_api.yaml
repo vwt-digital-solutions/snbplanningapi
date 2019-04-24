@@ -35,6 +35,22 @@ paths:
           description: Successful response - returns an array of locations
           schema:
             $ref: '#/definitions/Cars'
+  /carsinfo:
+    get:
+      summary: Get car info
+      description: Get a list of all car geolocations with info
+      parameters:
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
+      responses:
+        '200':
+          description: Successful response - returns an array of locations with info
+          schema:
+            $ref: '#/definitions/CarsInfo'
 definitions:
   Cars:
     description: Collection of Cars
@@ -109,6 +125,40 @@ definitions:
       coordinates:
         - 5.2,
         - 52.4
+  CarsInfo:
+    description: Collection of Cars locations with info
+    required:
+      - type
+      - features
+    type: object
+    properties:
+      type:
+        type: string
+      features:
+        type: array
+        items:
+          $ref: '#/definitions/Car'
+    example:
+      type: FeatureCollection
+      features:
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+              - 5.3
+              - 52.6
+          properties:
+            license_plate: AA-BB-11
+            driver_name: Pietje Puk
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+              - 5.4
+              - 52.5
+          properties:
+            license_plate: CC-DD-22
+            driver_name: Daan de Wit
 securityDefinitions:
   OAuth2AzureAD:
     type: oauth2

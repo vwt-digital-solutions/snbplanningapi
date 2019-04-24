@@ -38,6 +38,26 @@ paths:
           description: Successful response - returns an array of locations
       summary: Get car locations
       x-openapi-router-controller: openapi_server.controllers.default_controller
+  /carsinfo:
+    get:
+      description: Get a list of all car geolocations with info
+      operationId: carsinfo_get
+      parameters:
+      - description: Time offset range in hours for retrieving entries
+        in: query
+        name: offset
+        schema:
+          default: 168
+          type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarsInfo'
+          description: Successful response - returns an array of locations with info
+      summary: Get car info
+      x-openapi-router-controller: openapi_server.controllers.default_controller
 components:
   schemas:
     Cars:
@@ -113,6 +133,40 @@ components:
           type: array
       required:
       - coordinates
+      - type
+      type: object
+    CarsInfo:
+      description: Collection of Cars locations with info
+      example:
+        type: FeatureCollection
+        features:
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+            - 5.3
+            - 52.6
+          properties:
+            license_plate: AA-BB-11
+            driver_name: Pietje Puk
+        - type: Feature
+          geometry:
+            type: Point
+            coordinates:
+            - 5.4
+            - 52.5
+          properties:
+            license_plate: CC-DD-22
+            driver_name: Daan de Wit
+      properties:
+        type:
+          type: string
+        features:
+          items:
+            $ref: '#/components/schemas/Car'
+          type: array
+      required:
+      - features
       - type
       type: object
   securitySchemes:

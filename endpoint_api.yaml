@@ -51,6 +51,20 @@ paths:
           description: Successful response - returns an array of locations with info
           schema:
             $ref: '#/definitions/CarsInfo'
+    post:
+      summary: Post car info
+      description: Post a list of all car geolocations with info
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CarsInfo'
+      responses:
+        '201':
+          description: Successful POST
 definitions:
   Cars:
     description: Collection of Cars

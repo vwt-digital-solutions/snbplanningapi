@@ -3,6 +3,7 @@ import datetime
 import random
 
 from flask import jsonify
+from flask import make_response
 from google.cloud import datastore
 
 
@@ -73,3 +74,15 @@ def carsinfo_get(offset):  # noqa: E501
         })
 
     return jsonify(result)
+
+
+def carsinfo_post(body):  # noqa: E501
+    """Post car info
+
+    Post a list of all updated car information # noqa: E501
+
+
+    :rtype: CarsInfo
+    """
+
+    return make_response('Cars updated', 201)

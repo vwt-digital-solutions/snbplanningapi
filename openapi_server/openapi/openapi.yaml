@@ -58,6 +58,22 @@ paths:
           description: Successful response - returns an array of locations with info
       summary: Get car info
       x-openapi-router-controller: openapi_server.controllers.default_controller
+    post:
+      description: Post a list of all car geolocations with info
+      operationId: carsinfo_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarsInfo'
+        required: true
+      responses:
+        201:
+          content: {}
+          description: Successful POST
+      summary: Post car info
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: openapi_server.controllers.default_controller
 components:
   schemas:
     Cars:

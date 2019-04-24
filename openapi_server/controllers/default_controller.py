@@ -36,6 +36,7 @@ def cars_get(offset):  # noqa: E501
 
     return jsonify(result)
 
+
 def carsinfo_get(offset):  # noqa: E501
     """Get car info
 

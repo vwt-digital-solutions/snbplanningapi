@@ -66,6 +66,7 @@ def carsinfo_get(offset):  # noqa: E501
             "type": "Feature",
             "geometry": entity['geometry'],
             "properties": {
+                "id": random.randint(1,1000),
                 "license_plate": random.choice(licensePlateItems),
                 "driver_name": random.choice(nameItems)
             }

@@ -101,7 +101,9 @@ components:
           - 5.3
           - 52.6
         properties:
+          id: 1
           license_plate: AA-BB-11
+          driver_name: Pietje Puk
       properties:
         geometry:
           $ref: '#/components/schemas/Geometry'
@@ -147,6 +149,7 @@ components:
             - 5.3
             - 52.6
           properties:
+            id: 1
             license_plate: AA-BB-11
             driver_name: Pietje Puk
         - type: Feature
@@ -156,6 +159,7 @@ components:
             - 5.4
             - 52.5
           properties:
+            id: 2
             license_plate: CC-DD-22
             driver_name: Daan de Wit
       properties:

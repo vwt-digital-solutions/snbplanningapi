@@ -201,7 +201,6 @@ components:
           type: string
       required:
       - driver_name
-      - id
       - license_plate
       type: object
     Tokens:

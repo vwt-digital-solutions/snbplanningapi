@@ -69,8 +69,8 @@ def carsinfo_post(body):  # noqa: E501
     entity = None
     db_client = datastore.Client()
 
-    if not carinfo.id is None:
-        carinfo_key = db_client.key('carInfo', carinfo.id)
+    if not carinfo['id'] is None:
+        carinfo_key = db_client.key('carInfo', carinfo['id'])
         entity = db_client.get(carinfo_key)
         if entity is None:
             entity = datastore.Entity(key=carinfo_key)
@@ -78,9 +78,9 @@ def carsinfo_post(body):  # noqa: E501
         entity = datastore.Entity(db_client.key('CarInfo'))
 
     entity.update({
-        "license_plate": carinfo.license_plate,
-        "driver_name": carinfo.driver_name,
-        "token": carinfo.token
+        "license_plate": carinfo['license_plate'],
+        "driver_name": carinfo['driver_name'],
+        "token": carinfo['token']
     })
     db_client.put(entity)
 

@@ -46,32 +46,14 @@ def carsinfo_get(offset):  # noqa: E501
 
     :rtype: CarsInfo
     """
-
-    licensePlateItems = ['AA-BB-11', 'CC-DD-22', 'EE-FF-33', 'GG-HH-44', 'II-JJ-55']
-    nameItems = ['Pietje Puk', 'Connie Moeleker', 'Alco Liest', 'Peter Celie', 'Kenny Boeijen']
-
-    offsetDate = datetime.datetime.utcnow() - datetime.timedelta(hours=offset)
-    offsetDate = offsetDate.isoformat()
-
     db_client = datastore.Client()
-    query = db_client.query(kind='CarLocation')
-    query.add_filter('when', '>=', offsetDate)
-    query_iter = query.fetch()
-    result = {
-        "type": "FeatureCollection",
-        "features": []
-    }
-    for entity in query_iter:
-        logging.info('{}'.format(entity))
-        result['features'].append({
-            "type": "Feature",
-            "geometry": entity['geometry'],
-            "properties": {
-                "id": random.randint(1, 1000),
-                "license_plate": random.choice(licensePlateItems),
-                "driver_name": random.choice(nameItems)
-            }
-        })
+    query = db_client.query(kind='CarInfo')
+    result = [{
+            "id": entity.key.id_or_name,
+            "license_plate": entity['license_plate'],
+            "driver_name": entity['driver_name'],
+            "token": entity['token']
+        } for entity in query.fetch()]
 
     return jsonify(result)
 
@@ -110,4 +92,4 @@ def list_tokens(assigned):  # noqa: E501
     tokens = [token.key.id_or_name for token in tokens_query.fetch() if is_assigned(token.key.id_or_name, assigned,
                                                                                     car_tokens)]
 
-    return make_response(tokens, 201)
+    return jsonify(tokens)

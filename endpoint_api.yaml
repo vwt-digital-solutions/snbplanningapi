@@ -158,41 +158,30 @@ definitions:
         - 5.2,
         - 52.4
   CarsInfo:
-    description: Collection of Cars locations with info
-    required:
-      - type
-      - features
-    type: object
     properties:
-      type:
-        type: string
-      features:
+      items:
         type: array
-        items:
-          $ref: '#/definitions/Car'
-    example:
-      type: FeatureCollection
-      features:
-        - type: Feature
-          geometry:
-            type: Point
-            coordinates:
-              - 5.3
-              - 52.6
-          properties:
-            id: 1
-            license_plate: AA-BB-11
-            driver_name: Pietje Puk
-        - type: Feature
-          geometry:
-            type: Point
-            coordinates:
-              - 5.4
-              - 52.5
-          properties:
-            id: 2
-            license_plate: CC-DD-22
-            driver_name: Daan de Wit
+        $ref: '#/definitions/CarInfo'
+  CarInfo:
+      description: Car Info details
+      example:
+        - id: 123456789
+          license_plate: AB-12-CD
+          driver_name: Billy Gates
+          token: some-token-value
+      properties:
+        id:
+          type: number
+        license_plate:
+          type: string
+        driver_name:
+          type: string
+        token:
+          type: string
+      required:
+        - id
+        - license_plate
+        - driver_name
   Tokens:
     description: Collection of list with tokens
     required:

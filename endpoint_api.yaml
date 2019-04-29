@@ -61,7 +61,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CarsInfo'
+            $ref: '#/definitions/CarInfo'
       responses:
         '201':
           description: Successful POST
@@ -171,7 +171,7 @@ definitions:
           token: some-token-value
       properties:
         id:
-          type: number
+          type: integer
         license_plate:
           type: string
         driver_name:

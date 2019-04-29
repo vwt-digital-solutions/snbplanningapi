@@ -19,7 +19,7 @@ class CarInfo(Model):
         """CarInfo - a model defined in OpenAPI
 
         :param id: The id of this CarInfo.  # noqa: E501
-        :type id: float
+        :type id: int
         :param license_plate: The license_plate of this CarInfo.  # noqa: E501
         :type license_plate: str
         :param driver_name: The driver_name of this CarInfo.  # noqa: E501
@@ -28,7 +28,7 @@ class CarInfo(Model):
         :type token: str
         """
         self.openapi_types = {
-            'id': float,
+            'id': int,
             'license_plate': str,
             'driver_name': str,
             'token': str
@@ -63,7 +63,7 @@ class CarInfo(Model):
 
 
         :return: The id of this CarInfo.
-        :rtype: float
+        :rtype: int
         """
         return self._id
 
@@ -73,7 +73,7 @@ class CarInfo(Model):
 
 
         :param id: The id of this CarInfo.
-        :type id: float
+        :type id: int
         """
         if id is None:
             raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501

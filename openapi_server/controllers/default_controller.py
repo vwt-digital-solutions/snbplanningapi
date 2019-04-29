@@ -1,6 +1,5 @@
 import logging
 import datetime
-import random
 
 from flask import jsonify
 from flask import make_response
@@ -58,16 +57,33 @@ def carsinfo_get(offset):  # noqa: E501
     return jsonify(result)
 
 
-def carsinfo_post(body):  # noqa: E501
+def carsinfo_post(carinfo):  # noqa: E501
     """Post car info
 
-    Post a list of all updated car information # noqa: E501
+    Post a car information # noqa: E501
 
 
-    :rtype: CarsInfo
+    :rtype: CarInfo id
     """
+    entity = None
+    db_client = datastore.Client()
 
-    return make_response('Cars updated', 201)
+    if not carinfo.id is None:
+        carinfo_key = db_client.key('carInfo', carinfo.id)
+        entity = db_client.get(carinfo_key)
+        if entity is None:
+            entity = datastore.Entity(key=carinfo_key)
+    else:
+        entity = datastore.Entity(db_client.key('CarInfo'))
+
+    entity.update({
+        "license_plate": carinfo.license_plate,
+        "driver_name": carinfo.driver_name,
+        "token": carinfo.token
+    })
+    db_client.put(entity)
+
+    return make_response(entity.key.id_or_name, 201)
 
 
 def is_assigned(token, assigned, car_tokens):

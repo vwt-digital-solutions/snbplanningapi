@@ -174,41 +174,37 @@ components:
       - type
       type: object
     CarsInfo:
-      description: Collection of Cars locations with info
+      description: Collection of Car info
       example:
-        type: FeatureCollection
-        features:
-        - type: Feature
-          geometry:
-            type: Point
-            coordinates:
-            - 5.3
-            - 52.6
-          properties:
-            id: 1
-            license_plate: AA-BB-11
-            driver_name: Pietje Puk
-        - type: Feature
-          geometry:
-            type: Point
-            coordinates:
-            - 5.4
-            - 52.5
-          properties:
-            id: 2
-            license_plate: CC-DD-22
-            driver_name: Daan de Wit
+        - id: 2
+          license_plate: CC-DD-22
+          driver_name: Daan de Wit
+        - id: 3
+          license_plate: EE-FF-33
+          driver_name: Daan de Wit
+      type: array
+      items:
+        $ref: '#/components/schemas/carInfo'
+    CarInfo:
+      description: Car Info details
+      example:
+        id: 123456789
+        license_plate: AB-12-CD
+        driver_name: Billy Gates
+        token: some-token-value
       properties:
-        type:
+        id:
+          type: number
+        license_plate:
           type: string
-        features:
-          items:
-            $ref: '#/components/schemas/Car'
-          type: array
+        driver_name:
+          type: string
+        token:
+          type: string
       required:
-      - features
-      - type
-      type: object
+      - id
+      - license_plate
+      - driver_name
   securitySchemes:
     OAuth2AzureAD:
       description: OAuth through Azure AD

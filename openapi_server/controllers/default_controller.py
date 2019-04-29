@@ -65,7 +65,6 @@ def carsinfo_post(body):  # noqa: E501
 
     :rtype: CarInfo id
     """
-    print(body)
     carinfo = body
     entity = None
     db_client = datastore.Client()
@@ -86,7 +85,7 @@ def carsinfo_post(body):  # noqa: E501
     })
     db_client.put(entity)
 
-    return make_response(entity.key.id_or_name, 201)
+    return make_response(jsonify(message=entity.key.id_or_name), 201)
 
 
 def is_assigned(token, assigned, car_tokens):

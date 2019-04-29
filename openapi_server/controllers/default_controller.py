@@ -85,7 +85,7 @@ def carsinfo_post(body):  # noqa: E501
     })
     db_client.put(entity)
 
-    return make_response(jsonify(message=entity.key.id_or_name), 201)
+    return make_response(jsonify(carinfo_id=entity.key.id_or_name), 201)
 
 
 def is_assigned(token, assigned, car_tokens):

@@ -76,24 +76,23 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.default_controller
   /tokens:
     get:
-      summary: Get a list of tokens
       description: List of tokens
       operationId: list_tokens
       parameters:
-        - name: "assigned"
-          in: "query"
+      - in: query
+        name: assigned
+        schema:
+          default: false
           type: boolean
-          required: false
       responses:
         200:
           content:
             application/json:
               schema:
-                type: "array"
-                items:
-                  type: "string"
+                $ref: '#/components/schemas/Tokens'
           description: OK
-    x-openapi-router-controller: openapi_server.controllers.default_controller
+      summary: Get a list of tokens
+      x-openapi-router-controller: openapi_server.controllers.default_controller
 components:
   schemas:
     Cars:
@@ -208,6 +207,17 @@ components:
       required:
       - features
       - type
+      type: object
+    Tokens:
+      description: Collection of list with tokens
+      example:
+        items: '{}'
+      properties:
+        items:
+          properties: {}
+          type: object
+      required:
+      - items
       type: object
   securitySchemes:
     OAuth2AzureAD:

@@ -65,6 +65,22 @@ paths:
       responses:
         '201':
           description: Successful POST
+  /tokens:
+    get:
+      summary: Get a list of tokens
+      description: List of tokens
+      operationId: list_tokens
+      parameters:
+        - name: "assigned"
+          in: "query"
+          type: boolean
+          required: false
+          default: false
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Tokens'
 definitions:
   Cars:
     description: Collection of Cars
@@ -177,6 +193,14 @@ definitions:
             id: 2
             license_plate: CC-DD-22
             driver_name: Daan de Wit
+  Tokens:
+    description: Collection of list with tokens
+    required:
+      - items
+    type: object
+    properties:
+      items:
+        type: object
 securityDefinitions:
   OAuth2AzureAD:
     type: oauth2

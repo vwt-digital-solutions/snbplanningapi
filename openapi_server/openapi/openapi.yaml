@@ -74,6 +74,26 @@ paths:
       summary: Post car info
       x-codegen-request-body-name: body
       x-openapi-router-controller: openapi_server.controllers.default_controller
+  /tokens:
+    get:
+      summary: Get a list of tokens
+      description: List of tokens
+      operationId: list_tokens
+      parameters:
+        - name: "assigned"
+          in: "query"
+          type: boolean
+          required: false
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "string"
+          description: OK
+    x-openapi-router-controller: openapi_server.controllers.default_controller
 components:
   schemas:
     Cars:

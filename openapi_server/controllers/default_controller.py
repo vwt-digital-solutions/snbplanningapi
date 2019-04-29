@@ -57,7 +57,7 @@ def carsinfo_get(offset):  # noqa: E501
     return jsonify(result)
 
 
-def carsinfo_post(carinfo):  # noqa: E501
+def carsinfo_post(body):  # noqa: E501
     """Post car info
 
     Post a car information # noqa: E501
@@ -65,6 +65,7 @@ def carsinfo_post(carinfo):  # noqa: E501
 
     :rtype: CarInfo id
     """
+    carinfo = body
     entity = None
     db_client = datastore.Client()
 

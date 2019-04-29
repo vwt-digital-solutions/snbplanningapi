@@ -65,7 +65,7 @@ def carsinfo_post(body):  # noqa: E501
 
     :rtype: CarInfo id
     """
-    logging.info(body)
+    print(body)
     carinfo = body
     entity = None
     db_client = datastore.Client()

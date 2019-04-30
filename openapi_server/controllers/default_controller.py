@@ -71,7 +71,7 @@ def carsinfo_post(body):  # noqa: E501
 
     # for unknown reason attribute 'id' is received as 'id_'
     if 'id_' in carinfo and carinfo['id_'] is not None:
-        carinfo_key = db_client.key('carInfo', carinfo['id_'])
+        carinfo_key = db_client.key('CarInfo', carinfo['id_'])
         entity = db_client.get(carinfo_key)
         if entity is None:
             entity = datastore.Entity(key=carinfo_key)

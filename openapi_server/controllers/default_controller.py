@@ -30,7 +30,7 @@ def cars_get(offset):  # noqa: E501
         logging.info('{}'.format(entity))
         result['features'].append({
             "type": "Feature",
-            "geometry": entity.geometry,
+            "geometry": entity['geometry'],
             "properties": {
                 "id": entity.key.id_or_name
             }

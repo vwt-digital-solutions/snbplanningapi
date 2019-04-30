@@ -32,7 +32,7 @@ def cars_get(offset):  # noqa: E501
             "type": "Feature",
             "geometry": entity['geometry'],
             "properties": {
-                "id": entity.key.id_or_name
+                "token": entity.key.id_or_name
             }
         })
 

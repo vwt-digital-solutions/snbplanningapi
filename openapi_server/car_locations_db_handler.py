@@ -9,9 +9,9 @@ import config
 
 def read_topic():
     client = pubsub_v1.SubscriberClient()
-    subscription = client.subscription_path(config.TOPIC_PROJECT_ID,
-                                            config.SUBSCRIPTION_NAME)
     db_client = datastore.Client()
+    subscription = client.subscription_path(config.TOPIC_PROJECT_ID,
+                                            config.TOKEN_SUBSCRIPTION_NAME)
     logging.info('Start pooling car locations')
     while True:
         try:

@@ -37,7 +37,7 @@ paths:
                 $ref: '#/components/schemas/Cars'
           description: Successful response - returns an array of locations
       summary: Get car locations
-      x-openapi-router-controller: openapi_server.controllers.default_controller
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /carsinfo:
     get:
       description: Get a list of all car geolocations with info
@@ -57,7 +57,7 @@ paths:
                 $ref: '#/components/schemas/CarsInfo'
           description: Successful response - returns an array of locations with info
       summary: Get car info
-      x-openapi-router-controller: openapi_server.controllers.default_controller
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
     post:
       description: Post a list of all car geolocations with info
       operationId: carsinfo_post
@@ -72,8 +72,8 @@ paths:
           content: {}
           description: Successful POST
       summary: Post car info
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
       x-codegen-request-body-name: body
-      x-openapi-router-controller: openapi_server.controllers.default_controller
   /tokens:
     get:
       description: List of tokens
@@ -92,7 +92,27 @@ paths:
                 $ref: '#/components/schemas/Tokens'
           description: OK
       summary: Get a list of tokens
-      x-openapi-router-controller: openapi_server.controllers.default_controller
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+  /workitems/active:
+    get:
+      description: List of work items
+      operationId: list_work_items
+      responses:
+        200:
+          content: {}
+          description: OK
+      summary: Get a list of work items
+      x-openapi-router-controller: openapi_server.controllers.workitems_controller
+  /workitems/all:
+    get:
+      description: List of work items
+      operationId: list_all_work_items
+      responses:
+        200:
+          content: {}
+          description: OK
+      summary: Get a list of work items
+      x-openapi-router-controller: openapi_server.controllers.workitems_controller
 components:
   schemas:
     Cars:

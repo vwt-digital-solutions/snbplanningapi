@@ -99,7 +99,10 @@ paths:
       operationId: list_work_items
       responses:
         200:
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItems'
           description: OK
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
@@ -109,7 +112,10 @@ paths:
       operationId: list_all_work_items
       responses:
         200:
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItems'
           description: OK
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
@@ -233,6 +239,101 @@ components:
           type: object
       required:
       - items
+      type: object
+    WorkItems:
+      example:
+        items:
+          Status: Status
+          DuurMinuten: 0
+          MedewerkerNaam: MedewerkerNaam
+          Omschrijving: Omschrijving
+          UrenCategorieCode: UrenCategorieCode
+          ProjectNummer: ProjectNummer
+          WerkbonNummer: WerkbonNummer
+          StartDatumTijd: 2000-01-23T04:56:07.000+00:00
+          Postcode: Postcode
+          EinddatumTijd: 2000-01-23T04:56:07.000+00:00
+          Administratie: Administratie
+          Plaats: Plaats
+          WerkbonType: WerkbonType
+          Straat: Straat
+          Toevoeging: Toevoeging
+          geometry: |-
+            type: "Point",
+            coordinates:
+              - 5.2,
+              - 52.4
+          MedewerkerNummer: MedewerkerNummer
+          L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        items:
+          $ref: '#/components/schemas/WorkItem'
+      type: object
+    WorkItem:
+      description: Link2 work item
+      example:
+        Status: Status
+        DuurMinuten: 0
+        MedewerkerNaam: MedewerkerNaam
+        Omschrijving: Omschrijving
+        UrenCategorieCode: UrenCategorieCode
+        ProjectNummer: ProjectNummer
+        WerkbonNummer: WerkbonNummer
+        StartDatumTijd: 2000-01-23T04:56:07.000+00:00
+        Postcode: Postcode
+        EinddatumTijd: 2000-01-23T04:56:07.000+00:00
+        Administratie: Administratie
+        Plaats: Plaats
+        WerkbonType: WerkbonType
+        Straat: Straat
+        Toevoeging: Toevoeging
+        geometry: |-
+          type: "Point",
+          coordinates:
+            - 5.2,
+            - 52.4
+        MedewerkerNummer: MedewerkerNummer
+        L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        Administratie:
+          type: string
+        DuurMinuten:
+          type: integer
+        StartDatumTijd:
+          format: date-time
+          type: string
+        EinddatumTijd:
+          format: date-time
+          type: string
+        L2GUID:
+          format: uuid
+          type: string
+        MedewerkerNaam:
+          type: string
+        MedewerkerNummer:
+          type: string
+        Omschrijving:
+          type: string
+        Plaats:
+          type: string
+        Postcode:
+          type: string
+        ProjectNummer:
+          type: string
+        Status:
+          type: string
+        Straat:
+          type: string
+        Toevoeging:
+          type: string
+        UrenCategorieCode:
+          type: string
+        WerkbonNummer:
+          type: string
+        WerkbonType:
+          type: string
+        geometry:
+          $ref: '#/components/schemas/Geometry'
       type: object
   securitySchemes:
     OAuth2AzureAD:

@@ -93,6 +93,8 @@ paths:
       responses:
         200:
           description: OK
+          schema:
+            $ref: '#/definitions/WorkItems'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
   /workitems/all:
     get:
@@ -102,6 +104,8 @@ paths:
       responses:
         200:
           description: OK
+          schema:
+            $ref: '#/definitions/WorkItems'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
 definitions:
   Cars:
@@ -211,6 +215,53 @@ definitions:
     properties:
       items:
         type: object
+  WorkItems:
+    properties:
+      items:
+        type: array
+        $ref: '#/definitions/WorkItem'
+  WorkItem:
+    description: Link2 work item
+    properties:
+      Administratie:
+        type: string
+      DuurMinuten:
+        type: integer
+      StartDatumTijd:
+        type: string
+        format: date-time
+      EinddatumTijd:
+        type: string
+        format: date-time
+      L2GUID:
+        type: string
+        format: uuid
+      MedewerkerNaam:
+        type: string
+      MedewerkerNummer:
+        type: string
+      Omschrijving:
+        type: string
+      Plaats:
+        type: string
+      Postcode:
+        type: string
+      ProjectNummer:
+        type: string
+      Status:
+        type: string
+      Straat:
+        type: string
+      Toevoeging:
+        type: string
+      UrenCategorieCode:
+        type: string
+      WerkbonNummer:
+        type: string
+      WerkbonType:
+        type: string
+      geometry:
+        $ref: '#/definitions/Geometry'
 securityDefinitions:
   OAuth2AzureAD:
     type: oauth2

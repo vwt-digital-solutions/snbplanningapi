@@ -35,6 +35,10 @@ def read_topic():
                 entity = datastore.Entity(key=loc_key)
             if 'last_updated' not in entity or entity['last_updated'] < when:
                 payload['last_updated'] = when
+                payload['EindDatumTijd'] = datetime.datetime.strptime(payload['EindDatumTijd'],
+                                                                      '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
+                payload['StartDatumTijd'] = datetime.datetime.strptime(payload['StartDatumTijd'],
+                                                                       '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
                 entity.update(payload)
                 db_client.put(entity)
                 logging.info('Populate work item {} - {}'.format(entity.key, entity))

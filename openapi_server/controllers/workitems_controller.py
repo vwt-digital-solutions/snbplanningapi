@@ -18,7 +18,7 @@ def list_work_items():  # noqa: E501
     db_client = datastore.Client()
     query = db_client.query(kind='WorkItem')
     result = [res for res in query.fetch() if
-              res['StartDatumTijd'] < datetime.datetime.now(pytz.utc) < res['EindDatumTijd']]
+              res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp']]
     return jsonify(result)
 
 

@@ -17,105 +17,105 @@ class WorkItem(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, administratie=None, duur_minuten=None, start_datum_tijd=None, einddatum_tijd=None, l2_guid=None, medewerker_naam=None, medewerker_nummer=None, omschrijving=None, plaats=None, postcode=None, project_nummer=None, status=None, straat=None, toevoeging=None, uren_categorie_code=None, werkbon_nummer=None, werkbon_type=None, geometry=None):  # noqa: E501
+    def __init__(self, administration=None, duration=None, start_timestamp=None, end_timestamp=None, l2_guid=None, employee_name=None, employee_number=None, description=None, city=None, zip=None, project_number=None, status=None, street=None, extra=None, hours_category=None, task_number=None, task_type=None, geometry=None):  # noqa: E501
         """WorkItem - a model defined in OpenAPI
 
-        :param administratie: The administratie of this WorkItem.  # noqa: E501
-        :type administratie: str
-        :param duur_minuten: The duur_minuten of this WorkItem.  # noqa: E501
-        :type duur_minuten: int
-        :param start_datum_tijd: The start_datum_tijd of this WorkItem.  # noqa: E501
-        :type start_datum_tijd: datetime
-        :param einddatum_tijd: The einddatum_tijd of this WorkItem.  # noqa: E501
-        :type einddatum_tijd: datetime
+        :param administration: The administration of this WorkItem.  # noqa: E501
+        :type administration: str
+        :param duration: The duration of this WorkItem.  # noqa: E501
+        :type duration: int
+        :param start_timestamp: The start_timestamp of this WorkItem.  # noqa: E501
+        :type start_timestamp: datetime
+        :param end_timestamp: The end_timestamp of this WorkItem.  # noqa: E501
+        :type end_timestamp: datetime
         :param l2_guid: The l2_guid of this WorkItem.  # noqa: E501
         :type l2_guid: str
-        :param medewerker_naam: The medewerker_naam of this WorkItem.  # noqa: E501
-        :type medewerker_naam: str
-        :param medewerker_nummer: The medewerker_nummer of this WorkItem.  # noqa: E501
-        :type medewerker_nummer: str
-        :param omschrijving: The omschrijving of this WorkItem.  # noqa: E501
-        :type omschrijving: str
-        :param plaats: The plaats of this WorkItem.  # noqa: E501
-        :type plaats: str
-        :param postcode: The postcode of this WorkItem.  # noqa: E501
-        :type postcode: str
-        :param project_nummer: The project_nummer of this WorkItem.  # noqa: E501
-        :type project_nummer: str
+        :param employee_name: The employee_name of this WorkItem.  # noqa: E501
+        :type employee_name: str
+        :param employee_number: The employee_number of this WorkItem.  # noqa: E501
+        :type employee_number: str
+        :param description: The description of this WorkItem.  # noqa: E501
+        :type description: str
+        :param city: The city of this WorkItem.  # noqa: E501
+        :type city: str
+        :param zip: The zip of this WorkItem.  # noqa: E501
+        :type zip: str
+        :param project_number: The project_number of this WorkItem.  # noqa: E501
+        :type project_number: str
         :param status: The status of this WorkItem.  # noqa: E501
         :type status: str
-        :param straat: The straat of this WorkItem.  # noqa: E501
-        :type straat: str
-        :param toevoeging: The toevoeging of this WorkItem.  # noqa: E501
-        :type toevoeging: str
-        :param uren_categorie_code: The uren_categorie_code of this WorkItem.  # noqa: E501
-        :type uren_categorie_code: str
-        :param werkbon_nummer: The werkbon_nummer of this WorkItem.  # noqa: E501
-        :type werkbon_nummer: str
-        :param werkbon_type: The werkbon_type of this WorkItem.  # noqa: E501
-        :type werkbon_type: str
+        :param street: The street of this WorkItem.  # noqa: E501
+        :type street: str
+        :param extra: The extra of this WorkItem.  # noqa: E501
+        :type extra: str
+        :param hours_category: The hours_category of this WorkItem.  # noqa: E501
+        :type hours_category: str
+        :param task_number: The task_number of this WorkItem.  # noqa: E501
+        :type task_number: str
+        :param task_type: The task_type of this WorkItem.  # noqa: E501
+        :type task_type: str
         :param geometry: The geometry of this WorkItem.  # noqa: E501
         :type geometry: Geometry
         """
         self.openapi_types = {
-            'administratie': str,
-            'duur_minuten': int,
-            'start_datum_tijd': datetime,
-            'einddatum_tijd': datetime,
+            'administration': str,
+            'duration': int,
+            'start_timestamp': datetime,
+            'end_timestamp': datetime,
             'l2_guid': str,
-            'medewerker_naam': str,
-            'medewerker_nummer': str,
-            'omschrijving': str,
-            'plaats': str,
-            'postcode': str,
-            'project_nummer': str,
+            'employee_name': str,
+            'employee_number': str,
+            'description': str,
+            'city': str,
+            'zip': str,
+            'project_number': str,
             'status': str,
-            'straat': str,
-            'toevoeging': str,
-            'uren_categorie_code': str,
-            'werkbon_nummer': str,
-            'werkbon_type': str,
+            'street': str,
+            'extra': str,
+            'hours_category': str,
+            'task_number': str,
+            'task_type': str,
             'geometry': Geometry
         }
 
         self.attribute_map = {
-            'administratie': 'Administratie',
-            'duur_minuten': 'DuurMinuten',
-            'start_datum_tijd': 'StartDatumTijd',
-            'einddatum_tijd': 'EinddatumTijd',
+            'administration': 'administration',
+            'duration': 'duration',
+            'start_timestamp': 'start_timestamp',
+            'end_timestamp': 'end_timestamp',
             'l2_guid': 'L2GUID',
-            'medewerker_naam': 'MedewerkerNaam',
-            'medewerker_nummer': 'MedewerkerNummer',
-            'omschrijving': 'Omschrijving',
-            'plaats': 'Plaats',
-            'postcode': 'Postcode',
-            'project_nummer': 'ProjectNummer',
-            'status': 'Status',
-            'straat': 'Straat',
-            'toevoeging': 'Toevoeging',
-            'uren_categorie_code': 'UrenCategorieCode',
-            'werkbon_nummer': 'WerkbonNummer',
-            'werkbon_type': 'WerkbonType',
+            'employee_name': 'employee_name',
+            'employee_number': 'employee_number',
+            'description': 'description',
+            'city': 'city',
+            'zip': 'zip',
+            'project_number': 'project_number',
+            'status': 'status',
+            'street': 'street',
+            'extra': 'extra',
+            'hours_category': 'hours_category',
+            'task_number': 'task_number',
+            'task_type': 'task_type',
             'geometry': 'geometry'
         }
 
-        self._administratie = administratie
-        self._duur_minuten = duur_minuten
-        self._start_datum_tijd = start_datum_tijd
-        self._einddatum_tijd = einddatum_tijd
+        self._administration = administration
+        self._duration = duration
+        self._start_timestamp = start_timestamp
+        self._end_timestamp = end_timestamp
         self._l2_guid = l2_guid
-        self._medewerker_naam = medewerker_naam
-        self._medewerker_nummer = medewerker_nummer
-        self._omschrijving = omschrijving
-        self._plaats = plaats
-        self._postcode = postcode
-        self._project_nummer = project_nummer
+        self._employee_name = employee_name
+        self._employee_number = employee_number
+        self._description = description
+        self._city = city
+        self._zip = zip
+        self._project_number = project_number
         self._status = status
-        self._straat = straat
-        self._toevoeging = toevoeging
-        self._uren_categorie_code = uren_categorie_code
-        self._werkbon_nummer = werkbon_nummer
-        self._werkbon_type = werkbon_type
+        self._street = street
+        self._extra = extra
+        self._hours_category = hours_category
+        self._task_number = task_number
+        self._task_type = task_type
         self._geometry = geometry
 
     @classmethod
@@ -130,88 +130,88 @@ class WorkItem(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def administratie(self):
-        """Gets the administratie of this WorkItem.
+    def administration(self):
+        """Gets the administration of this WorkItem.
 
 
-        :return: The administratie of this WorkItem.
+        :return: The administration of this WorkItem.
         :rtype: str
         """
-        return self._administratie
+        return self._administration
 
-    @administratie.setter
-    def administratie(self, administratie):
-        """Sets the administratie of this WorkItem.
+    @administration.setter
+    def administration(self, administration):
+        """Sets the administration of this WorkItem.
 
 
-        :param administratie: The administratie of this WorkItem.
-        :type administratie: str
+        :param administration: The administration of this WorkItem.
+        :type administration: str
         """
 
-        self._administratie = administratie
+        self._administration = administration
 
     @property
-    def duur_minuten(self):
-        """Gets the duur_minuten of this WorkItem.
+    def duration(self):
+        """Gets the duration of this WorkItem.
 
 
-        :return: The duur_minuten of this WorkItem.
+        :return: The duration of this WorkItem.
         :rtype: int
         """
-        return self._duur_minuten
+        return self._duration
 
-    @duur_minuten.setter
-    def duur_minuten(self, duur_minuten):
-        """Sets the duur_minuten of this WorkItem.
+    @duration.setter
+    def duration(self, duration):
+        """Sets the duration of this WorkItem.
 
 
-        :param duur_minuten: The duur_minuten of this WorkItem.
-        :type duur_minuten: int
+        :param duration: The duration of this WorkItem.
+        :type duration: int
         """
 
-        self._duur_minuten = duur_minuten
+        self._duration = duration
 
     @property
-    def start_datum_tijd(self):
-        """Gets the start_datum_tijd of this WorkItem.
+    def start_timestamp(self):
+        """Gets the start_timestamp of this WorkItem.
 
 
-        :return: The start_datum_tijd of this WorkItem.
+        :return: The start_timestamp of this WorkItem.
         :rtype: datetime
         """
-        return self._start_datum_tijd
+        return self._start_timestamp
 
-    @start_datum_tijd.setter
-    def start_datum_tijd(self, start_datum_tijd):
-        """Sets the start_datum_tijd of this WorkItem.
+    @start_timestamp.setter
+    def start_timestamp(self, start_timestamp):
+        """Sets the start_timestamp of this WorkItem.
 
 
-        :param start_datum_tijd: The start_datum_tijd of this WorkItem.
-        :type start_datum_tijd: datetime
+        :param start_timestamp: The start_timestamp of this WorkItem.
+        :type start_timestamp: datetime
         """
 
-        self._start_datum_tijd = start_datum_tijd
+        self._start_timestamp = start_timestamp
 
     @property
-    def einddatum_tijd(self):
-        """Gets the einddatum_tijd of this WorkItem.
+    def end_timestamp(self):
+        """Gets the end_timestamp of this WorkItem.
 
 
-        :return: The einddatum_tijd of this WorkItem.
+        :return: The end_timestamp of this WorkItem.
         :rtype: datetime
         """
-        return self._einddatum_tijd
+        return self._end_timestamp
 
-    @einddatum_tijd.setter
-    def einddatum_tijd(self, einddatum_tijd):
-        """Sets the einddatum_tijd of this WorkItem.
+    @end_timestamp.setter
+    def end_timestamp(self, end_timestamp):
+        """Sets the end_timestamp of this WorkItem.
 
 
-        :param einddatum_tijd: The einddatum_tijd of this WorkItem.
-        :type einddatum_tijd: datetime
+        :param end_timestamp: The end_timestamp of this WorkItem.
+        :type end_timestamp: datetime
         """
 
-        self._einddatum_tijd = einddatum_tijd
+        self._end_timestamp = end_timestamp
 
     @property
     def l2_guid(self):
@@ -235,130 +235,130 @@ class WorkItem(Model):
         self._l2_guid = l2_guid
 
     @property
-    def medewerker_naam(self):
-        """Gets the medewerker_naam of this WorkItem.
+    def employee_name(self):
+        """Gets the employee_name of this WorkItem.
 
 
-        :return: The medewerker_naam of this WorkItem.
+        :return: The employee_name of this WorkItem.
         :rtype: str
         """
-        return self._medewerker_naam
+        return self._employee_name
 
-    @medewerker_naam.setter
-    def medewerker_naam(self, medewerker_naam):
-        """Sets the medewerker_naam of this WorkItem.
+    @employee_name.setter
+    def employee_name(self, employee_name):
+        """Sets the employee_name of this WorkItem.
 
 
-        :param medewerker_naam: The medewerker_naam of this WorkItem.
-        :type medewerker_naam: str
+        :param employee_name: The employee_name of this WorkItem.
+        :type employee_name: str
         """
 
-        self._medewerker_naam = medewerker_naam
+        self._employee_name = employee_name
 
     @property
-    def medewerker_nummer(self):
-        """Gets the medewerker_nummer of this WorkItem.
+    def employee_number(self):
+        """Gets the employee_number of this WorkItem.
 
 
-        :return: The medewerker_nummer of this WorkItem.
+        :return: The employee_number of this WorkItem.
         :rtype: str
         """
-        return self._medewerker_nummer
+        return self._employee_number
 
-    @medewerker_nummer.setter
-    def medewerker_nummer(self, medewerker_nummer):
-        """Sets the medewerker_nummer of this WorkItem.
+    @employee_number.setter
+    def employee_number(self, employee_number):
+        """Sets the employee_number of this WorkItem.
 
 
-        :param medewerker_nummer: The medewerker_nummer of this WorkItem.
-        :type medewerker_nummer: str
+        :param employee_number: The employee_number of this WorkItem.
+        :type employee_number: str
         """
 
-        self._medewerker_nummer = medewerker_nummer
+        self._employee_number = employee_number
 
     @property
-    def omschrijving(self):
-        """Gets the omschrijving of this WorkItem.
+    def description(self):
+        """Gets the description of this WorkItem.
 
 
-        :return: The omschrijving of this WorkItem.
+        :return: The description of this WorkItem.
         :rtype: str
         """
-        return self._omschrijving
+        return self._description
 
-    @omschrijving.setter
-    def omschrijving(self, omschrijving):
-        """Sets the omschrijving of this WorkItem.
+    @description.setter
+    def description(self, description):
+        """Sets the description of this WorkItem.
 
 
-        :param omschrijving: The omschrijving of this WorkItem.
-        :type omschrijving: str
+        :param description: The description of this WorkItem.
+        :type description: str
         """
 
-        self._omschrijving = omschrijving
+        self._description = description
 
     @property
-    def plaats(self):
-        """Gets the plaats of this WorkItem.
+    def city(self):
+        """Gets the city of this WorkItem.
 
 
-        :return: The plaats of this WorkItem.
+        :return: The city of this WorkItem.
         :rtype: str
         """
-        return self._plaats
+        return self._city
 
-    @plaats.setter
-    def plaats(self, plaats):
-        """Sets the plaats of this WorkItem.
+    @city.setter
+    def city(self, city):
+        """Sets the city of this WorkItem.
 
 
-        :param plaats: The plaats of this WorkItem.
-        :type plaats: str
+        :param city: The city of this WorkItem.
+        :type city: str
         """
 
-        self._plaats = plaats
+        self._city = city
 
     @property
-    def postcode(self):
-        """Gets the postcode of this WorkItem.
+    def zip(self):
+        """Gets the zip of this WorkItem.
 
 
-        :return: The postcode of this WorkItem.
+        :return: The zip of this WorkItem.
         :rtype: str
         """
-        return self._postcode
+        return self._zip
 
-    @postcode.setter
-    def postcode(self, postcode):
-        """Sets the postcode of this WorkItem.
+    @zip.setter
+    def zip(self, zip):
+        """Sets the zip of this WorkItem.
 
 
-        :param postcode: The postcode of this WorkItem.
-        :type postcode: str
+        :param zip: The zip of this WorkItem.
+        :type zip: str
         """
 
-        self._postcode = postcode
+        self._zip = zip
 
     @property
-    def project_nummer(self):
-        """Gets the project_nummer of this WorkItem.
+    def project_number(self):
+        """Gets the project_number of this WorkItem.
 
 
-        :return: The project_nummer of this WorkItem.
+        :return: The project_number of this WorkItem.
         :rtype: str
         """
-        return self._project_nummer
+        return self._project_number
 
-    @project_nummer.setter
-    def project_nummer(self, project_nummer):
-        """Sets the project_nummer of this WorkItem.
+    @project_number.setter
+    def project_number(self, project_number):
+        """Sets the project_number of this WorkItem.
 
 
-        :param project_nummer: The project_nummer of this WorkItem.
-        :type project_nummer: str
+        :param project_number: The project_number of this WorkItem.
+        :type project_number: str
         """
 
-        self._project_nummer = project_nummer
+        self._project_number = project_number
 
     @property
     def status(self):
@@ -382,109 +382,109 @@ class WorkItem(Model):
         self._status = status
 
     @property
-    def straat(self):
-        """Gets the straat of this WorkItem.
+    def street(self):
+        """Gets the street of this WorkItem.
 
 
-        :return: The straat of this WorkItem.
+        :return: The street of this WorkItem.
         :rtype: str
         """
-        return self._straat
+        return self._street
 
-    @straat.setter
-    def straat(self, straat):
-        """Sets the straat of this WorkItem.
+    @street.setter
+    def street(self, street):
+        """Sets the street of this WorkItem.
 
 
-        :param straat: The straat of this WorkItem.
-        :type straat: str
+        :param street: The street of this WorkItem.
+        :type street: str
         """
 
-        self._straat = straat
+        self._street = street
 
     @property
-    def toevoeging(self):
-        """Gets the toevoeging of this WorkItem.
+    def extra(self):
+        """Gets the extra of this WorkItem.
 
 
-        :return: The toevoeging of this WorkItem.
+        :return: The extra of this WorkItem.
         :rtype: str
         """
-        return self._toevoeging
+        return self._extra
 
-    @toevoeging.setter
-    def toevoeging(self, toevoeging):
-        """Sets the toevoeging of this WorkItem.
+    @extra.setter
+    def extra(self, extra):
+        """Sets the extra of this WorkItem.
 
 
-        :param toevoeging: The toevoeging of this WorkItem.
-        :type toevoeging: str
+        :param extra: The extra of this WorkItem.
+        :type extra: str
         """
 
-        self._toevoeging = toevoeging
+        self._extra = extra
 
     @property
-    def uren_categorie_code(self):
-        """Gets the uren_categorie_code of this WorkItem.
+    def hours_category(self):
+        """Gets the hours_category of this WorkItem.
 
 
-        :return: The uren_categorie_code of this WorkItem.
+        :return: The hours_category of this WorkItem.
         :rtype: str
         """
-        return self._uren_categorie_code
+        return self._hours_category
 
-    @uren_categorie_code.setter
-    def uren_categorie_code(self, uren_categorie_code):
-        """Sets the uren_categorie_code of this WorkItem.
+    @hours_category.setter
+    def hours_category(self, hours_category):
+        """Sets the hours_category of this WorkItem.
 
 
-        :param uren_categorie_code: The uren_categorie_code of this WorkItem.
-        :type uren_categorie_code: str
+        :param hours_category: The hours_category of this WorkItem.
+        :type hours_category: str
         """
 
-        self._uren_categorie_code = uren_categorie_code
+        self._hours_category = hours_category
 
     @property
-    def werkbon_nummer(self):
-        """Gets the werkbon_nummer of this WorkItem.
+    def task_number(self):
+        """Gets the task_number of this WorkItem.
 
 
-        :return: The werkbon_nummer of this WorkItem.
+        :return: The task_number of this WorkItem.
         :rtype: str
         """
-        return self._werkbon_nummer
+        return self._task_number
 
-    @werkbon_nummer.setter
-    def werkbon_nummer(self, werkbon_nummer):
-        """Sets the werkbon_nummer of this WorkItem.
+    @task_number.setter
+    def task_number(self, task_number):
+        """Sets the task_number of this WorkItem.
 
 
-        :param werkbon_nummer: The werkbon_nummer of this WorkItem.
-        :type werkbon_nummer: str
+        :param task_number: The task_number of this WorkItem.
+        :type task_number: str
         """
 
-        self._werkbon_nummer = werkbon_nummer
+        self._task_number = task_number
 
     @property
-    def werkbon_type(self):
-        """Gets the werkbon_type of this WorkItem.
+    def task_type(self):
+        """Gets the task_type of this WorkItem.
 
 
-        :return: The werkbon_type of this WorkItem.
+        :return: The task_type of this WorkItem.
         :rtype: str
         """
-        return self._werkbon_type
+        return self._task_type
 
-    @werkbon_type.setter
-    def werkbon_type(self, werkbon_type):
-        """Sets the werkbon_type of this WorkItem.
+    @task_type.setter
+    def task_type(self, task_type):
+        """Sets the task_type of this WorkItem.
 
 
-        :param werkbon_type: The werkbon_type of this WorkItem.
-        :type werkbon_type: str
+        :param task_type: The task_type of this WorkItem.
+        :type task_type: str
         """
 
-        self._werkbon_type = werkbon_type
+        self._task_type = task_type
 
     @property
     def geometry(self):

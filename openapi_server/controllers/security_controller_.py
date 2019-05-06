@@ -9,6 +9,13 @@ if hasattr(config, 'OAUTH_JWKS_URL'):
                        jwks_url=config.OAUTH_JWKS_URL)
 
 
+def refine_token_info(token_info):
+    if token_info and 'scopes' in token_info:
+        if 'snbplanningapi.editor' in token_info['scopes']:
+            token_info['scopes'].append('snbplanningapi.planner')
+    return token_info
+
+
 def info_from_OAuth2AzureAD(token):
     """
     Validate and decode token.
@@ -21,4 +28,4 @@ def info_from_OAuth2AzureAD(token):
     :return: Decoded token information or None if token is invalid
     :rtype: dict | None
     """
-    return my_jwkaas.get_connexion_token_info(token)
+    return refine_token_info(my_jwkaas.get_connexion_token_info(token))

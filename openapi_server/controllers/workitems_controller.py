@@ -1,9 +1,9 @@
-import logging
+# import logging
 import datetime
 import pytz
 
 from flask import jsonify
-from flask import make_response
+# from flask import make_response
 from google.cloud import datastore
 
 

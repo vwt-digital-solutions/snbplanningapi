@@ -13,9 +13,6 @@ info:
   x-audience: company-internal
   x-api-id: e2a63575-f436-4e31-8f34-fadbad0d9693
 host: PROJECT_ID.appspot.com
-security:
-- OAuth2AzureAD:
-    - snbplanningapi.read
 produces:
   - application/json
 paths:
@@ -36,6 +33,8 @@ paths:
           schema:
             $ref: '#/definitions/Cars'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.read]
   /carsinfo:
     get:
       summary: Get car info
@@ -53,6 +52,8 @@ paths:
           schema:
             $ref: '#/definitions/CarsInfo'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
     post:
       summary: Post car info
       description: Post a list of all car geolocations with info
@@ -68,6 +69,8 @@ paths:
         '201':
           description: Successful POST
       x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.editor]
   /tokens:
     get:
       summary: Get a list of tokens
@@ -85,6 +88,8 @@ paths:
           schema:
             $ref: '#/definitions/Tokens'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.read]
   /workitems/active:
     get:
       summary: Get a list of work items
@@ -96,6 +101,8 @@ paths:
           schema:
             $ref: '#/definitions/WorkItems'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
   /workitems/all:
     get:
       summary: Get a list of work items
@@ -107,6 +114,8 @@ paths:
           schema:
             $ref: '#/definitions/WorkItems'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
 definitions:
   Cars:
     description: Collection of Cars
@@ -223,42 +232,42 @@ definitions:
   WorkItem:
     description: Link2 work item
     properties:
-      Administratie:
+      administration:
         type: string
-      DuurMinuten:
+      duration:
         type: integer
-      StartDatumTijd:
+      start_timestamp:
         type: string
         format: date-time
-      EinddatumTijd:
+      end_timestamp:
         type: string
         format: date-time
       L2GUID:
         type: string
         format: uuid
-      MedewerkerNaam:
+      employee_name:
         type: string
-      MedewerkerNummer:
+      employee_number:
         type: string
-      Omschrijving:
+      description:
         type: string
-      Plaats:
+      city:
         type: string
-      Postcode:
+      zip:
         type: string
-      ProjectNummer:
+      project_number:
         type: string
-      Status:
+      status:
         type: string
-      Straat:
+      street:
         type: string
-      Toevoeging:
+      extra:
         type: string
-      UrenCategorieCode:
+      hours_category:
         type: string
-      WerkbonNummer:
+      task_number:
         type: string
-      WerkbonType:
+      task_type:
         type: string
       geometry:
         $ref: '#/definitions/Geometry'
@@ -266,9 +275,12 @@ securityDefinitions:
   OAuth2AzureAD:
     type: oauth2
     description: OAuth through Azure AD
-    flow: implicit
+    flow: accessCode
     authorizationUrl: 'https://azuread.url'
+    tokenUrl: 'https://azuread.url'
     scopes:
-      snbplanningapi.read: Read access to snbplanningapi.
+      snbplanningapi.read: View
+      snbplanningapi.planner: Planner
+      snbplanningapi.editor: Editor
     x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
     x-scopeValidateFunc: connexion.decorators.security.validate_scope

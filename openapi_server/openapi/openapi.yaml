@@ -14,9 +14,6 @@ info:
   x-api-id: e2a63575-f436-4e31-8f34-fadbad0d9693
 servers:
 - url: //PROJECT_ID.appspot.com/
-security:
-- OAuth2AzureAD:
-  - snbplanningapi.read
 paths:
   /cars:
     get:
@@ -36,6 +33,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Cars'
           description: Successful response - returns an array of locations
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.read
       summary: Get car locations
       x-openapi-router-controller: openapi_server.controllers.cars_controller
   /carsinfo:
@@ -56,6 +56,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CarsInfo'
           description: Successful response - returns an array of locations with info
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.planner
       summary: Get car info
       x-openapi-router-controller: openapi_server.controllers.cars_controller
     post:
@@ -71,6 +74,9 @@ paths:
         201:
           content: {}
           description: Successful POST
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.editor
       summary: Post car info
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       x-codegen-request-body-name: body
@@ -91,6 +97,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Tokens'
           description: OK
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.read
       summary: Get a list of tokens
       x-openapi-router-controller: openapi_server.controllers.cars_controller
   /workitems/active:
@@ -104,6 +113,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/WorkItems'
           description: OK
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
   /workitems/all:
@@ -117,6 +129,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/WorkItems'
           description: OK
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
 components:
@@ -243,28 +258,28 @@ components:
     WorkItems:
       example:
         items:
-          Status: Status
-          DuurMinuten: 0
-          MedewerkerNaam: MedewerkerNaam
-          Omschrijving: Omschrijving
-          UrenCategorieCode: UrenCategorieCode
-          ProjectNummer: ProjectNummer
-          WerkbonNummer: WerkbonNummer
-          StartDatumTijd: 2000-01-23T04:56:07.000+00:00
-          Postcode: Postcode
-          EinddatumTijd: 2000-01-23T04:56:07.000+00:00
-          Administratie: Administratie
-          Plaats: Plaats
-          WerkbonType: WerkbonType
-          Straat: Straat
-          Toevoeging: Toevoeging
+          zip: zip
+          start_timestamp: 2000-01-23T04:56:07.000+00:00
+          city: city
+          administration: administration
+          description: description
+          employee_name: employee_name
+          duration: 0
+          end_timestamp: 2000-01-23T04:56:07.000+00:00
+          project_number: project_number
+          street: street
+          extra: extra
+          employee_number: employee_number
+          hours_category: hours_category
+          task_number: task_number
           geometry: |-
             type: "Point",
             coordinates:
               - 5.2,
               - 52.4
-          MedewerkerNummer: MedewerkerNummer
+          task_type: task_type
           L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          status: status
       properties:
         items:
           $ref: '#/components/schemas/WorkItem'
@@ -272,65 +287,65 @@ components:
     WorkItem:
       description: Link2 work item
       example:
-        Status: Status
-        DuurMinuten: 0
-        MedewerkerNaam: MedewerkerNaam
-        Omschrijving: Omschrijving
-        UrenCategorieCode: UrenCategorieCode
-        ProjectNummer: ProjectNummer
-        WerkbonNummer: WerkbonNummer
-        StartDatumTijd: 2000-01-23T04:56:07.000+00:00
-        Postcode: Postcode
-        EinddatumTijd: 2000-01-23T04:56:07.000+00:00
-        Administratie: Administratie
-        Plaats: Plaats
-        WerkbonType: WerkbonType
-        Straat: Straat
-        Toevoeging: Toevoeging
+        zip: zip
+        start_timestamp: 2000-01-23T04:56:07.000+00:00
+        city: city
+        administration: administration
+        description: description
+        employee_name: employee_name
+        duration: 0
+        end_timestamp: 2000-01-23T04:56:07.000+00:00
+        project_number: project_number
+        street: street
+        extra: extra
+        employee_number: employee_number
+        hours_category: hours_category
+        task_number: task_number
         geometry: |-
           type: "Point",
           coordinates:
             - 5.2,
             - 52.4
-        MedewerkerNummer: MedewerkerNummer
+        task_type: task_type
         L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        status: status
       properties:
-        Administratie:
+        administration:
           type: string
-        DuurMinuten:
+        duration:
           type: integer
-        StartDatumTijd:
+        start_timestamp:
           format: date-time
           type: string
-        EinddatumTijd:
+        end_timestamp:
           format: date-time
           type: string
         L2GUID:
           format: uuid
           type: string
-        MedewerkerNaam:
+        employee_name:
           type: string
-        MedewerkerNummer:
+        employee_number:
           type: string
-        Omschrijving:
+        description:
           type: string
-        Plaats:
+        city:
           type: string
-        Postcode:
+        zip:
           type: string
-        ProjectNummer:
+        project_number:
           type: string
-        Status:
+        status:
           type: string
-        Straat:
+        street:
           type: string
-        Toevoeging:
+        extra:
           type: string
-        UrenCategorieCode:
+        hours_category:
           type: string
-        WerkbonNummer:
+        task_number:
           type: string
-        WerkbonType:
+        task_type:
           type: string
         geometry:
           $ref: '#/components/schemas/Geometry'
@@ -339,10 +354,13 @@ components:
     OAuth2AzureAD:
       description: OAuth through Azure AD
       flows:
-        implicit:
+        authorizationCode:
           authorizationUrl: https://azuread.url
           scopes:
-            snbplanningapi.read: Read access to snbplanningapi.
+            snbplanningapi.read: View
+            snbplanningapi.planner: Planner
+            snbplanningapi.editor: Editor
+          tokenUrl: https://azuread.url
       type: oauth2
       x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
       x-scopeValidateFunc: connexion.decorators.security.validate_scope

@@ -28,10 +28,10 @@ def read_topic():
         for message in response.received_messages:
             mdata = json.loads(message.message.data)
             payload = mdata['data']
-            try:
-                when = datetime.datetime.strptime(mdata['when'], '%Y-%m-%dT%H:%M:%S%z')
-            except:
-                when = datetime.datetime.strptime(mdata['when'], '%Y-%m-%dT%H:%M:%S').astimezone(pytz.utc)
+#            try:
+            when = datetime.datetime.strptime(mdata['when'], '%Y-%m-%dT%H:%M:%S%z')
+#            except:
+#               when = datetime.datetime.strptime(mdata['when'], '%Y-%m-%dT%H:%M:%S').astimezone(pytz.utc)
             loc_key = db_client.key('WorkItem', payload['L2GUID'])
             entity = db_client.get(loc_key)
             if entity is None:
@@ -41,7 +41,7 @@ def read_topic():
                 payload['end_timestamp'] = datetime.datetime.strptime(payload['end_timestamp'],
                                                                       '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
                 payload['start_timestamp'] = datetime.datetime.strptime(payload['start_timestamp'],
-                                                                       '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
+                                                                        '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
                 if hasattr(config, 'GEO_API_KEY'):
                     location = None
                     if 'geometry' not in entity:

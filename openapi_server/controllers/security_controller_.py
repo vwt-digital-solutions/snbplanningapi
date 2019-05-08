@@ -41,6 +41,6 @@ def info_from_OAuth2AzureAD(token):
         token_info = my_e2e_jwkaas.get_connexion_token_info(token)
         if token_info is not None and 'appid' in token_info and token_info['appid'] == config.OAUTH_E2E_APPID:
             logging.warning('Approved e2e access token for appid [%s]', token_info['appid'])
-            result = {'scopes': ['snbplanningapi.read'], 'sub': 'e2e'}
+            result = {'scopes': ['snbplanningapi.editor'], 'sub': 'e2e'}
 
     return refine_token_info(result)

@@ -7,6 +7,7 @@ from flask import g
 
 import config
 import logging
+import json
 
 from openapi_server import encoder
 from . import car_locations_db_handler
@@ -31,14 +32,12 @@ if hasattr(config, 'WORKITEMS_SUBSCTIPTION_NAME'):
 
 @app.app.after_request
 def after_request_callback( response ):
-    logging.info({
-        'request': {
-            'url': request.url,
-            'remote_addr': request.remote_addr,
-            'user_agent': request.user_agent
-        },
-        'response_status': response.status,
-        'upn': g.user
-    })
+    logging.info(' | '.join([
+        request.url,
+        request.remote_addr,
+        request.headers.get('User-Agent'),
+        response.status,
+        g.user
+    ]))
 
     return response

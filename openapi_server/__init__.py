@@ -32,12 +32,14 @@ if hasattr(config, 'WORKITEMS_SUBSCTIPTION_NAME'):
 
 @app.app.after_request
 def after_request_callback( response ):
+    user = '' if g.user is None else g.user
+
     logging.info(' | '.join([
         request.url,
         request.remote_addr,
         request.headers.get('User-Agent'),
         response.status,
-        g.user
+        user
     ]))
 
     return response

@@ -17,7 +17,7 @@ def read_topic():
         gmaps = googlemaps.Client(key=config.GEO_API_KEY)
     subscription = client.subscription_path(config.TOPIC_PROJECT_ID,
                                             config.WORKITEMS_SUBSCTIPTION_NAME)
-    logging.info('Start pooling work items')
+    logging.info('Start polling work items')
     while True:
         try:
             response = client.pull(subscription, 10)
@@ -65,9 +65,9 @@ def read_topic():
                         })
                 entity.update(payload)
                 db_client.put(entity)
-                logging.info('Populate work item {} - {}'.format(entity.key, entity))
+                logging.debug('Populate work item {} - {}'.format(entity.key, entity))
             else:
-                logging.info('Skipping {} - late notification {}/{}'
+                logging.debug('Skipping {} - late notification {}/{}'
                              .format(payload, when, entity['last_updated']))
             ack_ids.append(message.ack_id)
         if ack_ids:

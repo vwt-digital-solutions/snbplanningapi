@@ -12,7 +12,7 @@ def read_topic():
     db_client = datastore.Client()
     subscription = client.subscription_path(config.TOPIC_PROJECT_ID,
                                             config.TOKEN_SUBSCRIPTION_NAME)
-    logging.info('Start pooling car locations')
+    logging.info('Start polling car locations')
     while True:
         try:
             response = client.pull(subscription, 10)
@@ -33,9 +33,9 @@ def read_topic():
                         "when": mdata['when']
                     })
                     db_client.put(entity)
-                    logging.info('Populate location {} - {}'.format(entity.key, entity))
+                    logging.debug('Populate location {} - {}'.format(entity.key, entity))
                 else:
-                    logging.info('Skipping {} - late notification {}/{}'
+                    logging.debug('Skipping {} - late notification {}/{}'
                                  .format(mdata['token'], mdata['when'], entity['when']))
             ack_ids.append(message.ack_id)
         if ack_ids:

@@ -2,6 +2,8 @@ import config
 import logging
 from jwkaas import JWKaas
 
+from flask import g
+
 my_jwkaas = None
 my_e2e_jwkaas = None
 
@@ -42,5 +44,7 @@ def info_from_OAuth2AzureAD(token):
         if token_info is not None and 'appid' in token_info and token_info['appid'] == config.OAUTH_E2E_APPID:
             logging.warning('Approved e2e access token for appid [%s]', token_info['appid'])
             result = {'scopes': ['snbplanningapi.read', 'snbplanningapi.editor'], 'sub': 'e2e'}
+
+    g.user = None if result is None else result['upn']
 
     return refine_token_info(result)

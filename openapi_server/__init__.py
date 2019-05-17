@@ -30,6 +30,10 @@ if hasattr(config, 'WORKITEMS_SUBSCTIPTION_NAME'):
     thread = Thread(target=workitems_db_handler.read_topic)
     thread.start()
 
+@app.app.before_request
+def before_request():
+    g.user = ''
+
 @app.app.after_request
 def after_request_callback( response ):
     user = '' if g.user is None else g.user

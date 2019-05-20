@@ -36,14 +36,13 @@ def before_request():
 
 @app.app.after_request
 def after_request_callback( response ):
-    user = '' if g.user is None else g.user
-
-    logging.info(' | '.join([
+    logger = logging.getLogger('auditlog')
+    logger.info(' | '.join([
         request.url,
-        request.remote_addr,
+        request.environ['REMOTE_ADDR'],
         request.headers.get('User-Agent'),
         response.status,
-        user
+        g.user
     ]))
 
     return response

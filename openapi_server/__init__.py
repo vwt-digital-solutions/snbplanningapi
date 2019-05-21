@@ -7,19 +7,12 @@ from flask import g
 
 import config
 import logging
-import sys
-from pythonjsonlogger import jsonlogger
 
 from openapi_server import encoder
 from . import car_locations_db_handler
 from . import workitems_db_handler
 
-handler = logging.StreamHandler(sys.stdout)
-formatter = jsonlogger.JsonFormatter()
-handler.setFormatter(formatter)
-root_logger = logging.getLogger()
-root_logger.setLevel(level=logging.INFO)
-root_logger.addHandler(handler)
+logging.basicConfig(level=logging.INFO)
 
 app = connexion.App(__name__, specification_dir='./openapi/')
 app.app.json_encoder = encoder.JSONEncoder
@@ -43,12 +36,15 @@ def before_request():
 
 @app.app.after_request
 def after_request_callback( response ):
-    root_logger.info(' | '.join([
+    logger = logging.getLogger('auditlog')
+    auditlog_list = list(filter(None, [
         request.url,
         g.ip,
         request.headers.get('User-Agent'),
         response.status,
         g.user
     ]))
+
+    logger.info(' | '.join(auditlog_list))
 
     return response

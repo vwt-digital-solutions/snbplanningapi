@@ -8,16 +8,18 @@ from flask import g
 import config
 import logging
 import sys
+from pythonjsonlogger import jsonlogger
 
 from openapi_server import encoder
 from . import car_locations_db_handler
 from . import workitems_db_handler
 
-info_handler = logging.StreamHandler(sys.stdout)
-
-root_logger = logging.getLogger('auditlog')
+handler = logging.StreamHandler(sys.stdout)
+formatter = jsonlogger.JsonFormatter()
+handler.setFormatter(formatter)
+root_logger = logging.getLogger()
 root_logger.setLevel(level=logging.INFO)
-root_logger.addHandler(info_handler)
+root_logger.addHandler(handler)
 
 app = connexion.App(__name__, specification_dir='./openapi/')
 app.app.json_encoder = encoder.JSONEncoder

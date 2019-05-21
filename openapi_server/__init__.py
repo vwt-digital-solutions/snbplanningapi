@@ -7,13 +7,17 @@ from flask import g
 
 import config
 import logging
-import json
+import sys
 
 from openapi_server import encoder
 from . import car_locations_db_handler
 from . import workitems_db_handler
 
-logging.basicConfig(level=logging.INFO)
+info_handler = logging.StreamHandler(sys.stdout)
+
+root_logger = logging.getLogger('auditlog')
+root_logger.setLevel(level=logging.INFO)
+root_logger.addHandler(info_handler)
 
 app = connexion.App(__name__, specification_dir='./openapi/')
 app.app.json_encoder = encoder.JSONEncoder
@@ -33,13 +37,13 @@ if hasattr(config, 'WORKITEMS_SUBSCTIPTION_NAME'):
 @app.app.before_request
 def before_request():
     g.user = ''
+    g.ip = ''
 
 @app.app.after_request
 def after_request_callback( response ):
-    logger = logging.getLogger('auditlog')
-    logger.info(' | '.join([
+    root_logger.info(' | '.join([
         request.url,
-        request.environ['REMOTE_ADDR'],
+        g.ip,
         request.headers.get('User-Agent'),
         response.status,
         g.user

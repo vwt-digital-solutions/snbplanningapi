@@ -38,10 +38,13 @@ def before_request():
 @app.app.after_request
 def after_request_callback( response ):
     if 'x-appengine-user-ip' in request.headers:
+        logger.info('x-appengine-user-ip', request.headers.get('x-appengine-user-ip'))
         g.ip = request.headers.get('x-appengine-user-ip')
     elif 'X-Real-IP' in request.headers:
+        logger.info('X-Real-IP', request.headers.get('X-Real-IP'))
         g.ip = request.headers.get('X-Real-IP')
     elif 'HTTP_X_REAL_IP' in os.environ:
+        logger.info('HTTP_X_REAL_IP', request.headers.get('HTTP_X_REAL_IP'))
         g.ip = os.environ["HTTP_X_REAL_IP"]
 
     logger = logging.getLogger('auditlog')

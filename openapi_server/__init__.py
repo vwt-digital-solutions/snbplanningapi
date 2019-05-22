@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask import request
 from flask import g
 
+import os
 import config
 import logging
 
@@ -36,6 +37,13 @@ def before_request():
 
 @app.app.after_request
 def after_request_callback( response ):
+    if 'x-appengine-user-ip' in request.headers:
+        g.ip = request.headers.get('x-appengine-user-ip')
+    elif 'X-Real-IP' in request.headers:
+        g.ip = request.headers.get('X-Real-IP')
+    elif 'HTTP_X_REAL_IP' in os.environ:
+        g.ip = os.environ["HTTP_X_REAL_IP"]
+
     logger = logging.getLogger('auditlog')
     auditlog_list = list(filter(None, [
         request.url,

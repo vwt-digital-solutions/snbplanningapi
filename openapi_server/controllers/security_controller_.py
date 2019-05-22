@@ -45,7 +45,7 @@ def info_from_OAuth2AzureAD(token):
             logging.warning('Approved e2e access token for appid [%s]', token_info['appid'])
             result = {'scopes': ['snbplanningapi.read', 'snbplanningapi.editor'], 'sub': 'e2e'}
 
-    g.user = result.get('upn', '')
-    g.ip = result.get('ipaddr', '')
+    if result is not None:
+        g.user = result.get('upn', '')
 
     return refine_token_info(result)

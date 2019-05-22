@@ -42,11 +42,11 @@ def after_request_callback( response ):
 
     logger = logging.getLogger('auditlog')
     auditlog_list = list(filter(None, [
-        request.url,
-        g.ip,
-        request.headers.get('User-Agent'),
-        response.status,
-        g.user
+        "Request Url: {}".format(request.url),
+        "IP: {}".format(g.ip),
+        "User-Agent: {}".format(request.headers.get('User-Agent')),
+        "Response status: {}".format(response.status),
+        "UPN: {}".format(g.user)
     ]))
 
     logger.info(' | '.join(auditlog_list))

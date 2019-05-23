@@ -1,4 +1,3 @@
-import logging
 import datetime
 
 from flask import jsonify
@@ -27,7 +26,6 @@ def cars_get(offset):  # noqa: E501
         "features": []
     }
     for entity in query_iter:
-        logging.info('{}'.format(entity))
         result['features'].append({
             "type": "Feature",
             "geometry": entity['geometry'],

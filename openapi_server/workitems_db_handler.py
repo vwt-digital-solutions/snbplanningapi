@@ -38,9 +38,11 @@ def read_topic():
                 entity = datastore.Entity(key=loc_key)
             if 'last_updated' not in entity or entity['last_updated'] < when:
                 payload['last_updated'] = when
-                payload['end_timestamp'] = datetime.datetime.strptime(payload['end_timestamp'],
+                if payload['end_timestamp']:
+                    payload['end_timestamp'] = datetime.datetime.strptime(payload['end_timestamp'],
                                                                       '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
-                payload['start_timestamp'] = datetime.datetime.strptime(payload['start_timestamp'],
+                if payload['start_timestamp']:
+                    payload['start_timestamp'] = datetime.datetime.strptime(payload['start_timestamp'],
                                                                         '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
                 if hasattr(config, 'GEO_API_KEY'):
                     location = None

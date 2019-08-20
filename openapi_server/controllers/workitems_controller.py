@@ -1,6 +1,7 @@
 # import logging
 import datetime
 import pytz
+import config
 
 from flask import jsonify
 # from flask import make_response
@@ -18,7 +19,8 @@ def list_work_items():  # noqa: E501
     db_client = datastore.Client()
     query = db_client.query(kind='WorkItem')
     result = [res for res in query.fetch() if
-              res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp']]
+              res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp'] and
+              (not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH))]
     return jsonify(result)
 
 
@@ -32,5 +34,6 @@ def list_all_work_items():  # noqa: E501
     """
     db_client = datastore.Client()
     query = db_client.query(kind='WorkItem')
-    result = [res for res in query.fetch()]
+    result = [res for res in query.fetch() if
+              not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH)]
     return jsonify(result)

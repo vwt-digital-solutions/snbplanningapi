@@ -20,6 +20,7 @@ def list_work_items():  # noqa: E501
     query = db_client.query(kind='WorkItem')
     result = [res for res in query.fetch() if
               res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp'] and
+              res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed'] and
               (not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH))]
     return jsonify(result)
 
@@ -35,5 +36,6 @@ def list_all_work_items():  # noqa: E501
     db_client = datastore.Client()
     query = db_client.query(kind='WorkItem')
     result = [res for res in query.fetch() if
-              not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH)]
+              res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed'] and
+              (not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH))]
     return jsonify(result)

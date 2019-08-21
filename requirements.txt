@@ -3,7 +3,7 @@ swagger-ui-bundle == 0.0.2
 python_dateutil == 2.6.0
 setuptools >= 21.0.0
 flask_cors == 3.0.7
-google-cloud-datastore
-google-cloud-pubsub
+google-cloud-datastore == 1.9.0
+google-cloud-pubsub == 0.45.0
 jwkaas == 0.3
-googlemaps
+googlemaps == 3.0.2

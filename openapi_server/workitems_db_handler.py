@@ -44,26 +44,37 @@ def read_topic():
                 if payload['start_timestamp']:
                     payload['start_timestamp'] = datetime.datetime.strptime(payload['start_timestamp'],
                                                                         '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
-                if hasattr(config, 'GEO_API_KEY'):
+                if hasattr(config, 'GEO_API_KEY') and (payload['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed']):
                     location = None
-                    if 'geometry' not in entity:
-                        if 'zip' in payload and payload['zip'] != '':
-                            postcode = ''.join([ch for ch in payload['zip'] if ch != ' '])
-                            location = gmaps.geocode(postcode)
-                        elif 'city' in payload and payload['city'] != '':
-                            address = payload['city'] + ',Nederlands'
-                            if 'street' in payload and payload['street'] != '':
-                                address = payload['street'] + ',' + address
-                            location = gmaps.geocode(address)
-                    if location:
+                    # Add extra object to the json to check whether it has already tried
+                    # to geocode this location
+                    # If this object is true, don't geocode
+                    if 'isGeocoded' not in entity:
                         entity.update({
-                            "geometry": {
-                                "type": "Point",
-                                "coordinates": [
-                                    location[0]['geometry']['location']['lng'],
-                                    location[0]['geometry']['location']['lat']
-                                ]
-                            }
+                            "isGeocoded": False
+                        })
+                    if (entity['isGeocoded'] == False):
+                        if 'geometry' not in entity:
+                            if 'zip' in payload and payload['zip'] != '':
+                                postcode = ''.join([ch for ch in payload['zip'] if ch != ' '])
+                                location = gmaps.geocode(postcode)
+                            elif 'city' in payload and payload['city'] != '':
+                                address = payload['city'] + ',Nederlands'
+                                if 'street' in payload and payload['street'] != '':
+                                    address = payload['street'] + ',' + address
+                                location = gmaps.geocode(address)
+                        if location:
+                            entity.update({
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        location[0]['geometry']['location']['lng'],
+                                        location[0]['geometry']['location']['lat']
+                                    ]
+                                }
+                            })
+                        entity.update({
+                            "isGeocoded": True
                         })
                 entity.update(payload)
                 db_client.put(entity)

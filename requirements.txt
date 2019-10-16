@@ -7,3 +7,5 @@ google-cloud-datastore == 1.9.0
 google-cloud-pubsub == 0.45.0
 jwkaas == 0.3
 googlemaps == 3.0.2
+Flask-AuditLog==1.0
+Flask-No-Cache==1.0

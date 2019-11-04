@@ -46,6 +46,7 @@ def info_from_OAuth2AzureAD(token):
             result = {'scopes': ['snbplanningapi.read', 'snbplanningapi.editor'], 'sub': 'e2e'}
 
     if result is not None:
-        g.user = result.get('upn', '')
+        g.user = result.get('upn', 'e2e-technical-user')
+        g.token = result
 
     return refine_token_info(result)

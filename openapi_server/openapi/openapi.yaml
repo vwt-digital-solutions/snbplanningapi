@@ -118,6 +118,7 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
+    x-eac-ignore: True
   /workitems/all:
     get:
       description: List of work items

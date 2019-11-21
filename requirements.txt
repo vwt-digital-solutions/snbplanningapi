@@ -9,3 +9,4 @@ jwkaas == 0.3
 googlemaps == 3.0.2
 Flask-AuditLog==1.0
 Flask-No-Cache==1.0
+Flask-SSLify==0.1.5

@@ -5,7 +5,7 @@ setuptools >= 21.0.0
 flask_cors == 3.0.7
 google-cloud-datastore == 1.9.0
 google-cloud-pubsub == 0.45.0
-jwkaas == 0.3
+jwkaas == 0.4
 googlemaps == 3.0.2
 Flask-AuditLog==1.0
 Flask-No-Cache==1.0

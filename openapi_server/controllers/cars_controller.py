@@ -1,85 +1,63 @@
-"""cars controller module"""
-from datetime import datetime, timedelta
-from flask import json
+import datetime
+
 from flask import jsonify
-from flask import Response
 from flask import make_response
 from google.cloud import datastore
 
 
-def make_get_response(response, status_code: int = 200,
-                      cache_control: tuple = ('no-store',)) -> Response:
+def cars_get(offset):  # noqa: E501
+    """Get car locations
+
+    Get a list of all car geolocations # noqa: E501
+
+
+    :rtype: Cars
     """
-    creates the HTTP response.
 
-    :param response: response body (JSON-formatted).
-    :param status_code: response status code.
-    :param cache_control: cache control header settings.
-    :return: HTTP response object.
+    offsetDate = datetime.datetime.utcnow() - datetime.timedelta(hours=offset)
+    offsetDate = offsetDate.isoformat()
+
+    db_client = datastore.Client()
+    query = db_client.query(kind='CarLocation')
+    query.add_filter('when', '>=', offsetDate)
+    query_iter = query.fetch()
+    result = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    for entity in query_iter:
+        result['features'].append({
+            "type": "Feature",
+            "geometry": entity['geometry'],
+            "properties": {
+                "token": entity.key.id_or_name
+            }
+        })
+
+    return jsonify(result)
+
+
+def carsinfo_get(offset):  # noqa: E501
+    """Get car info
+
+    Get a list of all car information # noqa: E501
+
+
+    :rtype: CarsInfo
     """
-    resp: Response = Response()
-    resp.status_code = status_code
-    resp.response = json.dumps(response)
-    # customized cache-control header.
-    for header in cache_control:
-        resp.headers.add_header('cache-control', header)
-    resp.content_type = 'application/json'
-    # remove default connection header.
-    resp.headers.remove('connection')
-    return resp
+    db_client = datastore.Client()
+    query = db_client.query(kind='CarInfo')
+    result = [{
+            "id": entity.key.id_or_name,
+            "license_plate": entity['license_plate'],
+            "driver_name": entity['driver_name'],
+            "token": entity['token']
+        } for entity in query.fetch()]
+
+    return jsonify(result)
 
 
-def format_cars_get_feature(query_item) -> dict:
-    """
-    formats a query item into the correct feature format for the HTTP response body.
-
-    :param query_item: item of the query result.
-    :return: formatted response body feature.
-    """
-    return {"type": "Feature", "geometry": query_item["geometry"],
-            "properties": {"token": query_item.key.id_or_name}}
-
-
-def cars_get(offset: int = 168) -> Response:
-    """
-    gets the most recent car information.
-
-    :param offset: retrospect in hours.
-    :return: corresponding HTTP response.
-    """
-    treshold = (datetime.utcnow() - timedelta(hours=offset)).isoformat()
-    query = datastore.Client().query(kind="CarLocation")
-    query.add_filter("when", ">=", treshold)
-    query = query.fetch()
-    response = {"type": "FeatureCollection",
-                "features": [format_cars_get_feature(q) for q in query]}
-    return make_get_response(response, 200, ('private', 'max-age=300'))
-
-
-def format_carsinfo_get_feature(query_item) -> dict:
-    """
-    formats a query item into the correct feature format for the HTTP response body.
-
-    :param query_item: item of the query result.
-    :return: formatted response body feature.
-    """
-    return {"id": query_item.key.id_or_name,
-            "license_plate": query_item["license_plate"],
-            "driver_name": query_item["driver_name"],
-            "token": query_item["token"]}
-
-
-def carsinfo_get() -> Response:
-    """
-    gets the most recent static car information.
-
-    :return: corresponding HTTP response.
-    """
-    query = datastore.Client().query(kind="CarInfo")
-    return make_get_response([format_carsinfo_get_feature(q) for q in query.fetch()])
-
-
-def carsinfo_post(body):
+def carsinfo_post(body):  # noqa: E501
     """Post car info
 
     Post a car information # noqa: E501
@@ -88,6 +66,7 @@ def carsinfo_post(body):
     :rtype: CarInfo id
     """
     carinfo = body
+    entity = None
     db_client = datastore.Client()
 
     # for unknown reason attribute 'id' is received as 'id_'
@@ -110,17 +89,13 @@ def carsinfo_post(body):
 
 
 def is_assigned(token, assigned, car_tokens):
-    """
-
-    :param token:
-    :param assigned:
-    :param car_tokens:
-    :return:
-    """
-    return assigned == token in car_tokens if assigned is not None else True
+    if assigned is not None:
+        return (assigned and token in car_tokens) or (not assigned and token not in car_tokens)
+    else:
+        return True
 
 
-def list_tokens(assigned):
+def list_tokens(assigned):  # noqa: E501
     """Enumerate tokens
 
     :rtype array of strings
@@ -130,9 +105,9 @@ def list_tokens(assigned):
     cars_query = db_client.query(kind='CarInfo')
     car_tokens = []
     if assigned is not None:
-        car_tokens = [ci['token'] for ci in cars_query.fetch()
-                      if ci['token'] is not None and len(ci['token']) > 0]
+        car_tokens = [ci['token'] for ci in cars_query.fetch() if ci['token'] is not None and len(ci['token']) > 0]
 
-    tokens = [token.key.id_or_name for token in tokens_query.fetch()
-              if is_assigned(token.key.id_or_name, assigned, car_tokens)]
+    tokens = [token.key.id_or_name for token in tokens_query.fetch() if is_assigned(token.key.id_or_name, assigned,
+                                                                                    car_tokens)]
+
     return jsonify(tokens)

@@ -1,41 +1,36 @@
-# import logging
-import datetime
+""" work items controller module. """
 import pytz
 import config
-
+import datetime
 from flask import jsonify
-# from flask import make_response
 from google.cloud import datastore
+from openapi_server.controllers.cars_controller import make_http_response
 
 
-def list_work_items():  # noqa: E501
-    """Get a list of work items
-
-    Get a list of work items # noqa: E501
-
-
-    :rtype: array of work items
+def list_work_items():
     """
-    db_client = datastore.Client()
-    query = db_client.query(kind='WorkItem')
-    result = [res for res in query.fetch() if
-              res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp'] and
-              res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed'] and
-              (not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH))]
-    return jsonify(result)
+    gets all (active) work items from the data store.
 
-
-def list_all_work_items():  # noqa: E501
-    """Get a list of work items
-
-    Get a list of work items # noqa: E501
-
-
-    :rtype: array of work items
+    :return: list of active work items.
     """
-    db_client = datastore.Client()
-    query = db_client.query(kind='WorkItem')
-    query.add_filter('task_type', '>=', config.TASK_TYPE_STARTSWITH)
-    result = [res for res in query.fetch() if res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed']]
+    now = datetime.datetime.now(pytz.utc)
+    statuses = ["Te Plannen", "Gepland", "Niet Gereed"]
+    query = datastore.Client().query(kind="WorkItem")
+    response = [q for q in query.fetch() if q["start_timestamp"] < now < q["end_timestamp"]
+                and q["status"] in statuses and(not hasattr(config, "TASK_TYPE_STARTSWITH")
+                                                or q["task_type"].startswith(config.TASK_TYPE_STARTSWITH))]
+    return make_http_response(response, 200, ("private", "max-age=300"))
 
-    return jsonify(result)
+
+def list_all_work_items():
+    """
+    gets all work items from the data store.
+
+    :return: list of all work items.
+    """
+    statuses = ["Te Plannen", "Gepland", "Niet Gereed"]
+    query = datastore.Client().query(kind='WorkItem')
+    query.add_filter("task_type", ">=", config.TASK_TYPE_STARTSWITH)
+    response = [q for q in query.fetch() if q["status"] in statuses]
+    return make_http_response(response, 200, ("private", "max-age=300"))
+

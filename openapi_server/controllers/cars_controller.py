@@ -3,11 +3,12 @@ from datetime import datetime, timedelta
 from flask import json
 from flask import jsonify
 from flask import Response
+from flask import make_response
 from google.cloud import datastore
 
 
-def make_http_response(response, status_code: int = 200,
-                       cache_control: tuple = ('no-store',)) -> Response:
+def make_get_response(response, status_code: int = 200,
+                      cache_control: tuple = ('no-store',)) -> Response:
     """
     creates the HTTP response.
 
@@ -52,7 +53,7 @@ def cars_get(offset: int = 168) -> Response:
     query = query.fetch()
     response = {"type": "FeatureCollection",
                 "features": [format_cars_get_feature(q) for q in query]}
-    return make_http_response(response, 200, ('private', 'max-age=300'))
+    return make_get_response(response, 200, ('private', 'max-age=300'))
 
 
 def format_carsinfo_get_feature(query_item) -> dict:
@@ -75,56 +76,63 @@ def carsinfo_get() -> Response:
     :return: corresponding HTTP response.
     """
     query = datastore.Client().query(kind="CarInfo")
-    return make_http_response([format_carsinfo_get_feature(q) for q in query.fetch()])
+    return make_get_response([format_carsinfo_get_feature(q) for q in query.fetch()])
 
 
-def carsinfo_post(body: dict) -> tuple:
+def carsinfo_post(body):
+    """Post car info
+
+    Post a car information # noqa: E501
+
+
+    :rtype: CarInfo id
     """
+    carinfo = body
+    db_client = datastore.Client()
 
-    :param body:
-    :return:
-    """
-    client = datastore.Client()
-    # The attribute 'id' is received as 'id_' (unknown reason).
-    body["id"] = body["id_"]
-    del body["id_"]
-    if "id" in body and body["id"] is not None:
-        key = client.key("CarInfo", body["id"])
-        entity = client.get(key)
-        entity = datastore.Entity(key=key) if entity is None else entity
+    # for unknown reason attribute 'id' is received as 'id_'
+    if 'id_' in carinfo and carinfo['id_'] is not None:
+        carinfo_key = db_client.key('CarInfo', carinfo['id_'])
+        entity = db_client.get(carinfo_key)
+        if entity is None:
+            entity = datastore.Entity(key=carinfo_key)
     else:
-        entity = datastore.Entity(client.key("CarInfo"))
-    entity.update({"license_plate": body["license_plate"],
-                   "driver_name": body["driver_name"],
-                   "token": body["token"]})
-    client.put(entity)
-    return {"carinfo_id": entity.key.id_or_name}, 201
+        entity = datastore.Entity(db_client.key('CarInfo'))
+
+    entity.update({
+        "license_plate": carinfo['license_plate'],
+        "driver_name": carinfo['driver_name'],
+        "token": carinfo['token']
+    })
+    db_client.put(entity)
+
+    return make_response(jsonify(carinfo_id=entity.key.id_or_name), 201)
 
 
-def is_assigned(assigned, token, car_tokens) -> bool:
+def is_assigned(token, assigned, car_tokens):
     """
-    determines whether or not a token is assigned.
 
-    :param assigned: assignment indicator.
-    :param token: token value.
-    :param car_tokens: list of existing car tokens.
-    :return: token assignment indicator.
+    :param token:
+    :param assigned:
+    :param car_tokens:
+    :return:
     """
     return assigned == token in car_tokens if assigned is not None else True
 
 
-def list_tokens(assigned: object) -> tuple:
-    """
-    car token listing method.
+def list_tokens(assigned):
+    """Enumerate tokens
 
-    :param assigned: assignment indicator.
-    :return: list of existing car tokens.
+    :rtype array of strings
     """
-    client = datastore.Client()
-    cars, tokens = client.query(kind="CarInfo"), client.query(kind="CarLocation")
+    db_client = datastore.Client()
+    tokens_query = db_client.query(kind='CarLocation')
+    cars_query = db_client.query(kind='CarInfo')
     car_tokens = []
     if assigned is not None:
-        car_tokens = [car["token"] for car in cars.fetch() if car["token"] is not None and len(car["token"]) > 0]
-    tokens = [token.key.id_or_name for token in tokens.fetch()
-              if is_assigned(assigned, token.key.id_or_name, car_tokens)]
-    return jsonify(tokens), 200
+        car_tokens = [ci['token'] for ci in cars_query.fetch()
+                      if ci['token'] is not None and len(ci['token']) > 0]
+
+    tokens = [token.key.id_or_name for token in tokens_query.fetch()
+              if is_assigned(token.key.id_or_name, assigned, car_tokens)]
+    return jsonify(tokens)

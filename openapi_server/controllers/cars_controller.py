@@ -34,7 +34,7 @@ def cars_get(offset):  # noqa: E501
             }
         })
 
-    return jsonify(result)
+    return make_response(result, 200, {'cache-control': 'private, max-age=300'})
 
 
 def carsinfo_get(offset):  # noqa: E501

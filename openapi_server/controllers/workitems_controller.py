@@ -1,10 +1,8 @@
-# import logging
 import datetime
 import pytz
 import config
 
-from flask import jsonify
-# from flask import make_response
+from flask import make_response
 from google.cloud import datastore
 
 
@@ -22,7 +20,7 @@ def list_work_items():  # noqa: E501
               res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp'] and
               res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed'] and
               (not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH))]
-    return jsonify(result)
+    return make_response(result, 200, {'cache-control': 'private, max-age=300'})
 
 
 def list_all_work_items():  # noqa: E501
@@ -38,4 +36,4 @@ def list_all_work_items():  # noqa: E501
     query.add_filter('task_type', '>=', config.TASK_TYPE_STARTSWITH)
     result = [res for res in query.fetch() if res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed']]
 
-    return jsonify(result)
+    return make_response(result, 200, {'cache-control': 'private, max-age=300'})

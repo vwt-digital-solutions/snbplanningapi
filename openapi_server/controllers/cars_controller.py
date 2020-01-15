@@ -91,8 +91,8 @@ def carsinfo_post(body):  # noqa: E501
 def is_assigned(token, assigned, car_tokens):
     if assigned is not None:
         return (assigned and token in car_tokens) or (not assigned and token not in car_tokens)
-    else:
-        return True
+
+    return True
 
 
 def list_tokens(assigned):  # noqa: E501

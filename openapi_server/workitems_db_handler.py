@@ -28,10 +28,7 @@ def read_topic():
         for message in response.received_messages:
             mdata = json.loads(message.message.data)
             payload = mdata['data']
-#            try:
             when = datetime.datetime.strptime(mdata['when'], '%Y-%m-%dT%H:%M:%S%z')
-#            except:
-#               when = datetime.datetime.strptime(mdata['when'], '%Y-%m-%dT%H:%M:%S').astimezone(pytz.utc)
             loc_key = db_client.key('WorkItem', payload['L2GUID'])
             entity = db_client.get(loc_key)
             if entity is None:
@@ -40,10 +37,10 @@ def read_topic():
                 payload['last_updated'] = when
                 if payload['end_timestamp']:
                     payload['end_timestamp'] = datetime.datetime.strptime(payload['end_timestamp'],
-                                                                      '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
+                                                                          '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
                 if payload['start_timestamp']:
                     payload['start_timestamp'] = datetime.datetime.strptime(payload['start_timestamp'],
-                                                                        '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
+                                                                            '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
                 if hasattr(config, 'GEO_API_KEY') and (payload['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed']):
                     location = None
                     # Add extra object to the json to check whether it has already tried
@@ -53,7 +50,7 @@ def read_topic():
                         entity.update({
                             "isGeocoded": False
                         })
-                    if (entity['isGeocoded'] == False):
+                    if not entity['isGeocoded']:
                         if 'geometry' not in entity:
                             if 'zip' in payload and payload['zip'] != '':
                                 postcode = ''.join([ch for ch in payload['zip'] if ch != ' '])
@@ -81,11 +78,10 @@ def read_topic():
                 logging.debug('Populate work item {} - {}'.format(entity.key, entity))
             else:
                 logging.debug('Skipping {} - late notification {}/{}'
-                             .format(payload, when, entity['last_updated']))
+                              .format(payload, when, entity['last_updated']))
             ack_ids.append(message.ack_id)
         if ack_ids:
             client.acknowledge(subscription, ack_ids)
-    pass
 
 
 if __name__ == '__main__':

@@ -33,11 +33,9 @@ def read_topic():
             entity = db_client.get(loc_key)
             if payload.get('status') not in ['Te Plannen', 'Gepland', 'Niet Gereed']:
                 # Remove inactive work from DataStore
-                logging.info(f"Deleting finished work {payload['L2GUID']} status {payload.get('status')}")
                 if entity:
                     db_client.delete(loc_key)
             elif not entity or entity['last_updated'] < when:
-                logging.info(f"Add/update work {payload['L2GUID']} status {payload.get('status')}")
                 if entity is None:
                     entity = datastore.Entity(key=loc_key)
                 payload['last_updated'] = when

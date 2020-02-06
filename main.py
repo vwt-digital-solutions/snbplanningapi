@@ -8,6 +8,8 @@ from flask_sslify import SSLify
 
 app = openapi_server.app
 
+flask_app = app.app
+
 logging.basicConfig(level=logging.INFO)
 
 AuditLog(app)

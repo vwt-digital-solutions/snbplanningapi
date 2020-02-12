@@ -68,6 +68,7 @@ def carsinfo_get(offset):
             "id": entity.key.id_or_name,
             "license_plate": entity['license_plate'],
             "driver_name": entity['driver_name'],
+            "driver_skill": entity.get('driver_skill', None),
             "token": entity['token']
         } for entity in query.fetch()]
 
@@ -99,6 +100,7 @@ def carsinfo_post(body):
     entity.update({
         "license_plate": carinfo['license_plate'],
         "driver_name": carinfo['driver_name'],
+        "driver_skill": carinfo.get('driver_skill', None),
         "token": carinfo['token']
     })
     db_client.put(entity)

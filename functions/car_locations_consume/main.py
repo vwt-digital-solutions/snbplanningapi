@@ -2,7 +2,7 @@ import logging
 import json
 import base64
 
-from .dbprocessor import DBProcessor
+from functions.car_locations_consume.dbprocessor import DBProcessor
 
 parser = DBProcessor()
 

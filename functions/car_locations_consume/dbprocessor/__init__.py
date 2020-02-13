@@ -9,6 +9,8 @@ class DBProcessor(object):
 
     def process(self, payload):
         batch = self.client.batch()
+        batch.begin()
+
         for car_location in payload['carlocations']:
             car_location_entity = self.get_car_location(car_location)
 

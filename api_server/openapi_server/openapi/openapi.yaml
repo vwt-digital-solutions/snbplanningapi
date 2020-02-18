@@ -1,5 +1,5 @@
 openapi: 3.0.1
-x-zally-ignore: [101, 105, 104, 134]
+x-zally-ignore: [101, 105, 104, 134, 174]
 info:
   contact:
     email: opensource@vwt.digital
@@ -178,7 +178,7 @@ components:
           - 5.3
           - 52.6
         properties:
-          iid: 1
+          id: 1
           license_plate: AA-BB-11
           driver_name: Pietje Puk
       properties:
@@ -217,7 +217,7 @@ components:
     CarsInfo:
       example:
         items:
-        - iid: 123456789
+        - id: 123456789
           license_plate: AB-12-CD
           driver_name: Billy Gates
           driver_skill: Metende
@@ -229,13 +229,13 @@ components:
     CarInfo:
       description: Car Info details
       example:
-      - iid: 123456789
+      - id: 123456789
         license_plate: AB-12-CD
         driver_name: Billy Gates
         driver_skill: Metende
         token: some-token-value
       properties:
-        iid:
+        id:
           type: integer
           format: int64
         license_plate:

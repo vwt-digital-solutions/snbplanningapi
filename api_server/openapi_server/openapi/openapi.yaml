@@ -1,5 +1,5 @@
 openapi: 3.0.1
-x-zally-ignore: [101, 105, 104, 134, 174]
+x-zally-ignore: [101, 105, 104, 134, 174, 171, 118]
 info:
   contact:
     email: opensource@vwt.digital
@@ -237,7 +237,6 @@ components:
       properties:
         id:
           type: integer
-          format: int64
         license_plate:
           type: string
         driver_name:
@@ -284,7 +283,7 @@ components:
               - 5.2,
               - 52.4
           task_type: task_type
-          l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           status: status
       properties:
         items:
@@ -313,21 +312,20 @@ components:
             - 5.2,
             - 52.4
         task_type: task_type
-        l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         status: status
       properties:
         administration:
           type: string
         duration:
           type: integer
-          format: int64
         start_timestamp:
           format: date-time
           type: string
         end_timestamp:
           format: date-time
           type: string
-        l2_guid:
+        L2GUID:
           format: uuid
           type: string
         employee_name:

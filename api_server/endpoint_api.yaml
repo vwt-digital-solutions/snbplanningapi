@@ -245,7 +245,7 @@ definitions:
       end_timestamp:
         type: string
         format: date-time
-      l2_guid:
+      L2GUID:
         type: string
         format: uuid
       employee_name:

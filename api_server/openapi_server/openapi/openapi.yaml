@@ -1,4 +1,5 @@
 openapi: 3.0.1
+x-zally-ignore: [101, 105, 104, 134]
 info:
   contact:
     email: opensource@vwt.digital
@@ -177,7 +178,7 @@ components:
           - 5.3
           - 52.6
         properties:
-          id: 1
+          iid: 1
           license_plate: AA-BB-11
           driver_name: Pietje Puk
       properties:
@@ -216,7 +217,7 @@ components:
     CarsInfo:
       example:
         items:
-        - id: 123456789
+        - iid: 123456789
           license_plate: AB-12-CD
           driver_name: Billy Gates
           driver_skill: Metende
@@ -228,14 +229,15 @@ components:
     CarInfo:
       description: Car Info details
       example:
-      - id: 123456789
+      - iid: 123456789
         license_plate: AB-12-CD
         driver_name: Billy Gates
         driver_skill: Metende
         token: some-token-value
       properties:
-        id:
+        iid:
           type: integer
+          format: int64
         license_plate:
           type: string
         driver_name:
@@ -282,7 +284,7 @@ components:
               - 5.2,
               - 52.4
           task_type: task_type
-          L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           status: status
       properties:
         items:
@@ -311,20 +313,21 @@ components:
             - 5.2,
             - 52.4
         task_type: task_type
-        L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         status: status
       properties:
         administration:
           type: string
         duration:
           type: integer
+          format: int64
         start_timestamp:
           format: date-time
           type: string
         end_timestamp:
           format: date-time
           type: string
-        L2GUID:
+        l2_guid:
           format: uuid
           type: string
         employee_name:

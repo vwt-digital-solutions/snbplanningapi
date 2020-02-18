@@ -84,7 +84,7 @@ class WorkItem(Model):
             'duration': 'duration',
             'start_timestamp': 'start_timestamp',
             'end_timestamp': 'end_timestamp',
-            'l2_guid': 'L2GUID',
+            'l2_guid': 'l2_guid',
             'employee_name': 'employee_name',
             'employee_number': 'employee_number',
             'description': 'description',

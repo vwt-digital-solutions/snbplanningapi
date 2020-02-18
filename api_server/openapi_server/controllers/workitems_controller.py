@@ -6,12 +6,14 @@ from flask import jsonify
 from flask import make_response
 from google.cloud import datastore
 
+from api_server.main import cache
 
+
+@cache.cached(timeout=300, key_prefix="work_items")
 def list_work_items():  # noqa: E501
     """Get a list of work items
 
     Get a list of work items # noqa: E501
-
 
     :rtype: array of work items
     """
@@ -21,9 +23,11 @@ def list_work_items():  # noqa: E501
               res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp'] and
               res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed'] and
               (not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH))]
+
     return make_response(jsonify(result), 200, {'cache-control': 'private, max-age=300'})
 
 
+@cache.cached(timeout=300, key_prefix="all_work_items")
 def list_all_work_items():  # noqa: E501
     """Get a list of work items
 

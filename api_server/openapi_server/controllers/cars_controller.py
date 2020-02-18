@@ -4,12 +4,14 @@ from flask import jsonify
 from flask import make_response
 from google.cloud import datastore
 
+from api_server.main import cache
 
 """
 API endpoints.
 """
 
 
+@cache.cached(timeout=300, key_prefix="cars_get")
 def cars_get(offset):
     """Get car locations
 
@@ -52,6 +54,7 @@ def cars_get(offset):
     return make_response(jsonify(result), 200, {'cache-control': 'private, max-age=300'})
 
 
+@cache.cached(timeout=300, key_prefix="carsinfo_get")
 def carsinfo_get(offset):
     """Get car info
 
@@ -108,6 +111,7 @@ def carsinfo_post(body):
     return make_response(jsonify(carinfo_id=entity.key.id_or_name), 201)
 
 
+@cache.cached(timeout=300, key_prefix="list_tokens")
 def list_tokens(assigned):
     """Enumerate tokens
 

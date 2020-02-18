@@ -3,10 +3,7 @@
 from __future__ import absolute_import
 import unittest
 
-from flask import json
-from six import BytesIO
-
-from openapi_server.test import BaseTestCase
+from api_server.openapi_server.test import BaseTestCase
 
 
 class TestDefaultController(BaseTestCase):
@@ -17,7 +14,7 @@ class TestDefaultController(BaseTestCase):
 
         Get car locations
         """
-        headers = { 
+        headers = {
             'Accept': 'application/json',
         }
         response = self.client.open(

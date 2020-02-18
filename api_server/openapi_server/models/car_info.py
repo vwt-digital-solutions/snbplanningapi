@@ -15,7 +15,7 @@ class CarInfo(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, license_plate=None, driver_name=None, token=None):  # noqa: E501
+    def __init__(self, id=None, license_plate=None, driver_name=None, driver_skill=None, token=None):  # noqa: E501
         """CarInfo - a model defined in OpenAPI
 
         :param id: The id of this CarInfo.  # noqa: E501
@@ -24,6 +24,8 @@ class CarInfo(Model):
         :type license_plate: str
         :param driver_name: The driver_name of this CarInfo.  # noqa: E501
         :type driver_name: str
+        :param driver_skill: The driver_skill of this CarInfo.  # noqa: E501
+        :type driver_skill: str
         :param token: The token of this CarInfo.  # noqa: E501
         :type token: str
         """
@@ -31,6 +33,7 @@ class CarInfo(Model):
             'id': int,
             'license_plate': str,
             'driver_name': str,
+            'driver_skill': str,
             'token': str
         }
 
@@ -38,12 +41,14 @@ class CarInfo(Model):
             'id': 'id',
             'license_plate': 'license_plate',
             'driver_name': 'driver_name',
+            'driver_skill': 'driver_skill',
             'token': 'token'
         }
 
         self._id = id
         self._license_plate = license_plate
         self._driver_name = driver_name
+        self._driver_skill = driver_skill
         self._token = token
 
     @classmethod
@@ -123,6 +128,27 @@ class CarInfo(Model):
             raise ValueError("Invalid value for `driver_name`, must not be `None`")  # noqa: E501
 
         self._driver_name = driver_name
+
+    @property
+    def driver_skill(self):
+        """Gets the driver_skill of this CarInfo.
+
+
+        :return: The driver_skill of this CarInfo.
+        :rtype: str
+        """
+        return self._driver_skill
+
+    @driver_skill.setter
+    def driver_skill(self, driver_skill):
+        """Sets the driver_skill of this CarInfo.
+
+
+        :param driver_skill: The driver_skill of this CarInfo.
+        :type driver_skill: str
+        """
+
+        self._driver_skill = driver_skill
 
     @property
     def token(self):

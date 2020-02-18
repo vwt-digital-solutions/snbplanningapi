@@ -10,8 +10,6 @@ import config
 import logging
 
 from openapi_server import encoder
-from . import car_locations_db_handler
-from . import workitems_db_handler
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,14 +19,6 @@ app.add_api('openapi.yaml',
             arguments={'title': 'snbplanningtool'},
             pythonic_params=True)
 CORS(app.app)
-
-if hasattr(config, 'TOKEN_SUBSCRIPTION_NAME'):
-    thread = Thread(target=car_locations_db_handler.read_topic)
-    thread.start()
-
-if hasattr(config, 'WORKITEMS_SUBSCTIPTION_NAME'):
-    thread = Thread(target=workitems_db_handler.read_topic)
-    thread.start()
 
 @app.app.before_request
 def before_request():

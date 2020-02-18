@@ -118,7 +118,6 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-    x-eac-ignore: True
   /workitems/all:
     get:
       description: List of work items
@@ -220,6 +219,7 @@ components:
         - id: 123456789
           license_plate: AB-12-CD
           driver_name: Billy Gates
+          driver_skill: Metende
           token: some-token-value
       properties:
         items:
@@ -231,6 +231,7 @@ components:
       - id: 123456789
         license_plate: AB-12-CD
         driver_name: Billy Gates
+        driver_skill: Metende
         token: some-token-value
       properties:
         id:
@@ -238,6 +239,8 @@ components:
         license_plate:
           type: string
         driver_name:
+          type: string
+        driver_skill:
           type: string
         token:
           type: string

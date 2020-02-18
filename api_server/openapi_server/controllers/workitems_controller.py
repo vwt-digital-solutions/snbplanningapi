@@ -6,7 +6,7 @@ from flask import jsonify
 from flask import make_response
 from google.cloud import datastore
 
-from api_server.main import cache
+from main import cache
 
 
 @cache.cached(timeout=300, key_prefix="work_items")

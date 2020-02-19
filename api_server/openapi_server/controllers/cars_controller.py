@@ -11,7 +11,7 @@ API endpoints.
 """
 
 
-@cache.cached(timeout=300, key_prefix="cars_get")
+@cache.memoize(timeout=300, key_prefix="cars_get")
 def cars_get(offset):
     """Get car locations
 
@@ -54,7 +54,7 @@ def cars_get(offset):
     return make_response(jsonify(result), 200, {'cache-control': 'private, max-age=300'})
 
 
-@cache.cached(timeout=300, key_prefix="carsinfo_get")
+@cache.memoize(timeout=300, key_prefix="carsinfo_get")
 def carsinfo_get(offset):
     """Get car info
 

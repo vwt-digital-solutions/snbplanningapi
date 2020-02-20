@@ -1,4 +1,5 @@
 openapi: 3.0.1
+x-zally-ignore: [101, 105, 104, 134, 174, 171, 118]
 info:
   contact:
     email: opensource@vwt.digital
@@ -118,6 +119,7 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
+    x-eac-ignore: True
   /workitems/all:
     get:
       description: List of work items

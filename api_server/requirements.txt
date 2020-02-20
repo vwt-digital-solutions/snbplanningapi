@@ -8,6 +8,7 @@ connexion==2.2.0
 cryptography==2.8
 Flask==1.1.1
 Flask-AuditLog==1.0
+Flask-Caching==1.7.0
 Flask-Cors==3.0.7
 Flask-No-Cache==1.0
 Flask-SSLify==0.1.5

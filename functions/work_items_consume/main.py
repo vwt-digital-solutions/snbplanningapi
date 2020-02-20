@@ -21,9 +21,6 @@ def topic_to_datastore(request):
 
     # Extract subscription from subscription string
     try:
-        envelope = {
-            'subscription': 'test_subscription'
-        }
         subscription = envelope['subscription'].split('/')[-1]
         logging.info(f'Message received from {subscription} [{payload}]')
 

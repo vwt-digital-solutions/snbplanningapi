@@ -1,4 +1,4 @@
-import dateutil
+import dateutil.parser
 from google.cloud import datastore
 import logging
 

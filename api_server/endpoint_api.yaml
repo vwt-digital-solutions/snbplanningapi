@@ -116,6 +116,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
+        - OAuth2AzureADApplication: []
 definitions:
   Cars:
     description: Collection of Cars
@@ -285,5 +286,13 @@ securityDefinitions:
       snbplanningapi.read: View
       snbplanningapi.planner: Planner
       snbplanningapi.editor: Editor
+    x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
+    x-scopeValidateFunc: connexion.decorators.security.validate_scope
+  OAuth2AzureADApplication:
+    type: oauth2
+    description: OAuth through Azure AD with Client Credentials flow
+    flow: application
+    tokenUrl: 'https://azuread.url'
+    scopes: {}
     x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
     x-scopeValidateFunc: connexion.decorators.security.validate_scope

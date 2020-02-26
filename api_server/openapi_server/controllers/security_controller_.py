@@ -12,10 +12,16 @@ if hasattr(config, 'OAUTH_JWKS_URL'):
                        config.OAUTH_EXPECTED_ISSUER,
                        jwks_url=config.OAUTH_JWKS_URL)
 
+if hasattr(config, 'OAUTH_B2B_JWKS_URL'):
+    my_b2b_jwkaas = JWKaas(config.OAUTH_B2B_EXPECTED_AUDIENCE,
+                       config.OAUTH_B2B_EXPECTED_ISSUER,
+                       jwks_url=config.OAUTH_B2B_JWKS_URL)
+
 if hasattr(config, 'OAUTH_E2E_JWKS_URL'):
     my_e2e_jwkaas = JWKaas(config.OAUTH_E2E_EXPECTED_AUDIENCE,
                        config.OAUTH_E2E_EXPECTED_ISSUER,
                        jwks_url=config.OAUTH_E2E_JWKS_URL)
+
 
 def refine_token_info(token_info):
     if token_info and 'scopes' in token_info:
@@ -38,10 +44,19 @@ def info_from_OAuth2AzureAD(token):
     """
     result = my_jwkaas.get_connexion_token_info(token)
 
+    # Check if b2b token is configured
+    if result is None and my_b2b_jwkaas is not None:
+        token_info = my_b2b_jwkaas.get_connexion_token_info(token)
+        if token_info is not None and 'appid' in token_info and \
+                token_info['appid'] == config.OAUTH_B2B_APPID:
+            logging.warning('Approved B2B access token for appid [%s]', token_info['appid'])
+            result = {'scopes': ['snbplanningapi.read', 'snbplanningapi.planner'], 'sub': 'b2b', 'upn': 'b2b-technical-user'}
+
     # Check if e2e test token is configured
     if result is None and my_e2e_jwkaas is not None:
         token_info = my_e2e_jwkaas.get_connexion_token_info(token)
-        if token_info is not None and 'appid' in token_info and token_info['appid'] == config.OAUTH_E2E_APPID:
+        if token_info is not None and 'appid' in token_info and \
+                token_info['appid'] == config.OAUTH_E2E_APPID:
             logging.warning('Approved e2e access token for appid [%s]', token_info['appid'])
             result = {'scopes': ['snbplanningapi.read', 'snbplanningapi.editor'], 'sub': 'e2e', 'upn': 'e2e-technical-user'}
 

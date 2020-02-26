@@ -1,6 +1,4 @@
-from datetime import datetime
-
-import pytz
+import dateutil.parser
 from google.cloud import datastore
 import logging
 
@@ -11,7 +9,7 @@ class DBProcessor(object):
         pass
 
     def process(self, payload, gmaps):
-        when = datetime.strptime(payload['when'], '%Y-%m-%dT%H:%M:%S%z')
+        when = dateutil.parser.isoparse(payload['when'])
 
         work_item = payload['data']
         work_item_entity = self.get_work_item(work_item, when, gmaps)
@@ -42,11 +40,11 @@ class DBProcessor(object):
     @staticmethod
     def update_db_workitem(entity, gmaps, work_item):
         if work_item['end_timestamp']:
-            work_item['end_timestamp'] = datetime.strptime(work_item['end_timestamp'],
-                                                           '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
+            work_item['end_timestamp'] = dateutil.parser.isoparse(work_item['end_timestamp'])
         if work_item['start_timestamp']:
-            work_item['start_timestamp'] = datetime.strptime(work_item['start_timestamp'],
-                                                             '%d-%m-%Y %H:%M:%S').astimezone(pytz.utc)
+            work_item['start_timestamp'] = dateutil.parser.isoparse(work_item['start_timestamp'])
+        if work_item['resolve_before_timestamp']:
+            work_item['resolve_before_timestamp'] = dateutil.parser.isoparse(work_item['resolve_before_timestamp'])
         if gmaps is not None:
             location = None
             # Add extra object to the json to check whether it has already tried

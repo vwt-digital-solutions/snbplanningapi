@@ -1,4 +1,5 @@
 swagger: '2.0'
+x-zally-ignore: [101, 105, 104, 134, 174, 171, 118]
 info:
   title: snbplanningtool
   description: Endpoint to retreive the latest car locations
@@ -103,6 +104,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
+    x-eac-ignore: True
   /workitems/all:
     get:
       summary: Get a list of work items
@@ -235,45 +237,58 @@ definitions:
   WorkItem:
     description: Link2 work item
     properties:
+      L2GUID:
+        type: string
+        format: uuid
       administration:
         type: string
-      duration:
-        type: integer
+      category:
+        type: string
+      task_type:
+        type: string
+      project:
+        type: string
+      status:
+        type: string
+      description:
+        type: string
       start_timestamp:
         type: string
         format: date-time
       end_timestamp:
         type: string
         format: date-time
-      L2GUID:
+      last_updated:
         type: string
-        format: uuid
-      employee_name:
+        format: date-time
+      resolve_before_timestamp:
         type: string
-      employee_number:
-        type: string
-      description:
-        type: string
+        format: date-time
       city:
         type: string
       zip:
         type: string
-      project_number:
-        type: string
-      status:
+      house:
         type: string
       street:
         type: string
       extra:
         type: string
-      hours_category:
-        type: string
-      task_number:
-        type: string
-      task_type:
-        type: string
+      isGeocoded:
+        type: boolean
       geometry:
         $ref: '#/definitions/Geometry'
+      employee_name:
+        type: string
+      employee_number:
+        type: string
+      order_id:
+        type: string
+      sub_order_id:
+        type: string
+        format: uuid
+      stagnation:
+          type: boolean
 securityDefinitions:
   OAuth2AzureAD:
     type: oauth2

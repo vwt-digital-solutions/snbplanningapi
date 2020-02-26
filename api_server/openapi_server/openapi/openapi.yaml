@@ -1,5 +1,4 @@
 openapi: 3.0.1
-x-zally-ignore: [101, 105, 104, 134, 174, 171, 118]
 info:
   contact:
     email: opensource@vwt.digital
@@ -119,7 +118,7 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-    x-eac-ignore: True
+    x-eac-ignore: true
   /workitems/all:
     get:
       description: List of work items
@@ -265,26 +264,31 @@ components:
       example:
         items:
           zip: zip
+          last_updated: 2000-01-23T04:56:07.000+00:00
           start_timestamp: 2000-01-23T04:56:07.000+00:00
           city: city
           administration: administration
+          isGeocoded: true
+          project: project
           description: description
           employee_name: employee_name
-          duration: 0
+          resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+          sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          house: house
           end_timestamp: 2000-01-23T04:56:07.000+00:00
-          project_number: project_number
           street: street
           extra: extra
+          stagnation: true
           employee_number: employee_number
-          hours_category: hours_category
-          task_number: task_number
           geometry: |-
             type: "Point",
             coordinates:
               - 5.2,
               - 52.4
+          category: category
           task_type: task_type
           L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          order_id: order_id
           status: status
       properties:
         items:
@@ -294,67 +298,85 @@ components:
       description: Link2 work item
       example:
         zip: zip
+        last_updated: 2000-01-23T04:56:07.000+00:00
         start_timestamp: 2000-01-23T04:56:07.000+00:00
         city: city
         administration: administration
+        isGeocoded: true
+        project: project
         description: description
         employee_name: employee_name
-        duration: 0
+        resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+        sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        house: house
         end_timestamp: 2000-01-23T04:56:07.000+00:00
-        project_number: project_number
         street: street
         extra: extra
+        stagnation: true
         employee_number: employee_number
-        hours_category: hours_category
-        task_number: task_number
         geometry: |-
           type: "Point",
           coordinates:
             - 5.2,
             - 52.4
+        category: category
         task_type: task_type
         L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        order_id: order_id
         status: status
       properties:
+        L2GUID:
+          format: uuid
+          type: string
         administration:
           type: string
-        duration:
-          type: integer
+        category:
+          type: string
+        task_type:
+          type: string
+        project:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
         start_timestamp:
           format: date-time
           type: string
         end_timestamp:
           format: date-time
           type: string
-        L2GUID:
-          format: uuid
+        last_updated:
+          format: date-time
           type: string
-        employee_name:
-          type: string
-        employee_number:
-          type: string
-        description:
+        resolve_before_timestamp:
+          format: date-time
           type: string
         city:
           type: string
         zip:
           type: string
-        project_number:
-          type: string
-        status:
+        house:
           type: string
         street:
           type: string
         extra:
           type: string
-        hours_category:
-          type: string
-        task_number:
-          type: string
-        task_type:
-          type: string
+        isGeocoded:
+          type: boolean
         geometry:
           $ref: '#/components/schemas/Geometry'
+        employee_name:
+          type: string
+        employee_number:
+          type: string
+        order_id:
+          type: string
+        sub_order_id:
+          format: uuid
+          type: string
+        stagnation:
+          type: boolean
       type: object
   securitySchemes:
     OAuth2AzureAD:
@@ -370,3 +392,11 @@ components:
       type: oauth2
       x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
       x-scopeValidateFunc: connexion.decorators.security.validate_scope
+x-zally-ignore:
+- 101
+- 105
+- 104
+- 134
+- 174
+- 171
+- 118

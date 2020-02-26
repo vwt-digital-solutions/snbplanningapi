@@ -18,106 +18,131 @@ class WorkItem(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, administration=None, duration=None, start_timestamp=None, end_timestamp=None, l2_guid=None, employee_name=None, employee_number=None, description=None, city=None, zip=None, project_number=None, status=None, street=None, extra=None, hours_category=None, task_number=None, task_type=None, geometry=None):  # noqa: E501
+    def __init__(self, l2_guid=None, administration=None, category=None, task_type=None, project=None, status=None, description=None, start_timestamp=None, end_timestamp=None, last_updated=None, resolve_before_timestamp=None, city=None, zip=None, house=None, street=None, extra=None, is_geocoded=None, geometry=None, employee_name=None, employee_number=None, order_id=None, sub_order_id=None, stagnation=None):  # noqa: E501
         """WorkItem - a model defined in OpenAPI
 
+        :param l2_guid: The l2_guid of this WorkItem.  # noqa: E501
+        :type l2_guid: str
         :param administration: The administration of this WorkItem.  # noqa: E501
         :type administration: str
-        :param duration: The duration of this WorkItem.  # noqa: E501
-        :type duration: int
+        :param category: The category of this WorkItem.  # noqa: E501
+        :type category: str
+        :param task_type: The task_type of this WorkItem.  # noqa: E501
+        :type task_type: str
+        :param project: The project of this WorkItem.  # noqa: E501
+        :type project: str
+        :param status: The status of this WorkItem.  # noqa: E501
+        :type status: str
+        :param description: The description of this WorkItem.  # noqa: E501
+        :type description: str
         :param start_timestamp: The start_timestamp of this WorkItem.  # noqa: E501
         :type start_timestamp: datetime
         :param end_timestamp: The end_timestamp of this WorkItem.  # noqa: E501
         :type end_timestamp: datetime
-        :param l2_guid: The l2_guid of this WorkItem.  # noqa: E501
-        :type l2_guid: str
-        :param employee_name: The employee_name of this WorkItem.  # noqa: E501
-        :type employee_name: str
-        :param employee_number: The employee_number of this WorkItem.  # noqa: E501
-        :type employee_number: str
-        :param description: The description of this WorkItem.  # noqa: E501
-        :type description: str
+        :param last_updated: The last_updated of this WorkItem.  # noqa: E501
+        :type last_updated: datetime
+        :param resolve_before_timestamp: The resolve_before_timestamp of this WorkItem.  # noqa: E501
+        :type resolve_before_timestamp: datetime
         :param city: The city of this WorkItem.  # noqa: E501
         :type city: str
         :param zip: The zip of this WorkItem.  # noqa: E501
         :type zip: str
-        :param project_number: The project_number of this WorkItem.  # noqa: E501
-        :type project_number: str
-        :param status: The status of this WorkItem.  # noqa: E501
-        :type status: str
+        :param house: The house of this WorkItem.  # noqa: E501
+        :type house: str
         :param street: The street of this WorkItem.  # noqa: E501
         :type street: str
         :param extra: The extra of this WorkItem.  # noqa: E501
         :type extra: str
-        :param hours_category: The hours_category of this WorkItem.  # noqa: E501
-        :type hours_category: str
-        :param task_number: The task_number of this WorkItem.  # noqa: E501
-        :type task_number: str
-        :param task_type: The task_type of this WorkItem.  # noqa: E501
-        :type task_type: str
+        :param is_geocoded: The is_geocoded of this WorkItem.  # noqa: E501
+        :type is_geocoded: bool
         :param geometry: The geometry of this WorkItem.  # noqa: E501
         :type geometry: Geometry
+        :param employee_name: The employee_name of this WorkItem.  # noqa: E501
+        :type employee_name: str
+        :param employee_number: The employee_number of this WorkItem.  # noqa: E501
+        :type employee_number: str
+        :param order_id: The order_id of this WorkItem.  # noqa: E501
+        :type order_id: str
+        :param sub_order_id: The sub_order_id of this WorkItem.  # noqa: E501
+        :type sub_order_id: str
+        :param stagnation: The stagnation of this WorkItem.  # noqa: E501
+        :type stagnation: bool
         """
         self.openapi_types = {
+            'l2_guid': str,
             'administration': str,
-            'duration': int,
+            'category': str,
+            'task_type': str,
+            'project': str,
+            'status': str,
+            'description': str,
             'start_timestamp': datetime,
             'end_timestamp': datetime,
-            'l2_guid': str,
-            'employee_name': str,
-            'employee_number': str,
-            'description': str,
+            'last_updated': datetime,
+            'resolve_before_timestamp': datetime,
             'city': str,
             'zip': str,
-            'project_number': str,
-            'status': str,
+            'house': str,
             'street': str,
             'extra': str,
-            'hours_category': str,
-            'task_number': str,
-            'task_type': str,
-            'geometry': Geometry
+            'is_geocoded': bool,
+            'geometry': Geometry,
+            'employee_name': str,
+            'employee_number': str,
+            'order_id': str,
+            'sub_order_id': str,
+            'stagnation': bool
         }
 
         self.attribute_map = {
+            'l2_guid': 'L2GUID',
             'administration': 'administration',
-            'duration': 'duration',
+            'category': 'category',
+            'task_type': 'task_type',
+            'project': 'project',
+            'status': 'status',
+            'description': 'description',
             'start_timestamp': 'start_timestamp',
             'end_timestamp': 'end_timestamp',
-            'l2_guid': 'L2GUID',
-            'employee_name': 'employee_name',
-            'employee_number': 'employee_number',
-            'description': 'description',
+            'last_updated': 'last_updated',
+            'resolve_before_timestamp': 'resolve_before_timestamp',
             'city': 'city',
             'zip': 'zip',
-            'project_number': 'project_number',
-            'status': 'status',
+            'house': 'house',
             'street': 'street',
             'extra': 'extra',
-            'hours_category': 'hours_category',
-            'task_number': 'task_number',
-            'task_type': 'task_type',
-            'geometry': 'geometry'
+            'is_geocoded': 'isGeocoded',
+            'geometry': 'geometry',
+            'employee_name': 'employee_name',
+            'employee_number': 'employee_number',
+            'order_id': 'order_id',
+            'sub_order_id': 'sub_order_id',
+            'stagnation': 'stagnation'
         }
 
+        self._l2_guid = l2_guid
         self._administration = administration
-        self._duration = duration
+        self._category = category
+        self._task_type = task_type
+        self._project = project
+        self._status = status
+        self._description = description
         self._start_timestamp = start_timestamp
         self._end_timestamp = end_timestamp
-        self._l2_guid = l2_guid
-        self._employee_name = employee_name
-        self._employee_number = employee_number
-        self._description = description
+        self._last_updated = last_updated
+        self._resolve_before_timestamp = resolve_before_timestamp
         self._city = city
         self._zip = zip
-        self._project_number = project_number
-        self._status = status
+        self._house = house
         self._street = street
         self._extra = extra
-        self._hours_category = hours_category
-        self._task_number = task_number
-        self._task_type = task_type
+        self._is_geocoded = is_geocoded
         self._geometry = geometry
+        self._employee_name = employee_name
+        self._employee_number = employee_number
+        self._order_id = order_id
+        self._sub_order_id = sub_order_id
+        self._stagnation = stagnation
 
     @classmethod
     def from_dict(cls, dikt) -> 'WorkItem':
@@ -129,6 +154,27 @@ class WorkItem(Model):
         :rtype: WorkItem
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def l2_guid(self):
+        """Gets the l2_guid of this WorkItem.
+
+
+        :return: The l2_guid of this WorkItem.
+        :rtype: str
+        """
+        return self._l2_guid
+
+    @l2_guid.setter
+    def l2_guid(self, l2_guid):
+        """Sets the l2_guid of this WorkItem.
+
+
+        :param l2_guid: The l2_guid of this WorkItem.
+        :type l2_guid: str
+        """
+
+        self._l2_guid = l2_guid
 
     @property
     def administration(self):
@@ -152,25 +198,109 @@ class WorkItem(Model):
         self._administration = administration
 
     @property
-    def duration(self):
-        """Gets the duration of this WorkItem.
+    def category(self):
+        """Gets the category of this WorkItem.
 
 
-        :return: The duration of this WorkItem.
-        :rtype: int
+        :return: The category of this WorkItem.
+        :rtype: str
         """
-        return self._duration
+        return self._category
 
-    @duration.setter
-    def duration(self, duration):
-        """Sets the duration of this WorkItem.
+    @category.setter
+    def category(self, category):
+        """Sets the category of this WorkItem.
 
 
-        :param duration: The duration of this WorkItem.
-        :type duration: int
+        :param category: The category of this WorkItem.
+        :type category: str
         """
 
-        self._duration = duration
+        self._category = category
+
+    @property
+    def task_type(self):
+        """Gets the task_type of this WorkItem.
+
+
+        :return: The task_type of this WorkItem.
+        :rtype: str
+        """
+        return self._task_type
+
+    @task_type.setter
+    def task_type(self, task_type):
+        """Sets the task_type of this WorkItem.
+
+
+        :param task_type: The task_type of this WorkItem.
+        :type task_type: str
+        """
+
+        self._task_type = task_type
+
+    @property
+    def project(self):
+        """Gets the project of this WorkItem.
+
+
+        :return: The project of this WorkItem.
+        :rtype: str
+        """
+        return self._project
+
+    @project.setter
+    def project(self, project):
+        """Sets the project of this WorkItem.
+
+
+        :param project: The project of this WorkItem.
+        :type project: str
+        """
+
+        self._project = project
+
+    @property
+    def status(self):
+        """Gets the status of this WorkItem.
+
+
+        :return: The status of this WorkItem.
+        :rtype: str
+        """
+        return self._status
+
+    @status.setter
+    def status(self, status):
+        """Sets the status of this WorkItem.
+
+
+        :param status: The status of this WorkItem.
+        :type status: str
+        """
+
+        self._status = status
+
+    @property
+    def description(self):
+        """Gets the description of this WorkItem.
+
+
+        :return: The description of this WorkItem.
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description):
+        """Sets the description of this WorkItem.
+
+
+        :param description: The description of this WorkItem.
+        :type description: str
+        """
+
+        self._description = description
 
     @property
     def start_timestamp(self):
@@ -215,88 +345,46 @@ class WorkItem(Model):
         self._end_timestamp = end_timestamp
 
     @property
-    def l2_guid(self):
-        """Gets the l2_guid of this WorkItem.
+    def last_updated(self):
+        """Gets the last_updated of this WorkItem.
 
 
-        :return: The l2_guid of this WorkItem.
-        :rtype: str
+        :return: The last_updated of this WorkItem.
+        :rtype: datetime
         """
-        return self._l2_guid
+        return self._last_updated
 
-    @l2_guid.setter
-    def l2_guid(self, l2_guid):
-        """Sets the l2_guid of this WorkItem.
+    @last_updated.setter
+    def last_updated(self, last_updated):
+        """Sets the last_updated of this WorkItem.
 
 
-        :param l2_guid: The l2_guid of this WorkItem.
-        :type l2_guid: str
+        :param last_updated: The last_updated of this WorkItem.
+        :type last_updated: datetime
         """
 
-        self._l2_guid = l2_guid
+        self._last_updated = last_updated
 
     @property
-    def employee_name(self):
-        """Gets the employee_name of this WorkItem.
+    def resolve_before_timestamp(self):
+        """Gets the resolve_before_timestamp of this WorkItem.
 
 
-        :return: The employee_name of this WorkItem.
-        :rtype: str
+        :return: The resolve_before_timestamp of this WorkItem.
+        :rtype: datetime
         """
-        return self._employee_name
+        return self._resolve_before_timestamp
 
-    @employee_name.setter
-    def employee_name(self, employee_name):
-        """Sets the employee_name of this WorkItem.
-
-
-        :param employee_name: The employee_name of this WorkItem.
-        :type employee_name: str
-        """
-
-        self._employee_name = employee_name
-
-    @property
-    def employee_number(self):
-        """Gets the employee_number of this WorkItem.
+    @resolve_before_timestamp.setter
+    def resolve_before_timestamp(self, resolve_before_timestamp):
+        """Sets the resolve_before_timestamp of this WorkItem.
 
 
-        :return: The employee_number of this WorkItem.
-        :rtype: str
-        """
-        return self._employee_number
-
-    @employee_number.setter
-    def employee_number(self, employee_number):
-        """Sets the employee_number of this WorkItem.
-
-
-        :param employee_number: The employee_number of this WorkItem.
-        :type employee_number: str
+        :param resolve_before_timestamp: The resolve_before_timestamp of this WorkItem.
+        :type resolve_before_timestamp: datetime
         """
 
-        self._employee_number = employee_number
-
-    @property
-    def description(self):
-        """Gets the description of this WorkItem.
-
-
-        :return: The description of this WorkItem.
-        :rtype: str
-        """
-        return self._description
-
-    @description.setter
-    def description(self, description):
-        """Sets the description of this WorkItem.
-
-
-        :param description: The description of this WorkItem.
-        :type description: str
-        """
-
-        self._description = description
+        self._resolve_before_timestamp = resolve_before_timestamp
 
     @property
     def city(self):
@@ -341,46 +429,25 @@ class WorkItem(Model):
         self._zip = zip
 
     @property
-    def project_number(self):
-        """Gets the project_number of this WorkItem.
+    def house(self):
+        """Gets the house of this WorkItem.
 
 
-        :return: The project_number of this WorkItem.
+        :return: The house of this WorkItem.
         :rtype: str
         """
-        return self._project_number
+        return self._house
 
-    @project_number.setter
-    def project_number(self, project_number):
-        """Sets the project_number of this WorkItem.
+    @house.setter
+    def house(self, house):
+        """Sets the house of this WorkItem.
 
 
-        :param project_number: The project_number of this WorkItem.
-        :type project_number: str
+        :param house: The house of this WorkItem.
+        :type house: str
         """
 
-        self._project_number = project_number
-
-    @property
-    def status(self):
-        """Gets the status of this WorkItem.
-
-
-        :return: The status of this WorkItem.
-        :rtype: str
-        """
-        return self._status
-
-    @status.setter
-    def status(self, status):
-        """Sets the status of this WorkItem.
-
-
-        :param status: The status of this WorkItem.
-        :type status: str
-        """
-
-        self._status = status
+        self._house = house
 
     @property
     def street(self):
@@ -425,67 +492,25 @@ class WorkItem(Model):
         self._extra = extra
 
     @property
-    def hours_category(self):
-        """Gets the hours_category of this WorkItem.
+    def is_geocoded(self):
+        """Gets the is_geocoded of this WorkItem.
 
 
-        :return: The hours_category of this WorkItem.
-        :rtype: str
+        :return: The is_geocoded of this WorkItem.
+        :rtype: bool
         """
-        return self._hours_category
+        return self._is_geocoded
 
-    @hours_category.setter
-    def hours_category(self, hours_category):
-        """Sets the hours_category of this WorkItem.
-
-
-        :param hours_category: The hours_category of this WorkItem.
-        :type hours_category: str
-        """
-
-        self._hours_category = hours_category
-
-    @property
-    def task_number(self):
-        """Gets the task_number of this WorkItem.
+    @is_geocoded.setter
+    def is_geocoded(self, is_geocoded):
+        """Sets the is_geocoded of this WorkItem.
 
 
-        :return: The task_number of this WorkItem.
-        :rtype: str
-        """
-        return self._task_number
-
-    @task_number.setter
-    def task_number(self, task_number):
-        """Sets the task_number of this WorkItem.
-
-
-        :param task_number: The task_number of this WorkItem.
-        :type task_number: str
+        :param is_geocoded: The is_geocoded of this WorkItem.
+        :type is_geocoded: bool
         """
 
-        self._task_number = task_number
-
-    @property
-    def task_type(self):
-        """Gets the task_type of this WorkItem.
-
-
-        :return: The task_type of this WorkItem.
-        :rtype: str
-        """
-        return self._task_type
-
-    @task_type.setter
-    def task_type(self, task_type):
-        """Sets the task_type of this WorkItem.
-
-
-        :param task_type: The task_type of this WorkItem.
-        :type task_type: str
-        """
-
-        self._task_type = task_type
+        self._is_geocoded = is_geocoded
 
     @property
     def geometry(self):
@@ -507,3 +532,108 @@ class WorkItem(Model):
         """
 
         self._geometry = geometry
+
+    @property
+    def employee_name(self):
+        """Gets the employee_name of this WorkItem.
+
+
+        :return: The employee_name of this WorkItem.
+        :rtype: str
+        """
+        return self._employee_name
+
+    @employee_name.setter
+    def employee_name(self, employee_name):
+        """Sets the employee_name of this WorkItem.
+
+
+        :param employee_name: The employee_name of this WorkItem.
+        :type employee_name: str
+        """
+
+        self._employee_name = employee_name
+
+    @property
+    def employee_number(self):
+        """Gets the employee_number of this WorkItem.
+
+
+        :return: The employee_number of this WorkItem.
+        :rtype: str
+        """
+        return self._employee_number
+
+    @employee_number.setter
+    def employee_number(self, employee_number):
+        """Sets the employee_number of this WorkItem.
+
+
+        :param employee_number: The employee_number of this WorkItem.
+        :type employee_number: str
+        """
+
+        self._employee_number = employee_number
+
+    @property
+    def order_id(self):
+        """Gets the order_id of this WorkItem.
+
+
+        :return: The order_id of this WorkItem.
+        :rtype: str
+        """
+        return self._order_id
+
+    @order_id.setter
+    def order_id(self, order_id):
+        """Sets the order_id of this WorkItem.
+
+
+        :param order_id: The order_id of this WorkItem.
+        :type order_id: str
+        """
+
+        self._order_id = order_id
+
+    @property
+    def sub_order_id(self):
+        """Gets the sub_order_id of this WorkItem.
+
+
+        :return: The sub_order_id of this WorkItem.
+        :rtype: str
+        """
+        return self._sub_order_id
+
+    @sub_order_id.setter
+    def sub_order_id(self, sub_order_id):
+        """Sets the sub_order_id of this WorkItem.
+
+
+        :param sub_order_id: The sub_order_id of this WorkItem.
+        :type sub_order_id: str
+        """
+
+        self._sub_order_id = sub_order_id
+
+    @property
+    def stagnation(self):
+        """Gets the stagnation of this WorkItem.
+
+
+        :return: The stagnation of this WorkItem.
+        :rtype: bool
+        """
+        return self._stagnation
+
+    @stagnation.setter
+    def stagnation(self, stagnation):
+        """Sets the stagnation of this WorkItem.
+
+
+        :param stagnation: The stagnation of this WorkItem.
+        :type stagnation: bool
+        """
+
+        self._stagnation = stagnation

@@ -92,10 +92,17 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
-  /workitems/active:
+  /workitems:
     get:
       summary: Get a list of work items
       description: List of work items
+      parameters:
+        - in: query
+          name: active
+          type: boolean
+          required: false
+          default: false
+          description: Select only active workitems. When set to false, retrieves all workitems
       operationId: list_work_items
       responses:
         200:
@@ -106,19 +113,6 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
     x-eac-ignore: true
-  /workitems/all:
-    get:
-      summary: Get a list of work items
-      description: List of work items
-      operationId: list_all_work_items
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/WorkItems'
-      x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      security:
-        - OAuth2AzureAD: [snbplanningapi.planner]
 definitions:
   Cars:
     description: Collection of Cars

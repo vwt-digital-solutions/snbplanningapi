@@ -102,10 +102,18 @@ paths:
         - snbplanningapi.read
       summary: Get a list of tokens
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /workitems/active:
+  /workitems:
     get:
       description: List of work items
       operationId: list_work_items
+      parameters:
+      - description: Select only active workitems. When set to false, retrieves all
+          workitems
+        in: query
+        name: active
+        schema:
+          default: false
+          type: boolean
       responses:
         200:
           content:
@@ -119,22 +127,6 @@ paths:
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
     x-eac-ignore: true
-  /workitems/all:
-    get:
-      description: List of work items
-      operationId: list_all_work_items
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkItems'
-          description: OK
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.planner
-      summary: Get a list of work items
-      x-openapi-router-controller: openapi_server.controllers.workitems_controller
 components:
   schemas:
     Cars:

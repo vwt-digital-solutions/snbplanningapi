@@ -12,7 +12,7 @@ API endpoints.
 
 
 @cache.memoize(timeout=300)
-def cars_get(offset):
+def car_locations_list(offset):
     """Get car locations
 
     Get a list of all car geolocations.
@@ -55,7 +55,7 @@ def cars_get(offset):
 
 
 @cache.memoize(timeout=300)
-def carsinfo_get(offset):
+def cars_list(offset):
     """Get car info
 
     Get a list of all car information
@@ -78,7 +78,7 @@ def carsinfo_get(offset):
     return make_response(jsonify(result), 200)
 
 
-def carsinfo_post(body):
+def cars_post(body):
     """Post car info
 
     Post a car information

@@ -17,8 +17,8 @@ servers:
 paths:
   /cars:
     get:
-      description: Get a list of all car geolocations
-      operationId: cars_get
+      description: Get a list of all cars and their driver information.
+      operationId: cars_list
       parameters:
       - description: Time offset range in hours for retrieving entries
         in: query
@@ -32,16 +32,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cars'
-          description: Successful response - returns an array of locations
+          description: Successful response - returns an array of locations with info
       security:
       - OAuth2AzureAD:
-        - snbplanningapi.read
-      summary: Get car locations
+        - snbplanningapi.planner
+      summary: Get car info
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /carsinfo:
+    post:
+      description: Post a list of all car geolocations with info
+      operationId: cars_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
+        required: true
+      responses:
+        201:
+          content: {}
+          description: Successful POST
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.editor
+      summary: Post car info
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      x-codegen-request-body-name: body
+  /cars/locations:
     get:
-      description: Get a list of all car geolocations with info
-      operationId: carsinfo_get
+      description: Get a list of all car geolocations, with their linked Hyrde tokens.
+      operationId: car_locations_list
       parameters:
       - description: Time offset range in hours for retrieving entries
         in: query
@@ -54,32 +73,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarsInfo'
-          description: Successful response - returns an array of locations with info
+                $ref: '#/components/schemas/CarLocations'
+          description: Successful response - returns an array of locations
       security:
       - OAuth2AzureAD:
-        - snbplanningapi.planner
-      summary: Get car info
+        - snbplanningapi.read
+      summary: Get car locations
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-    post:
-      description: Post a list of all car geolocations with info
-      operationId: carsinfo_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CarInfo'
-        required: true
-      responses:
-        201:
-          content: {}
-          description: Successful POST
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.editor
-      summary: Post car info
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-      x-codegen-request-body-name: body
   /tokens:
     get:
       description: List of tokens
@@ -129,8 +129,8 @@ paths:
     x-eac-ignore: true
 components:
   schemas:
-    Cars:
-      description: Collection of Cars
+    CarLocations:
+      description: Collection of car locations.
       example:
         type: FeatureCollection
         features:
@@ -154,14 +154,14 @@ components:
           type: string
         features:
           items:
-            $ref: '#/components/schemas/Car'
+            $ref: '#/components/schemas/CarLocation'
           type: array
       required:
       - features
       - type
       type: object
-    Car:
-      description: Information about a car
+    CarLocation:
+      description: The location of a car.
       example:
         type: Feature
         geometry:
@@ -206,7 +206,7 @@ components:
       - coordinates
       - type
       type: object
-    CarsInfo:
+    Cars:
       example:
         items:
         - id: 123456789
@@ -216,10 +216,10 @@ components:
           token: some-token-value
       properties:
         items:
-          $ref: '#/components/schemas/CarInfo'
+          $ref: '#/components/schemas/Car'
       type: object
-    CarInfo:
-      description: Car Info details
+    Car:
+      description: Information on a car and their driver
       example:
       - id: 123456789
         license_plate: AB-12-CD
@@ -388,6 +388,5 @@ x-zally-ignore:
 - 101
 - 105
 - 104
-- 134
 - 171
 - 118

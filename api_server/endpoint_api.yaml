@@ -1,6 +1,6 @@
 ---
 swagger: '2.0'
-x-zally-ignore: [101, 105, 104, 134, 171, 118]
+x-zally-ignore: [101, 105, 104, 171, 118]
 info:
   title: snbplanningtool
   description: Endpoint to retreive the latest car locations
@@ -20,27 +20,9 @@ produces:
 paths:
   /cars:
     get:
-      summary: Get car locations
-      description: Get a list of all car geolocations
-      parameters:
-        - in: query
-          name: offset
-          type: integer
-          required: false
-          default: 168
-          description: Time offset range in hours for retrieving entries
-      responses:
-        '200':
-          description: Successful response - returns an array of locations
-          schema:
-            $ref: '#/definitions/Cars'
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-      security:
-        - OAuth2AzureAD: [snbplanningapi.read]
-  /carsinfo:
-    get:
       summary: Get car info
-      description: Get a list of all car geolocations with info
+      operationId: cars_list
+      description: Get a list of all cars and their driver information.
       parameters:
         - in: query
           name: offset
@@ -52,7 +34,7 @@ paths:
         '200':
           description: Successful response - returns an array of locations with info
           schema:
-            $ref: '#/definitions/CarsInfo'
+            $ref: '#/definitions/Cars'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -66,13 +48,33 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CarInfo'
+            $ref: '#/definitions/Car'
       responses:
         '201':
           description: Successful POST
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.editor]
+  /cars/locations:
+    get:
+      summary: Get car locations
+      operationId: car_locations_list
+      description: Get a list of all car geolocations, with their linked Hyrde tokens.
+      parameters:
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
+      responses:
+        '200':
+          description: Successful response - returns an array of locations
+          schema:
+            $ref: '#/definitions/CarLocations'
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.read]
   /tokens:
     get:
       summary: Get a list of tokens
@@ -114,8 +116,8 @@ paths:
         - OAuth2AzureAD: [snbplanningapi.planner]
     x-eac-ignore: true
 definitions:
-  Cars:
-    description: Collection of Cars
+  CarLocations:
+    description: Collection of car locations.
     required:
       - type
       - features
@@ -126,7 +128,7 @@ definitions:
       features:
         type: array
         items:
-          $ref: '#/definitions/Car'
+          $ref: '#/definitions/CarLocation'
     example:
       type: FeatureCollection
       features:
@@ -145,8 +147,8 @@ definitions:
               - 5.4
               - 52.5
           properties: {}
-  Car:
-    description: Information about a car
+  CarLocation:
+    description: The location of a car.
     required:
       - type
       - geometry
@@ -189,13 +191,13 @@ definitions:
       coordinates:
         - 5.2,
         - 52.4
-  CarsInfo:
+  Cars:
     properties:
       items:
         type: array
-        $ref: '#/definitions/CarInfo'
-  CarInfo:
-    description: Car Info details
+        $ref: '#/definitions/Car'
+  Car:
+    description: Information on a car and their driver
     example:
       - id: 123456789
         license_plate: AB-12-CD

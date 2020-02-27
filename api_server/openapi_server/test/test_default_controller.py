@@ -9,8 +9,8 @@ from api_server.openapi_server.test import BaseTestCase
 class TestDefaultController(BaseTestCase):
     """DefaultController integration test stubs"""
 
-    def test_cars_get(self):
-        """Test case for cars_get
+    def test_cars_list(self):
+        """Test case for cars_list
 
         Get car locations
         """

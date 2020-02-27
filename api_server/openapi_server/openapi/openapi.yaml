@@ -260,7 +260,6 @@ components:
           start_timestamp: 2000-01-23T04:56:07.000+00:00
           city: city
           administration: administration
-          isGeocoded: true
           project: project
           description: description
           employee_name: employee_name
@@ -268,6 +267,7 @@ components:
           sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           house: house
           end_timestamp: 2000-01-23T04:56:07.000+00:00
+          is_geocoded: true
           street: street
           extra: extra
           stagnation: true
@@ -277,9 +277,9 @@ components:
             coordinates:
               - 5.2,
               - 52.4
+          l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           category: category
           task_type: task_type
-          L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           order_id: order_id
           status: status
       properties:
@@ -294,7 +294,6 @@ components:
         start_timestamp: 2000-01-23T04:56:07.000+00:00
         city: city
         administration: administration
-        isGeocoded: true
         project: project
         description: description
         employee_name: employee_name
@@ -302,6 +301,7 @@ components:
         sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         house: house
         end_timestamp: 2000-01-23T04:56:07.000+00:00
+        is_geocoded: true
         street: street
         extra: extra
         stagnation: true
@@ -311,13 +311,13 @@ components:
           coordinates:
             - 5.2,
             - 52.4
+        l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         category: category
         task_type: task_type
-        L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         order_id: order_id
         status: status
       properties:
-        L2GUID:
+        l2_guid:
           format: uuid
           type: string
         administration:
@@ -354,7 +354,7 @@ components:
           type: string
         extra:
           type: string
-        isGeocoded:
+        is_geocoded:
           type: boolean
         geometry:
           $ref: '#/components/schemas/Geometry'
@@ -386,7 +386,6 @@ components:
       x-scopeValidateFunc: connexion.decorators.security.validate_scope
 x-zally-ignore:
 - 101
-- 105
 - 104
-- 171
-- 118
+- 105
+

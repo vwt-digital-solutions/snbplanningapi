@@ -1,5 +1,4 @@
 # coding: utf-8
-# flake8: noqa
 
 from __future__ import absolute_import
 from datetime import date, datetime  # noqa: F401
@@ -36,13 +35,13 @@ class WorkItem(Model):
         :param description: The description of this WorkItem.  # noqa: E501
         :type description: str
         :param start_timestamp: The start_timestamp of this WorkItem.  # noqa: E501
-        :type start_timestamp: datetime
+        :type start_timestamp: str
         :param end_timestamp: The end_timestamp of this WorkItem.  # noqa: E501
-        :type end_timestamp: datetime
+        :type end_timestamp: str
         :param last_updated: The last_updated of this WorkItem.  # noqa: E501
-        :type last_updated: datetime
+        :type last_updated: str
         :param resolve_before_timestamp: The resolve_before_timestamp of this WorkItem.  # noqa: E501
-        :type resolve_before_timestamp: datetime
+        :type resolve_before_timestamp: str
         :param city: The city of this WorkItem.  # noqa: E501
         :type city: str
         :param zip: The zip of this WorkItem.  # noqa: E501
@@ -76,10 +75,10 @@ class WorkItem(Model):
             'project': str,
             'status': str,
             'description': str,
-            'start_timestamp': datetime,
-            'end_timestamp': datetime,
-            'last_updated': datetime,
-            'resolve_before_timestamp': datetime,
+            'start_timestamp': str,
+            'end_timestamp': str,
+            'last_updated': str,
+            'resolve_before_timestamp': str,
             'city': str,
             'zip': str,
             'house': str,
@@ -95,7 +94,7 @@ class WorkItem(Model):
         }
 
         self.attribute_map = {
-            'l2_guid': 'L2GUID',
+            'l2_guid': 'l2_guid',
             'administration': 'administration',
             'category': 'category',
             'task_type': 'task_type',
@@ -111,7 +110,7 @@ class WorkItem(Model):
             'house': 'house',
             'street': 'street',
             'extra': 'extra',
-            'is_geocoded': 'isGeocoded',
+            'is_geocoded': 'is_geocoded',
             'geometry': 'geometry',
             'employee_name': 'employee_name',
             'employee_number': 'employee_number',
@@ -308,7 +307,7 @@ class WorkItem(Model):
 
 
         :return: The start_timestamp of this WorkItem.
-        :rtype: datetime
+        :rtype: str
         """
         return self._start_timestamp
 
@@ -318,7 +317,7 @@ class WorkItem(Model):
 
 
         :param start_timestamp: The start_timestamp of this WorkItem.
-        :type start_timestamp: datetime
+        :type start_timestamp: str
         """
 
         self._start_timestamp = start_timestamp
@@ -329,7 +328,7 @@ class WorkItem(Model):
 
 
         :return: The end_timestamp of this WorkItem.
-        :rtype: datetime
+        :rtype: str
         """
         return self._end_timestamp
 
@@ -339,7 +338,7 @@ class WorkItem(Model):
 
 
         :param end_timestamp: The end_timestamp of this WorkItem.
-        :type end_timestamp: datetime
+        :type end_timestamp: str
         """
 
         self._end_timestamp = end_timestamp
@@ -350,7 +349,7 @@ class WorkItem(Model):
 
 
         :return: The last_updated of this WorkItem.
-        :rtype: datetime
+        :rtype: str
         """
         return self._last_updated
 
@@ -360,7 +359,7 @@ class WorkItem(Model):
 
 
         :param last_updated: The last_updated of this WorkItem.
-        :type last_updated: datetime
+        :type last_updated: str
         """
 
         self._last_updated = last_updated
@@ -371,7 +370,7 @@ class WorkItem(Model):
 
 
         :return: The resolve_before_timestamp of this WorkItem.
-        :rtype: datetime
+        :rtype: str
         """
         return self._resolve_before_timestamp
 
@@ -381,7 +380,7 @@ class WorkItem(Model):
 
 
         :param resolve_before_timestamp: The resolve_before_timestamp of this WorkItem.
-        :type resolve_before_timestamp: datetime
+        :type resolve_before_timestamp: str
         """
 
         self._resolve_before_timestamp = resolve_before_timestamp

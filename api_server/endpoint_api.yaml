@@ -1,6 +1,6 @@
 ---
 swagger: '2.0'
-x-zally-ignore: [101, 105, 104, 171, 118]
+x-zally-ignore: [101, 104, 105]
 info:
   title: snbplanningtool
   description: Endpoint to retreive the latest car locations
@@ -234,7 +234,7 @@ definitions:
   WorkItem:
     description: Link2 work item
     properties:
-      L2GUID:
+      l2_guid:
         type: string
         format: uuid
       administration:
@@ -271,7 +271,7 @@ definitions:
         type: string
       extra:
         type: string
-      isGeocoded:
+      is_geocoded:
         type: boolean
       geometry:
         $ref: '#/definitions/Geometry'

@@ -236,7 +236,7 @@ components:
         token: some-token-value
       properties:
         id:
-          type: integer
+          type: string
         license_plate:
           type: string
         driver_name:
@@ -397,6 +397,5 @@ x-zally-ignore:
 - 105
 - 104
 - 134
-- 174
 - 171
 - 118

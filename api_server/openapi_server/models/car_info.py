@@ -19,7 +19,7 @@ class CarInfo(Model):
         """CarInfo - a model defined in OpenAPI
 
         :param id: The id of this CarInfo.  # noqa: E501
-        :type id: int
+        :type id: str
         :param license_plate: The license_plate of this CarInfo.  # noqa: E501
         :type license_plate: str
         :param driver_name: The driver_name of this CarInfo.  # noqa: E501
@@ -30,7 +30,7 @@ class CarInfo(Model):
         :type token: str
         """
         self.openapi_types = {
-            'id': int,
+            'id': str,
             'license_plate': str,
             'driver_name': str,
             'driver_skill': str,
@@ -68,7 +68,7 @@ class CarInfo(Model):
 
 
         :return: The id of this CarInfo.
-        :rtype: int
+        :rtype: str
         """
         return self._id
 
@@ -78,7 +78,7 @@ class CarInfo(Model):
 
 
         :param id: The id of this CarInfo.
-        :type id: int
+        :type id: str
         """
 
         self._id = id

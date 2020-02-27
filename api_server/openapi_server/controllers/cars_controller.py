@@ -68,7 +68,7 @@ def carsinfo_get(offset):
     query = db_client.query(kind='CarInfo')
 
     result = [{
-            "id": entity.key.id_or_name,
+            "id": str(entity.key.id_or_name),
             "license_plate": entity['license_plate'],
             "driver_name": entity['driver_name'],
             "driver_skill": entity.get('driver_skill', None),

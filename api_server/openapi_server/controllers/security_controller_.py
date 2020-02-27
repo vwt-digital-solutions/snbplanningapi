@@ -6,6 +6,7 @@ from flask import g
 
 my_jwkaas = None
 my_e2e_jwkaas = None
+my_b2b_jwkaas = None
 
 if hasattr(config, 'OAUTH_JWKS_URL'):
     my_jwkaas = JWKaas(config.OAUTH_EXPECTED_AUDIENCE,

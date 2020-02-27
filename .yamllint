@@ -2,5 +2,5 @@
 extends: default
 
 ignore : |
-  *.yaml
+  api_server/openapi_server/openapi/openapi.yaml
 

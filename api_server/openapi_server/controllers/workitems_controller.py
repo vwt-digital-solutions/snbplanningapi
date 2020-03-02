@@ -7,6 +7,7 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
+from openapi_server.controllers.util import remap_attributes
 from openapi_server.models import WorkItem
 
 work_items_statuses = ['Te Plannen', 'Gepland', 'Niet Gereed']
@@ -60,17 +61,6 @@ def get_work_items():
     if hasattr(config, 'TASK_TYPE_STARTSWITH'):
         query.add_filter('task_type', '>=', config.TASK_TYPE_STARTSWITH)
 
-    work_items = [remap_attributes(res) for res in query.fetch() if res['status'] in work_items_statuses]
+    work_items = [remap_attributes(res, work_item_attribute_map)
+                  for res in query.fetch() if res['status'] in work_items_statuses]
     return work_items
-
-
-def remap_attributes(work_item):
-    """Map attributes from one key to another on the given dictionary.
-
-    :rtype: a dictionary
-        """
-    for(from_key, to_key) in work_item_attribute_map.items():
-        work_item[to_key] = work_item.get(from_key, None)
-        del work_item[from_key]
-
-    return work_item

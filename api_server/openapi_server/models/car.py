@@ -15,7 +15,7 @@ class Car(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, license_plate=None, driver_name=None, driver_skill=None, token=None):  # noqa: E501
+    def __init__(self, id=None, license_plate=None, driver_name=None, driver_skill=None, driver_employee_number=None, token=None):  # noqa: E501
         """Car - a model defined in OpenAPI
 
         :param id: The id of this Car.  # noqa: E501
@@ -26,6 +26,8 @@ class Car(Model):
         :type driver_name: str
         :param driver_skill: The driver_skill of this Car.  # noqa: E501
         :type driver_skill: str
+        :param driver_employee_number: The driver_employee_number of this Car.  # noqa: E501
+        :type driver_employee_number: str
         :param token: The token of this Car.  # noqa: E501
         :type token: str
         """
@@ -34,6 +36,7 @@ class Car(Model):
             'license_plate': str,
             'driver_name': str,
             'driver_skill': str,
+            'driver_employee_number': str,
             'token': str
         }
 
@@ -42,6 +45,7 @@ class Car(Model):
             'license_plate': 'license_plate',
             'driver_name': 'driver_name',
             'driver_skill': 'driver_skill',
+            'driver_employee_number': 'driver_employee_number',
             'token': 'token'
         }
 
@@ -49,6 +53,7 @@ class Car(Model):
         self._license_plate = license_plate
         self._driver_name = driver_name
         self._driver_skill = driver_skill
+        self._driver_employee_number = driver_employee_number
         self._token = token
 
     @classmethod
@@ -149,6 +154,27 @@ class Car(Model):
         """
 
         self._driver_skill = driver_skill
+
+    @property
+    def driver_employee_number(self):
+        """Gets the driver_employee_number of this Car.
+
+
+        :return: The driver_employee_number of this Car.
+        :rtype: str
+        """
+        return self._driver_employee_number
+
+    @driver_employee_number.setter
+    def driver_employee_number(self, driver_employee_number):
+        """Sets the driver_employee_number of this Car.
+
+
+        :param driver_employee_number: The driver_employee_number of this Car.
+        :type driver_employee_number: str
+        """
+
+        self._driver_employee_number = driver_employee_number
 
     @property
     def token(self):

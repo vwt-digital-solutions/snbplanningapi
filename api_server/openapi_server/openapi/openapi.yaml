@@ -235,6 +235,8 @@ components:
           type: string
         driver_skill:
           type: string
+        driver_employee_number:
+          type: string
         token:
           type: string
       required:
@@ -388,4 +390,3 @@ x-zally-ignore:
 - 101
 - 104
 - 105
-

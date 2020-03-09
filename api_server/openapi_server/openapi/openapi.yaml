@@ -234,6 +234,14 @@ components:
         driver_name:
           type: string
         driver_skill:
+          enum:
+          - Metende
+          - Lasser
+          - Leerling
+          - Kraanmachinist
+          - Overig
+          - NLS
+          - Cluster
           type: string
         driver_employee_number:
           type: string

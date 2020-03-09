@@ -235,6 +235,7 @@ components:
           type: string
         driver_skill:
           enum:
+          - ""
           - Metende
           - Lasser
           - Leerling

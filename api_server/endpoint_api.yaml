@@ -213,7 +213,7 @@ definitions:
         type: string
       driver_skill:
         type: string
-        enum: [Metende, Lasser, Leerling, Kraanmachinist, Overig, NLS, Cluster]
+        enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
       driver_employee_number:
         type: string
       token:

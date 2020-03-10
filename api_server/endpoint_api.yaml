@@ -1,4 +1,6 @@
+---
 swagger: '2.0'
+x-zally-ignore: [101, 104, 105]
 info:
   title: snbplanningtool
   description: Endpoint to retreive the latest car locations
@@ -18,27 +20,9 @@ produces:
 paths:
   /cars:
     get:
-      summary: Get car locations
-      description: Get a list of all car geolocations
-      parameters:
-        - in: query
-          name: offset
-          type: integer
-          required: false
-          default: 168
-          description: Time offset range in hours for retrieving entries
-      responses:
-        '200':
-          description: Successful response - returns an array of locations
-          schema:
-            $ref: '#/definitions/Cars'
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-      security:
-        - OAuth2AzureAD: [snbplanningapi.read]
-  /carsinfo:
-    get:
       summary: Get car info
-      description: Get a list of all car geolocations with info
+      operationId: cars_list
+      description: Get a list of all cars and their driver information.
       parameters:
         - in: query
           name: offset
@@ -50,7 +34,7 @@ paths:
         '200':
           description: Successful response - returns an array of locations with info
           schema:
-            $ref: '#/definitions/CarsInfo'
+            $ref: '#/definitions/Cars'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -64,13 +48,33 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CarInfo'
+            $ref: '#/definitions/Car'
       responses:
         '201':
           description: Successful POST
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.editor]
+  /cars/locations:
+    get:
+      summary: Get car locations
+      operationId: car_locations_list
+      description: Get a list of all car geolocations, with their linked Hyrde tokens.
+      parameters:
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
+      responses:
+        '200':
+          description: Successful response - returns an array of locations
+          schema:
+            $ref: '#/definitions/CarLocations'
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.read]
   /tokens:
     get:
       summary: Get a list of tokens
@@ -90,10 +94,17 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
-  /workitems/active:
+  /workitems:
     get:
       summary: Get a list of work items
       description: List of work items
+      parameters:
+        - in: query
+          name: active
+          type: boolean
+          required: false
+          default: false
+          description: Select only active workitems. When set to false, retrieves all workitems
       operationId: list_work_items
       responses:
         200:
@@ -103,22 +114,10 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
-  /workitems/all:
-    get:
-      summary: Get a list of work items
-      description: List of work items
-      operationId: list_all_work_items
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/WorkItems'
-      x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      security:
-        - OAuth2AzureAD: [snbplanningapi.planner]
+    x-eac-ignore: true
 definitions:
-  Cars:
-    description: Collection of Cars
+  CarLocations:
+    description: Collection of car locations.
     required:
       - type
       - features
@@ -129,7 +128,7 @@ definitions:
       features:
         type: array
         items:
-          $ref: '#/definitions/Car'
+          $ref: '#/definitions/CarLocation'
     example:
       type: FeatureCollection
       features:
@@ -148,8 +147,8 @@ definitions:
               - 5.4
               - 52.5
           properties: {}
-  Car:
-    description: Information about a car
+  CarLocation:
+    description: The location of a car.
     required:
       - type
       - geometry
@@ -192,33 +191,36 @@ definitions:
       coordinates:
         - 5.2,
         - 52.4
-  CarsInfo:
+  Cars:
     properties:
       items:
         type: array
-        $ref: '#/definitions/CarInfo'
-  CarInfo:
-      description: Car Info details
-      example:
-        - id: 123456789
-          license_plate: AB-12-CD
-          driver_name: Billy Gates
-          driver_skill: Metende
-          token: some-token-value
-      properties:
-        id:
-          type: integer
-        license_plate:
-          type: string
-        driver_name:
-          type: string
-        driver_skill:
-            type: string
-        token:
-          type: string
-      required:
-        - license_plate
-        - driver_name
+        $ref: '#/definitions/Car'
+  Car:
+    description: Information on a car and their driver
+    example:
+      - id: 123456789
+        license_plate: AB-12-CD
+        driver_name: Billy Gates
+        driver_skill: Metende
+        token: some-token-value
+    properties:
+      id:
+        type: string
+      license_plate:
+        type: string
+      driver_name:
+        type: string
+      driver_skill:
+        type: string
+        enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
+      driver_employee_number:
+        type: string
+      token:
+        type: string
+    required:
+      - license_plate
+      - driver_name
   Tokens:
     description: Collection of list with tokens
     required:
@@ -235,45 +237,58 @@ definitions:
   WorkItem:
     description: Link2 work item
     properties:
+      l2_guid:
+        type: string
+        format: uuid
       administration:
         type: string
-      duration:
-        type: integer
+      category:
+        type: string
+      task_type:
+        type: string
+      project:
+        type: string
+      status:
+        type: string
+      description:
+        type: string
       start_timestamp:
         type: string
         format: date-time
       end_timestamp:
         type: string
         format: date-time
-      L2GUID:
+      last_updated:
         type: string
-        format: uuid
-      employee_name:
+        format: date-time
+      resolve_before_timestamp:
         type: string
-      employee_number:
-        type: string
-      description:
-        type: string
+        format: date-time
       city:
         type: string
       zip:
         type: string
-      project_number:
-        type: string
-      status:
+      house:
         type: string
       street:
         type: string
       extra:
         type: string
-      hours_category:
-        type: string
-      task_number:
-        type: string
-      task_type:
-        type: string
+      is_geocoded:
+        type: boolean
       geometry:
         $ref: '#/definitions/Geometry'
+      employee_name:
+        type: string
+      employee_number:
+        type: string
+      order_id:
+        type: string
+      sub_order_id:
+        type: string
+        format: uuid
+      stagnation:
+        type: boolean
 securityDefinitions:
   OAuth2AzureAD:
     type: oauth2

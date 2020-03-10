@@ -18,7 +18,11 @@ app.app.json_encoder = encoder.JSONEncoder
 app.add_api('openapi.yaml',
             arguments={'title': 'snbplanningtool'},
             pythonic_params=True)
-CORS(app.app)
+if 'GAE_INSTANCE' in os.environ:
+    CORS(app.app, origins=config.ORIGINS)
+else:
+    CORS(app.app)
+
 
 @app.app.before_request
 def before_request():

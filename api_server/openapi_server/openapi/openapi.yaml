@@ -1,5 +1,4 @@
 openapi: 3.0.1
-x-zally-ignore: [101, 105, 104, 134, 174, 171, 118]
 info:
   contact:
     email: opensource@vwt.digital
@@ -18,8 +17,8 @@ servers:
 paths:
   /cars:
     get:
-      description: Get a list of all car geolocations
-      operationId: cars_get
+      description: Get a list of all cars and their driver information.
+      operationId: cars_list
       parameters:
       - description: Time offset range in hours for retrieving entries
         in: query
@@ -33,16 +32,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cars'
-          description: Successful response - returns an array of locations
+          description: Successful response - returns an array of locations with info
       security:
       - OAuth2AzureAD:
-        - snbplanningapi.read
-      summary: Get car locations
+        - snbplanningapi.planner
+      summary: Get car info
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /carsinfo:
+    post:
+      description: Post a list of all car geolocations with info
+      operationId: cars_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
+        required: true
+      responses:
+        201:
+          content: {}
+          description: Successful POST
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.editor
+      summary: Post car info
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      x-codegen-request-body-name: body
+  /cars/locations:
     get:
-      description: Get a list of all car geolocations with info
-      operationId: carsinfo_get
+      description: Get a list of all car geolocations, with their linked Hyrde tokens.
+      operationId: car_locations_list
       parameters:
       - description: Time offset range in hours for retrieving entries
         in: query
@@ -55,32 +73,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarsInfo'
-          description: Successful response - returns an array of locations with info
+                $ref: '#/components/schemas/CarLocations'
+          description: Successful response - returns an array of locations
       security:
       - OAuth2AzureAD:
-        - snbplanningapi.planner
-      summary: Get car info
+        - snbplanningapi.read
+      summary: Get car locations
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-    post:
-      description: Post a list of all car geolocations with info
-      operationId: carsinfo_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CarInfo'
-        required: true
-      responses:
-        201:
-          content: {}
-          description: Successful POST
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.editor
-      summary: Post car info
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-      x-codegen-request-body-name: body
   /tokens:
     get:
       description: List of tokens
@@ -103,10 +102,18 @@ paths:
         - snbplanningapi.read
       summary: Get a list of tokens
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /workitems/active:
+  /workitems:
     get:
       description: List of work items
       operationId: list_work_items
+      parameters:
+      - description: Select only active workitems. When set to false, retrieves all
+          workitems
+        in: query
+        name: active
+        schema:
+          default: false
+          type: boolean
       responses:
         200:
           content:
@@ -119,27 +126,11 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-    x-eac-ignore: True
-  /workitems/all:
-    get:
-      description: List of work items
-      operationId: list_all_work_items
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkItems'
-          description: OK
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.planner
-      summary: Get a list of work items
-      x-openapi-router-controller: openapi_server.controllers.workitems_controller
+    x-eac-ignore: true
 components:
   schemas:
-    Cars:
-      description: Collection of Cars
+    CarLocations:
+      description: Collection of car locations.
       example:
         type: FeatureCollection
         features:
@@ -163,14 +154,14 @@ components:
           type: string
         features:
           items:
-            $ref: '#/components/schemas/Car'
+            $ref: '#/components/schemas/CarLocation'
           type: array
       required:
       - features
       - type
       type: object
-    Car:
-      description: Information about a car
+    CarLocation:
+      description: The location of a car.
       example:
         type: Feature
         geometry:
@@ -215,7 +206,7 @@ components:
       - coordinates
       - type
       type: object
-    CarsInfo:
+    Cars:
       example:
         items:
         - id: 123456789
@@ -225,10 +216,10 @@ components:
           token: some-token-value
       properties:
         items:
-          $ref: '#/components/schemas/CarInfo'
+          $ref: '#/components/schemas/Car'
       type: object
-    CarInfo:
-      description: Car Info details
+    Car:
+      description: Information on a car and their driver
       example:
       - id: 123456789
         license_plate: AB-12-CD
@@ -237,12 +228,23 @@ components:
         token: some-token-value
       properties:
         id:
-          type: integer
+          type: string
         license_plate:
           type: string
         driver_name:
           type: string
         driver_skill:
+          enum:
+          - ""
+          - Metende
+          - Lasser
+          - Leerling
+          - Kraanmachinist
+          - Overig
+          - NLS
+          - Cluster
+          type: string
+        driver_employee_number:
           type: string
         token:
           type: string
@@ -265,26 +267,31 @@ components:
       example:
         items:
           zip: zip
+          last_updated: 2000-01-23T04:56:07.000+00:00
           start_timestamp: 2000-01-23T04:56:07.000+00:00
           city: city
           administration: administration
+          project: project
           description: description
           employee_name: employee_name
-          duration: 0
+          resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+          sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          house: house
           end_timestamp: 2000-01-23T04:56:07.000+00:00
-          project_number: project_number
+          is_geocoded: true
           street: street
           extra: extra
+          stagnation: true
           employee_number: employee_number
-          hours_category: hours_category
-          task_number: task_number
           geometry: |-
             type: "Point",
             coordinates:
               - 5.2,
               - 52.4
+          l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          category: category
           task_type: task_type
-          L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          order_id: order_id
           status: status
       properties:
         items:
@@ -294,67 +301,85 @@ components:
       description: Link2 work item
       example:
         zip: zip
+        last_updated: 2000-01-23T04:56:07.000+00:00
         start_timestamp: 2000-01-23T04:56:07.000+00:00
         city: city
         administration: administration
+        project: project
         description: description
         employee_name: employee_name
-        duration: 0
+        resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+        sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        house: house
         end_timestamp: 2000-01-23T04:56:07.000+00:00
-        project_number: project_number
+        is_geocoded: true
         street: street
         extra: extra
+        stagnation: true
         employee_number: employee_number
-        hours_category: hours_category
-        task_number: task_number
         geometry: |-
           type: "Point",
           coordinates:
             - 5.2,
             - 52.4
+        l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        category: category
         task_type: task_type
-        L2GUID: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        order_id: order_id
         status: status
       properties:
+        l2_guid:
+          format: uuid
+          type: string
         administration:
           type: string
-        duration:
-          type: integer
+        category:
+          type: string
+        task_type:
+          type: string
+        project:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
         start_timestamp:
           format: date-time
           type: string
         end_timestamp:
           format: date-time
           type: string
-        L2GUID:
-          format: uuid
+        last_updated:
+          format: date-time
           type: string
-        employee_name:
-          type: string
-        employee_number:
-          type: string
-        description:
+        resolve_before_timestamp:
+          format: date-time
           type: string
         city:
           type: string
         zip:
           type: string
-        project_number:
-          type: string
-        status:
+        house:
           type: string
         street:
           type: string
         extra:
           type: string
-        hours_category:
-          type: string
-        task_number:
-          type: string
-        task_type:
-          type: string
+        is_geocoded:
+          type: boolean
         geometry:
           $ref: '#/components/schemas/Geometry'
+        employee_name:
+          type: string
+        employee_number:
+          type: string
+        order_id:
+          type: string
+        sub_order_id:
+          format: uuid
+          type: string
+        stagnation:
+          type: boolean
       type: object
   securitySchemes:
     OAuth2AzureAD:
@@ -370,3 +395,7 @@ components:
       type: oauth2
       x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
       x-scopeValidateFunc: connexion.decorators.security.validate_scope
+x-zally-ignore:
+- 101
+- 104
+- 105

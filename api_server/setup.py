@@ -36,3 +36,4 @@ setup(
     Endpoint to retreive the latest car locations
     """
 )
+

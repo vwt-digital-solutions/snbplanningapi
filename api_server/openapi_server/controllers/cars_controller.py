@@ -5,6 +5,7 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
+from openapi_server.models import Car
 
 """
 API endpoints.
@@ -12,7 +13,7 @@ API endpoints.
 
 
 @cache.memoize(timeout=300)
-def cars_get(offset):
+def car_locations_list(offset):
     """Get car locations
 
     Get a list of all car geolocations.
@@ -55,7 +56,7 @@ def cars_get(offset):
 
 
 @cache.memoize(timeout=300)
-def carsinfo_get(offset):
+def cars_list(offset):
     """Get car info
 
     Get a list of all car information
@@ -67,18 +68,19 @@ def carsinfo_get(offset):
     db_client = datastore.Client()
     query = db_client.query(kind='CarInfo')
 
-    result = [{
-            "id": entity.key.id_or_name,
-            "license_plate": entity['license_plate'],
-            "driver_name": entity['driver_name'],
-            "driver_skill": entity.get('driver_skill', None),
-            "token": entity['token']
-        } for entity in query.fetch()]
+    query_iter = query.fetch()
+
+    result = []
+
+    for entity in query_iter:
+        car = Car.from_dict(entity)
+        car.id = str(entity.key.id_or_name)
+        result.append(car)
 
     return make_response(jsonify(result), 200)
 
 
-def carsinfo_post(body):
+def cars_post(body):
     """Post car info
 
     Post a car information
@@ -87,28 +89,24 @@ def carsinfo_post(body):
     :rtype: CarInfo id
 
     """
-    carinfo = body
+    car_info = Car.from_dict(body).to_dict()
     entity = None
     db_client = datastore.Client()
 
     # for unknown reason attribute 'id' is received as 'id_'
-    if 'id_' in carinfo and carinfo['id_'] is not None:
-        carinfo_key = db_client.key('CarInfo', carinfo['id_'])
-        entity = db_client.get(carinfo_key)
+    if 'id_' in body and body['id_'] is not None:
+        car_info_key = db_client.key('CarInfo', int(body['id_']))
+        entity = db_client.get(car_info_key)
         if entity is None:
-            entity = datastore.Entity(key=carinfo_key)
+            entity = datastore.Entity(key=car_info_key)
+        car_info['id'] = entity.key.id_or_name
     else:
         entity = datastore.Entity(db_client.key('CarInfo'))
 
-    entity.update({
-        "license_plate": carinfo['license_plate'],
-        "driver_name": carinfo['driver_name'],
-        "driver_skill": carinfo.get('driver_skill', None),
-        "token": carinfo['token']
-    })
+    entity.update(car_info)
     db_client.put(entity)
 
-    return make_response(jsonify(carinfo_id=entity.key.id_or_name), 201)
+    return make_response(jsonify(carinfo_id=str(entity.key.id_or_name)), 201)
 
 
 @cache.cached(timeout=300, key_prefix="list_tokens")

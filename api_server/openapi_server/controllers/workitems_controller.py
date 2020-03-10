@@ -7,38 +7,60 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
+from openapi_server.controllers.util import remap_attributes
+from openapi_server.models import WorkItem
+
+work_items_statuses = ['Te Plannen', 'Gepland', 'Niet Gereed']
+work_item_attribute_map = {
+    'L2GUID': 'l2_guid',
+    'isGeocoded': 'is_geocoded'
+}
 
 
-@cache.cached(timeout=300, key_prefix="work_items")
-def list_work_items():  # noqa: E501
+"""
+Controller functions
+"""
+
+
+@cache.memoize(timeout=300)
+def list_work_items(active=False):  # noqa: E501
     """Get a list of work items
 
     Get a list of work items # noqa: E501
+
+    :rtype: a response containing an array of work items
+    """
+    result = get_work_items()
+
+    if active:
+        result = [res for res in result if
+                  isinstance(res.get('start_timestamp', None), datetime.datetime) and
+                  isinstance(res.get('end_timestamp', None), datetime.datetime) and
+                  res.get('start_timestamp', None) < datetime.datetime.now(pytz.utc) < res.get('end_timestamp', None)]
+
+    work_items_list = [WorkItem.from_dict(res) for res in result]
+
+    return make_response(jsonify(work_items_list), 200, {'cache-control': 'private, max-age=300'})
+
+
+"""
+Helper functions
+"""
+
+
+@cache.cached(timeout=300, key_prefix='retrieve_workitems_from_datastore')
+def get_work_items():
+    """Get a list of work items
+
+    Get a list of work items from the DataStore # noqa: E501
 
     :rtype: array of work items
     """
     db_client = datastore.Client()
     query = db_client.query(kind='WorkItem')
-    result = [res for res in query.fetch() if
-              res['start_timestamp'] < datetime.datetime.now(pytz.utc) < res['end_timestamp'] and
-              res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed'] and
-              (not hasattr(config, 'TASK_TYPE_STARTSWITH') or res['task_type'].startswith(config.TASK_TYPE_STARTSWITH))]
+    if hasattr(config, 'TASK_TYPE_STARTSWITH'):
+        query.add_filter('task_type', '>=', config.TASK_TYPE_STARTSWITH)
 
-    return make_response(jsonify(result), 200, {'cache-control': 'private, max-age=300'})
-
-
-@cache.cached(timeout=300, key_prefix="all_work_items")
-def list_all_work_items():  # noqa: E501
-    """Get a list of work items
-
-    Get a list of work items # noqa: E501
-
-
-    :rtype: array of work items
-    """
-    db_client = datastore.Client()
-    query = db_client.query(kind='WorkItem')
-    query.add_filter('task_type', '>=', config.TASK_TYPE_STARTSWITH)
-    result = [res for res in query.fetch() if res['status'] in ['Te Plannen', 'Gepland', 'Niet Gereed']]
-
-    return make_response(jsonify(result), 200, {'cache-control': 'private, max-age=300'})
+    work_items = [remap_attributes(res, work_item_attribute_map)
+                  for res in query.fetch() if res['status'] in work_items_statuses]
+    return work_items

@@ -1,5 +1,4 @@
 # coding: utf-8
-# flake8: noqa
 
 from __future__ import absolute_import
 from datetime import date, datetime  # noqa: F401
@@ -18,26 +17,21 @@ class Cars(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, type=None, features=None):  # noqa: E501
+    def __init__(self, items=None):  # noqa: E501
         """Cars - a model defined in OpenAPI
 
-        :param type: The type of this Cars.  # noqa: E501
-        :type type: str
-        :param features: The features of this Cars.  # noqa: E501
-        :type features: List[Car]
+        :param items: The items of this Cars.  # noqa: E501
+        :type items: Car
         """
         self.openapi_types = {
-            'type': str,
-            'features': List[Car]
+            'items': Car
         }
 
         self.attribute_map = {
-            'type': 'type',
-            'features': 'features'
+            'items': 'items'
         }
 
-        self._type = type
-        self._features = features
+        self._items = items
 
     @classmethod
     def from_dict(cls, dikt) -> 'Cars':
@@ -51,47 +45,22 @@ class Cars(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def type(self):
-        """Gets the type of this Cars.
+    def items(self):
+        """Gets the items of this Cars.
 
 
-        :return: The type of this Cars.
-        :rtype: str
+        :return: The items of this Cars.
+        :rtype: Car
         """
-        return self._type
+        return self._items
 
-    @type.setter
-    def type(self, type):
-        """Sets the type of this Cars.
+    @items.setter
+    def items(self, items):
+        """Sets the items of this Cars.
 
 
-        :param type: The type of this Cars.
-        :type type: str
+        :param items: The items of this Cars.
+        :type items: Car
         """
-        if type is None:
-            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
 
-        self._type = type
-
-    @property
-    def features(self):
-        """Gets the features of this Cars.
-
-
-        :return: The features of this Cars.
-        :rtype: List[Car]
-        """
-        return self._features
-
-    @features.setter
-    def features(self, features):
-        """Sets the features of this Cars.
-
-
-        :param features: The features of this Cars.
-        :type features: List[Car]
-        """
-        if features is None:
-            raise ValueError("Invalid value for `features`, must not be `None`")  # noqa: E501
-
-        self._features = features
+        self._items = items

@@ -1,0 +1,6 @@
+---
+extends: default
+
+ignore : |
+  api_server/openapi_server/openapi/openapi.yaml
+

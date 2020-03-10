@@ -166,9 +166,11 @@ definitions:
         description: the Hyrde car token
       distance:
         type: number
+        format: decimal
         description: distance in km.
       travel_time:
         type: integer
+        format: int32
         description: Estimated travel time in seconds.
     example:
       token: 'vwt/hyrde/01202321'

@@ -196,9 +196,11 @@ components:
           type: string
         distance:
           description: distance in km.
+          format: decimal
           type: number
         travel_time:
           description: Estimated travel time in seconds.
+          format: int32
           type: integer
       type: object
     CarLocations:

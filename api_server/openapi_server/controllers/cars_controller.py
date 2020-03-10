@@ -5,7 +5,8 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
-from openapi_server.models import Car
+from openapi_server.models import Car, CarDistance, CarDistances
+from openapi_server.contrib.distance import calculate_distance
 
 """
 API endpoints.
@@ -130,6 +131,39 @@ def list_tokens(assigned):
               if is_assigned(token.key.id_or_name, car_tokens, assigned)]
 
     return jsonify(tokens)
+
+
+@cache.memoize(timeout=300)
+def car_distances_list(work_item: str, sort, limit):
+    """Get a list of carlocations together with their travel time in seconds,
+     ordered by the distance from specified workitem"""
+
+    db_client = datastore.Client()
+
+    work_item_entity = db_client.get(db_client.key('WorkItem', work_item))
+
+    # Get all CarLocations
+    query = db_client.query(kind='CarLocation')
+    query_iter = query.fetch()
+
+    # Filter CarLocations on matchin CarInfo
+    car_info_tokens = get_car_info_tokens(db_client)
+    query_iter = [car_location for car_location in query_iter
+                  if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]
+
+    # Calculate euclidean distances for all locations
+    car_distances = [(calculate_distance(work_item_entity, car_location), car_location)
+                     for car_location in query_iter]
+
+    # Sort and splice distances.
+    car_distances = sorted(car_distances, key=lambda tup: tup[0])
+    car_distances = car_distances[:limit]
+
+    # Generate valid CarDistances response.
+    car_distances = [CarDistance(token=tup[1].key.id_or_name, distance=tup[0], travel_time=round(tup[0] * 90)) for tup in car_distances]
+    result = CarDistances(items=car_distances)
+
+    return make_response(jsonify(result), 200)
 
 
 """

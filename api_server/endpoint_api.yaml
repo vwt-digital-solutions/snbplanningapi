@@ -75,6 +75,39 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
+  /cars/distances:
+    get:
+      summary: Get car distances from a point or workitem
+      operationId: car_distances_list
+      description: Get a list of Hyrde car tokens along with the distance and travel time from the specified point.
+                   Only returns tokens linked to cars.
+      parameters:
+        - in: query
+          name: work_item
+          type: string
+          required: true
+          description: The workitem for which to find the nearest car locations
+        - in: query
+          name: sort
+          type: string
+          enum: [travel_time, distance]
+          required: false
+          default: travel_time
+          description: Sort results by distance or travel time.
+        - in: query
+          name: limit
+          type: integer
+          required: false
+          default: 3
+          description: Total numer of distances to return.
+      responses:
+        '200':
+          description: Successful response - returns an array of distances
+          schema:
+            $ref: '#/definitions/CarDistances'
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
   /tokens:
     get:
       summary: Get a list of tokens
@@ -116,6 +149,31 @@ paths:
         - OAuth2AzureAD: [snbplanningapi.planner]
     x-eac-ignore: true
 definitions:
+  CarDistances:
+    description: Collection of car distances.
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/CarDistance'
+  CarDistance:
+    description: Hyrde token with distance and traveltime.
+    type: object
+    properties:
+      token:
+        type: string
+        description: the Hyrde car token
+      distance:
+        type: number
+        description: distance in km.
+      travel_time:
+        type: integer
+        description: Estimated travel time in seconds.
+    example:
+      token: 'vwt/hyrde/01202321'
+      distance: 5.0
+      travel_time: 1200
   CarLocations:
     description: Collection of car locations.
     required:

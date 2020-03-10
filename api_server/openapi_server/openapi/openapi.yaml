@@ -57,6 +57,45 @@ paths:
       summary: Post car info
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       x-codegen-request-body-name: body
+  /cars/distances:
+    get:
+      description: Get a list of Hyrde car tokens along with the distance and travel
+        time from the specified point. Only returns tokens linked to cars.
+      operationId: car_distances_list
+      parameters:
+      - description: The workitem for which to find the nearest car locations
+        in: query
+        name: work_item
+        required: true
+        schema:
+          type: string
+      - description: Sort results by distance or travel time.
+        in: query
+        name: sort
+        schema:
+          default: travel_time
+          enum:
+          - travel_time
+          - distance
+          type: string
+      - description: Total numer of distances to return.
+        in: query
+        name: limit
+        schema:
+          default: 3
+          type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDistances'
+          description: Successful response - returns an array of distances
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.planner
+      summary: Get car distances from a point or workitem
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /cars/locations:
     get:
       description: Get a list of all car geolocations, with their linked Hyrde tokens.
@@ -129,6 +168,39 @@ paths:
     x-eac-ignore: true
 components:
   schemas:
+    CarDistances:
+      description: Collection of car distances.
+      example:
+        items:
+        - token: vwt/hyrde/01202321
+          distance: 5.0
+          travel_time: 1200
+        - token: vwt/hyrde/01202321
+          distance: 5.0
+          travel_time: 1200
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CarDistance'
+          type: array
+      type: object
+    CarDistance:
+      description: Hyrde token with distance and traveltime.
+      example:
+        token: vwt/hyrde/01202321
+        distance: 5.0
+        travel_time: 1200
+      properties:
+        token:
+          description: the Hyrde car token
+          type: string
+        distance:
+          description: distance in km.
+          type: number
+        travel_time:
+          description: Estimated travel time in seconds.
+          type: integer
+      type: object
     CarLocations:
       description: Collection of car locations.
       example:

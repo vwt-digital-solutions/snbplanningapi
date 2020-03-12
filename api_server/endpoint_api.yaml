@@ -88,6 +88,12 @@ paths:
           required: true
           description: The workitem for which to find the nearest car locations
         - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
+        - in: query
           name: sort
           type: string
           enum: [travel_time, distance]

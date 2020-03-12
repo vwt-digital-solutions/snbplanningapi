@@ -6,11 +6,12 @@ from google.cloud import datastore
 
 from cache import cache
 from openapi_server.models import Car, CarDistance, CarDistances
-from openapi_server.contrib.distance import calculate_distance
+from openapi_server.contrib.distance import calculate_distance, calculate_travel_times
 
 """
 API endpoints.
 """
+db_client = datastore.Client()
 
 
 @cache.memoize(timeout=300)
@@ -23,28 +24,16 @@ def car_locations_list(offset):
     This function only includes CarLocations whose token is assigned to a CarInfo.
 
     :rtype: Cars
-
     """
-    db_client = datastore.Client()
 
-    # Get initial query of all car locations
-    offset_date = datetime.datetime.utcnow() - datetime.timedelta(hours=offset)
-    offset_date = offset_date.isoformat()
-    query = db_client.query(kind='CarLocation')
-    query.add_filter('when', '>=', offset_date)
-    query_iter = query.fetch()
-
-    # Filter query on CarInfo tokens
-    car_info_tokens = get_car_info_tokens(db_client)
-    query_iter = [car_location for car_location in query_iter
-                  if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]
+    car_locations = get_car_locations(db_client, True, offset)
 
     result = {
         "type": "FeatureCollection",
         "features": []
     }
 
-    for entity in query_iter:
+    for entity in car_locations:
         result['features'].append({
             "type": "Feature",
             "geometry": entity['geometry'],
@@ -66,7 +55,6 @@ def cars_list(offset):
     :rtype: CarsInfo
 
     """
-    db_client = datastore.Client()
     query = db_client.query(kind='CarInfo')
 
     query_iter = query.fetch()
@@ -92,7 +80,6 @@ def cars_post(body):
     """
     car_info = Car.from_dict(body).to_dict()
     entity = None
-    db_client = datastore.Client()
 
     # for unknown reason attribute 'id' is received as 'id_'
     if 'id_' in body and body['id_'] is not None:
@@ -120,7 +107,6 @@ def list_tokens(assigned):
     :rtype list of strings
 
     """
-    db_client = datastore.Client()
     tokens_query = db_client.query(kind='CarLocation')
     car_tokens = []
 
@@ -134,33 +120,29 @@ def list_tokens(assigned):
 
 
 @cache.memoize(timeout=300)
-def car_distances_list(work_item: str, sort, limit):
+def car_distances_list(work_item: str, offset, sort, limit):
     """Get a list of carlocations together with their travel time in seconds,
      ordered by the distance from specified workitem"""
 
-    db_client = datastore.Client()
-
     work_item_entity = db_client.get(db_client.key('WorkItem', work_item))
 
-    # Get all CarLocations
-    query = db_client.query(kind='CarLocation')
-    query_iter = query.fetch()
-
-    # Filter CarLocations on matchin CarInfo
-    car_info_tokens = get_car_info_tokens(db_client)
-    query_iter = [car_location for car_location in query_iter
-                  if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]
+    car_locations = get_car_locations(db_client, True, offset)
 
     # Calculate euclidean distances for all locations
-    car_distances = [(calculate_distance(work_item_entity, car_location), car_location)
-                     for car_location in query_iter]
+    euclidean_distances = [(calculate_distance(work_item_entity, car_location), car_location)
+                           for car_location in car_locations]
 
     # Sort and splice distances.
-    car_distances = sorted(car_distances, key=lambda tup: tup[0])
-    car_distances = car_distances[:limit]
+    sorted_euclidean_distances = sorted(euclidean_distances, key=lambda tup: tup[0])
+    spliced_euclidean_distances = sorted_euclidean_distances[:limit * 2]
+
+    # Calculate actual travel times, resort and splice.
+    travel_times = calculate_travel_times(work_item_entity, [tup[1] for tup in spliced_euclidean_distances])
+    sorted_travel_times = sorted(travel_times, key=lambda travel_time: travel_time[sort])
+    spliced_travel_times = sorted_travel_times[:limit]
 
     # Generate valid CarDistances response.
-    car_distances = [CarDistance(token=tup[1].key.id_or_name, distance=tup[0], travel_time=round(tup[0] * 90)) for tup in car_distances]
+    car_distances = [CarDistance(**travel_time) for travel_time in spliced_travel_times]
     result = CarDistances(items=car_distances)
 
     return make_response(jsonify(result), 200)
@@ -188,6 +170,38 @@ def is_assigned(token, car_tokens, assigned=None):
     return True
 
 
+@cache.memoize(timeout=300)
+def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, offset=None):
+    """
+    Retrieve a list of carLocations from CarLocations
+
+    :param db_client: The datastore Client.
+    :param assigned_to_car_info: Determines wether to return locations linked to a car info object or not.
+    :param offset: Maximum number of hours since the CarLocation was last updated.
+
+    :rtype a list of CarLocation entities
+    """
+
+    query = db_client.query(kind='CarLocation')
+
+    if offset is not None:
+        offset_date = datetime.datetime.utcnow() - datetime.timedelta(hours=offset)
+        offset_date = offset_date.isoformat()
+
+        query.add_filter('when', '>=', offset_date)
+
+    query_iter = query.fetch()
+
+    # Filter query on CarInfo tokens
+    if assigned_to_car_info:
+        car_info_tokens = get_car_info_tokens(db_client)
+        query_iter = [car_location for car_location in query_iter
+                      if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]
+
+    return query_iter
+
+
+@cache.memoize(timeout=300)
 def get_car_info_tokens(db_client: datastore.Client):
     """Retrieve a list of tokens from CarInfo
 

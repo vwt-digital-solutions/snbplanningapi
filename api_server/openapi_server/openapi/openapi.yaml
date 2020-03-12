@@ -69,6 +69,12 @@ paths:
         required: true
         schema:
           type: string
+      - description: Time offset range in hours for retrieving entries
+        in: query
+        name: offset
+        schema:
+          default: 168
+          type: integer
       - description: Sort results by distance or travel time.
         in: query
         name: sort

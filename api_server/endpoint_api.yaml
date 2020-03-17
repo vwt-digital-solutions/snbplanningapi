@@ -266,12 +266,15 @@ definitions:
     description: Information on a car and their driver
     example:
       - id: 123456789
+        administration: Klantteam Noord
         license_plate: AB-12-CD
         driver_name: Billy Gates
         driver_skill: Metende
         token: some-token-value
     properties:
       id:
+        type: string
+      administration:
         type: string
       license_plate:
         type: string

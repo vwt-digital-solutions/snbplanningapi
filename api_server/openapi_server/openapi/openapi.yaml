@@ -59,14 +59,22 @@ paths:
       x-codegen-request-body-name: body
   /cars/distances:
     get:
-      description: Get a list of Hyrde car tokens along with the distance and travel
-        time from the specified point. Only returns tokens linked to cars.
+      description: |-
+        Get a list of Hyrde car tokens along with the distance and travel time from the specified point. Optionally, a list of car tokens can be supplied, for which to calculate the distance. If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
+        When passing a list of car tokens, make sure that 1. All tokens are linked to a car info. 2. All cars have been updated within the time determined by offset (defaults to 168 hours, or 1 week)
+        Otherwise, these cars will not be accounted for in the response.
       operationId: car_distances_list
       parameters:
       - description: The workitem for which to find the nearest car locations
         in: query
         name: work_item
         required: true
+        schema:
+          type: string
+      - description: A comma separated list of car tokens to for which to calculate
+          the distance.
+        in: query
+        name: cars
         schema:
           type: string
       - description: Time offset range in hours for retrieving entries
@@ -171,7 +179,7 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-    x-eac-ignore: true
+      x-eac-ignore: true
 components:
   schemas:
     CarDistances:

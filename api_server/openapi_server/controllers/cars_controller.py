@@ -120,13 +120,17 @@ def list_tokens(assigned):
 
 
 @cache.memoize(timeout=300)
-def car_distances_list(work_item: str, offset, sort, limit):
+def car_distances_list(work_item: str, offset, sort, limit, cars: str = None):
     """Get a list of carlocations together with their travel time in seconds,
      ordered by the distance from specified workitem"""
 
     work_item_entity = db_client.get(db_client.key('WorkItem', work_item))
 
     car_locations = get_car_locations(db_client, True, offset)
+
+    if cars is not None:
+        tokens = cars.split(',')
+        car_locations = [car_location for car_location in car_locations if car_location.key.id_or_name in tokens]
 
     # Calculate euclidean distances for all locations
     euclidean_distances = [(calculate_distance(work_item_entity, car_location), car_location)

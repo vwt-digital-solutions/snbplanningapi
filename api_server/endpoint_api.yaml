@@ -80,13 +80,25 @@ paths:
       summary: Get car distances from a point or workitem
       operationId: car_distances_list
       description: Get a list of Hyrde car tokens along with the distance and travel time from the specified point.
-                   Only returns tokens linked to cars.
+                   Optionally, a list of car tokens can be supplied, for which to calculate the distance.
+                   If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
+
+                   When passing a list of car tokens, make sure that
+                   1. All tokens are linked to a car info.
+                   2. All cars have been updated within the time determined by offset (defaults to 168 hours, or 1 week)
+
+                   Otherwise, these cars will not be accounted for in the response.
       parameters:
         - in: query
           name: work_item
           type: string
           required: true
           description: The workitem for which to find the nearest car locations
+        - in: query
+          name: cars
+          type: string
+          required: false
+          description: A comma separated list of car tokens to for which to calculate the distance.
         - in: query
           name: offset
           type: integer
@@ -153,7 +165,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
-    x-eac-ignore: true
+      x-eac-ignore: true
 definitions:
   CarDistances:
     description: Collection of car distances.

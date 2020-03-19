@@ -5,7 +5,7 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
-from openapi_server.models import Car, CarDistance, CarDistances
+from openapi_server.models import Car, CarDistance, CarDistances, CarsList, Tokens
 from openapi_server.contrib.distance import calculate_distance, calculate_travel_times
 
 """
@@ -66,6 +66,8 @@ def cars_list(offset):
         car.id = str(entity.key.id_or_name)
         result.append(car)
 
+    result = CarsList(items=result)
+
     return make_response(jsonify(result), 200)
 
 
@@ -116,7 +118,9 @@ def list_tokens(assigned):
     tokens = [token.key.id_or_name for token in tokens_query.fetch()
               if is_assigned(token.key.id_or_name, car_tokens, assigned)]
 
-    return jsonify(tokens)
+    result = Tokens(items=tokens)
+
+    return make_response(jsonify(result), 200)
 
 
 @cache.memoize(timeout=300)

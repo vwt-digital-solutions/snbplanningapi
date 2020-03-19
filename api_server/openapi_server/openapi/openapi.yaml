@@ -31,7 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cars'
+                $ref: '#/components/schemas/CarsList'
           description: Successful response - returns an array of locations with info
       security:
       - OAuth2AzureAD:
@@ -294,18 +294,29 @@ components:
       - coordinates
       - type
       type: object
-    Cars:
+    CarsList:
+      description: A list of Cars.
       example:
         items:
-        - id: 123456789
-          administration: Klantteam Noord
-          license_plate: AB-12-CD
-          driver_name: Billy Gates
-          driver_skill: Metende
-          token: some-token-value
+        - - id: 123456789
+            administration: Klantteam Noord
+            license_plate: AB-12-CD
+            driver_name: Billy Gates
+            driver_skill: Metende
+            token: some-token-value
+        - - id: 123456789
+            administration: Klantteam Noord
+            license_plate: AB-12-CD
+            driver_name: Billy Gates
+            driver_skill: Metende
+            token: some-token-value
       properties:
         items:
-          $ref: '#/components/schemas/Car'
+          items:
+            $ref: '#/components/schemas/Car'
+          type: array
+      required:
+      - items
       type: object
     Car:
       description: Information on a car and their driver
@@ -347,11 +358,14 @@ components:
     Tokens:
       description: Collection of list with tokens
       example:
-        items: '{}'
+        items:
+        - items
+        - items
       properties:
         items:
-          properties: {}
-          type: object
+          items:
+            type: string
+          type: array
       required:
       - items
       type: object

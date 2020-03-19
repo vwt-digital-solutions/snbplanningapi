@@ -34,7 +34,7 @@ paths:
         '200':
           description: Successful response - returns an array of locations with info
           schema:
-            $ref: '#/definitions/Cars'
+            $ref: '#/definitions/CarsList'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -269,11 +269,16 @@ definitions:
       coordinates:
         - 5.2,
         - 52.4
-  Cars:
+  CarsList:
+    description: A list of Cars.
+    required:
+      - items
+    type: object
     properties:
       items:
         type: array
-        $ref: '#/definitions/Car'
+        items:
+          $ref: '#/definitions/Car'
   Car:
     description: Information on a car and their driver
     example:
@@ -309,7 +314,9 @@ definitions:
     type: object
     properties:
       items:
-        type: object
+        type: array
+        items:
+          type: string
   WorkItemsList:
     properties:
       items:

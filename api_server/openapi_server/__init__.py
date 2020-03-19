@@ -1,5 +1,3 @@
-from threading import Thread
-
 import connexion
 from flask_cors import CORS
 from flask import request
@@ -17,7 +15,8 @@ app = connexion.App(__name__, specification_dir='./openapi/')
 app.app.json_encoder = encoder.JSONEncoder
 app.add_api('openapi.yaml',
             arguments={'title': 'snbplanningtool'},
-            pythonic_params=True)
+            pythonic_params=True,
+            validate_responses=True)
 if 'GAE_INSTANCE' in os.environ:
     CORS(app.app, origins=config.ORIGINS)
 else:
@@ -29,8 +28,9 @@ def before_request():
     g.user = ''
     g.ip = ''
 
+
 @app.app.after_request
-def after_request_callback( response ):
+def after_request_callback(response):
     if 'x-appengine-user-ip' in request.headers:
         g.ip = request.headers.get('x-appengine-user-ip')
 

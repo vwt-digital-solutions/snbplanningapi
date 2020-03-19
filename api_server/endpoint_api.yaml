@@ -161,7 +161,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/WorkItems'
+            $ref: '#/definitions/WorkItemsList'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -310,11 +310,12 @@ definitions:
     properties:
       items:
         type: object
-  WorkItems:
+  WorkItemsList:
     properties:
       items:
         type: array
-        $ref: '#/definitions/WorkItem'
+        items:
+          $ref: '#/definitions/WorkItem'
   WorkItem:
     description: Link2 work item
     properties:

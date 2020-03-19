@@ -12,4 +12,4 @@ from openapi_server.models.cars import Cars
 from openapi_server.models.geometry import Geometry
 from openapi_server.models.tokens import Tokens
 from openapi_server.models.work_item import WorkItem
-from openapi_server.models.work_items import WorkItems
+from openapi_server.models.work_items_list import WorkItemsList

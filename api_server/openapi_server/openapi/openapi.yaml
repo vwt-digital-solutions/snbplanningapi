@@ -172,7 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkItems'
+                $ref: '#/components/schemas/WorkItemsList'
           description: OK
       security:
       - OAuth2AzureAD:
@@ -355,10 +355,37 @@ components:
       required:
       - items
       type: object
-    WorkItems:
+    WorkItemsList:
       example:
         items:
-          zip: zip
+        - zip: zip
+          last_updated: 2000-01-23T04:56:07.000+00:00
+          start_timestamp: 2000-01-23T04:56:07.000+00:00
+          city: city
+          administration: administration
+          project: project
+          description: description
+          employee_name: employee_name
+          resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+          sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          house: house
+          end_timestamp: 2000-01-23T04:56:07.000+00:00
+          is_geocoded: true
+          street: street
+          extra: extra
+          stagnation: true
+          employee_number: employee_number
+          geometry: |-
+            type: "Point",
+            coordinates:
+              - 5.2,
+              - 52.4
+          l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          category: category
+          task_type: task_type
+          order_id: order_id
+          status: status
+        - zip: zip
           last_updated: 2000-01-23T04:56:07.000+00:00
           start_timestamp: 2000-01-23T04:56:07.000+00:00
           city: city
@@ -387,7 +414,9 @@ components:
           status: status
       properties:
         items:
-          $ref: '#/components/schemas/WorkItem'
+          items:
+            $ref: '#/components/schemas/WorkItem'
+          type: array
       type: object
     WorkItem:
       description: Link2 work item

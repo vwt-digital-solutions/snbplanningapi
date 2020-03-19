@@ -31,7 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cars'
+                $ref: '#/components/schemas/CarsList'
           description: Successful response - returns an array of locations with info
       security:
       - OAuth2AzureAD:
@@ -57,6 +57,59 @@ paths:
       summary: Post car info
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       x-codegen-request-body-name: body
+  /cars/distances:
+    get:
+      description: |-
+        Get a list of Hyrde car tokens along with the distance and travel time from the specified point. Optionally, a list of car tokens can be supplied, for which to calculate the distance. If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
+        When passing a list of car tokens, make sure that 1. All tokens are linked to a car info. 2. All cars have been updated within the time determined by offset (defaults to 168 hours, or 1 week)
+        Otherwise, these cars will not be accounted for in the response.
+      operationId: car_distances_list
+      parameters:
+      - description: The workitem for which to find the nearest car locations
+        in: query
+        name: work_item
+        required: true
+        schema:
+          type: string
+      - description: A comma separated list of car tokens to for which to calculate
+          the distance.
+        in: query
+        name: cars
+        schema:
+          type: string
+      - description: Time offset range in hours for retrieving entries
+        in: query
+        name: offset
+        schema:
+          default: 168
+          type: integer
+      - description: Sort results by distance or travel time.
+        in: query
+        name: sort
+        schema:
+          default: travel_time
+          enum:
+          - travel_time
+          - distance
+          type: string
+      - description: Total numer of distances to return.
+        in: query
+        name: limit
+        schema:
+          default: 3
+          type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDistances'
+          description: Successful response - returns an array of distances
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.planner
+      summary: Get car distances from a point or workitem
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /cars/locations:
     get:
       description: Get a list of all car geolocations, with their linked Hyrde tokens.
@@ -119,16 +172,51 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkItems'
+                $ref: '#/components/schemas/WorkItemsList'
           description: OK
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-    x-eac-ignore: true
+      x-eac-ignore: true
 components:
   schemas:
+    CarDistances:
+      description: Collection of car distances.
+      example:
+        items:
+        - token: vwt/hyrde/01202321
+          distance: 5.0
+          travel_time: 1200
+        - token: vwt/hyrde/01202321
+          distance: 5.0
+          travel_time: 1200
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CarDistance'
+          type: array
+      type: object
+    CarDistance:
+      description: Hyrde token with distance and traveltime.
+      example:
+        token: vwt/hyrde/01202321
+        distance: 5.0
+        travel_time: 1200
+      properties:
+        token:
+          description: the Hyrde car token
+          type: string
+        distance:
+          description: distance in km.
+          format: decimal
+          type: number
+        travel_time:
+          description: Estimated travel time in seconds.
+          format: int32
+          type: integer
+      type: object
     CarLocations:
       description: Collection of car locations.
       example:
@@ -206,28 +294,43 @@ components:
       - coordinates
       - type
       type: object
-    Cars:
+    CarsList:
+      description: A list of Cars.
       example:
         items:
-        - id: 123456789
-          license_plate: AB-12-CD
-          driver_name: Billy Gates
-          driver_skill: Metende
-          token: some-token-value
+        - - id: 123456789
+            administration: Klantteam Noord
+            license_plate: AB-12-CD
+            driver_name: Billy Gates
+            driver_skill: Metende
+            token: some-token-value
+        - - id: 123456789
+            administration: Klantteam Noord
+            license_plate: AB-12-CD
+            driver_name: Billy Gates
+            driver_skill: Metende
+            token: some-token-value
       properties:
         items:
-          $ref: '#/components/schemas/Car'
+          items:
+            $ref: '#/components/schemas/Car'
+          type: array
+      required:
+      - items
       type: object
     Car:
       description: Information on a car and their driver
       example:
       - id: 123456789
+        administration: Klantteam Noord
         license_plate: AB-12-CD
         driver_name: Billy Gates
         driver_skill: Metende
         token: some-token-value
       properties:
         id:
+          type: string
+        administration:
           type: string
         license_plate:
           type: string
@@ -255,18 +358,48 @@ components:
     Tokens:
       description: Collection of list with tokens
       example:
-        items: '{}'
+        items:
+        - items
+        - items
       properties:
         items:
-          properties: {}
-          type: object
+          items:
+            type: string
+          type: array
       required:
       - items
       type: object
-    WorkItems:
+    WorkItemsList:
       example:
         items:
-          zip: zip
+        - zip: zip
+          last_updated: 2000-01-23T04:56:07.000+00:00
+          start_timestamp: 2000-01-23T04:56:07.000+00:00
+          city: city
+          administration: administration
+          project: project
+          description: description
+          employee_name: employee_name
+          resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+          sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          house: house
+          end_timestamp: 2000-01-23T04:56:07.000+00:00
+          is_geocoded: true
+          street: street
+          extra: extra
+          stagnation: true
+          employee_number: employee_number
+          geometry: |-
+            type: "Point",
+            coordinates:
+              - 5.2,
+              - 52.4
+          l2_guid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          category: category
+          task_type: task_type
+          order_id: order_id
+          status: status
+        - zip: zip
           last_updated: 2000-01-23T04:56:07.000+00:00
           start_timestamp: 2000-01-23T04:56:07.000+00:00
           city: city
@@ -295,7 +428,9 @@ components:
           status: status
       properties:
         items:
-          $ref: '#/components/schemas/WorkItem'
+          items:
+            $ref: '#/components/schemas/WorkItem'
+          type: array
       type: object
     WorkItem:
       description: Link2 work item

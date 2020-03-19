@@ -15,11 +15,13 @@ class Car(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, license_plate=None, driver_name=None, driver_skill=None, driver_employee_number=None, token=None):  # noqa: E501
+    def __init__(self, id=None, administration=None, license_plate=None, driver_name=None, driver_skill=None, driver_employee_number=None, token=None):  # noqa: E501
         """Car - a model defined in OpenAPI
 
         :param id: The id of this Car.  # noqa: E501
         :type id: str
+        :param administration: The administration of this Car.  # noqa: E501
+        :type administration: str
         :param license_plate: The license_plate of this Car.  # noqa: E501
         :type license_plate: str
         :param driver_name: The driver_name of this Car.  # noqa: E501
@@ -33,6 +35,7 @@ class Car(Model):
         """
         self.openapi_types = {
             'id': str,
+            'administration': str,
             'license_plate': str,
             'driver_name': str,
             'driver_skill': str,
@@ -42,6 +45,7 @@ class Car(Model):
 
         self.attribute_map = {
             'id': 'id',
+            'administration': 'administration',
             'license_plate': 'license_plate',
             'driver_name': 'driver_name',
             'driver_skill': 'driver_skill',
@@ -50,6 +54,7 @@ class Car(Model):
         }
 
         self._id = id
+        self._administration = administration
         self._license_plate = license_plate
         self._driver_name = driver_name
         self._driver_skill = driver_skill
@@ -87,6 +92,27 @@ class Car(Model):
         """
 
         self._id = id
+
+    @property
+    def administration(self):
+        """Gets the administration of this Car.
+
+
+        :return: The administration of this Car.
+        :rtype: str
+        """
+        return self._administration
+
+    @administration.setter
+    def administration(self, administration):
+        """Sets the administration of this Car.
+
+
+        :param administration: The administration of this Car.
+        :type administration: str
+        """
+
+        self._administration = administration
 
     @property
     def license_plate(self):

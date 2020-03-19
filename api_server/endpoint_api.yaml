@@ -34,7 +34,7 @@ paths:
         '200':
           description: Successful response - returns an array of locations with info
           schema:
-            $ref: '#/definitions/Cars'
+            $ref: '#/definitions/CarsList'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -75,6 +75,57 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
+  /cars/distances:
+    get:
+      summary: Get car distances from a point or workitem
+      operationId: car_distances_list
+      description: Get a list of Hyrde car tokens along with the distance and travel time from the specified point.
+                   Optionally, a list of car tokens can be supplied, for which to calculate the distance.
+                   If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
+
+                   When passing a list of car tokens, make sure that
+                   1. All tokens are linked to a car info.
+                   2. All cars have been updated within the time determined by offset (defaults to 168 hours, or 1 week)
+
+                   Otherwise, these cars will not be accounted for in the response.
+      parameters:
+        - in: query
+          name: work_item
+          type: string
+          required: true
+          description: The workitem for which to find the nearest car locations
+        - in: query
+          name: cars
+          type: string
+          required: false
+          description: A comma separated list of car tokens to for which to calculate the distance.
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
+        - in: query
+          name: sort
+          type: string
+          enum: [travel_time, distance]
+          required: false
+          default: travel_time
+          description: Sort results by distance or travel time.
+        - in: query
+          name: limit
+          type: integer
+          required: false
+          default: 3
+          description: Total numer of distances to return.
+      responses:
+        '200':
+          description: Successful response - returns an array of distances
+          schema:
+            $ref: '#/definitions/CarDistances'
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
   /tokens:
     get:
       summary: Get a list of tokens
@@ -110,12 +161,39 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/WorkItems'
+            $ref: '#/definitions/WorkItemsList'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
-    x-eac-ignore: true
+      x-eac-ignore: true
 definitions:
+  CarDistances:
+    description: Collection of car distances.
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/CarDistance'
+  CarDistance:
+    description: Hyrde token with distance and traveltime.
+    type: object
+    properties:
+      token:
+        type: string
+        description: the Hyrde car token
+      distance:
+        type: number
+        format: decimal
+        description: distance in km.
+      travel_time:
+        type: integer
+        format: int32
+        description: Estimated travel time in seconds.
+    example:
+      token: 'vwt/hyrde/01202321'
+      distance: 5.0
+      travel_time: 1200
   CarLocations:
     description: Collection of car locations.
     required:
@@ -191,21 +269,29 @@ definitions:
       coordinates:
         - 5.2,
         - 52.4
-  Cars:
+  CarsList:
+    description: A list of Cars.
+    required:
+      - items
+    type: object
     properties:
       items:
         type: array
-        $ref: '#/definitions/Car'
+        items:
+          $ref: '#/definitions/Car'
   Car:
     description: Information on a car and their driver
     example:
       - id: 123456789
+        administration: Klantteam Noord
         license_plate: AB-12-CD
         driver_name: Billy Gates
         driver_skill: Metende
         token: some-token-value
     properties:
       id:
+        type: string
+      administration:
         type: string
       license_plate:
         type: string
@@ -228,12 +314,15 @@ definitions:
     type: object
     properties:
       items:
-        type: object
-  WorkItems:
+        type: array
+        items:
+          type: string
+  WorkItemsList:
     properties:
       items:
         type: array
-        $ref: '#/definitions/WorkItem'
+        items:
+          $ref: '#/definitions/WorkItem'
   WorkItem:
     description: Link2 work item
     properties:

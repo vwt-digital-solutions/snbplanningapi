@@ -8,7 +8,7 @@ from google.cloud import datastore
 
 from cache import cache
 from openapi_server.controllers.util import remap_attributes
-from openapi_server.models import WorkItem
+from openapi_server.models import WorkItem, WorkItemsList
 
 work_items_statuses = ['Te Plannen', 'Gepland', 'Niet Gereed']
 work_item_attribute_map = {
@@ -40,7 +40,8 @@ def list_work_items(active=False):  # noqa: E501
 
     work_items_list = [WorkItem.from_dict(res) for res in result]
 
-    return make_response(jsonify(work_items_list), 200, {'cache-control': 'private, max-age=300'})
+    response = WorkItemsList(items=work_items_list)
+    return make_response(jsonify(response), 200, {'cache-control': 'private, max-age=300'})
 
 
 """

@@ -28,7 +28,9 @@ class DBProcessor(object):
         if 'when' not in entity or entity['when'] < car_location['when']:
             entity.update({
                 "geometry": car_location['geometry'],
-                "when": car_location['when']
+                "when": car_location['when'],
+                "status": car_location.get('what', None),
+                "license": car_location.get('license', None)
             })
             return entity
             logging.debug('Populate location {} - {}'.format(entity.key, entity))

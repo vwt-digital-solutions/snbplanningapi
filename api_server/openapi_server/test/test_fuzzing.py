@@ -2,7 +2,7 @@ import adal
 
 import config
 from openapi3_fuzzer import FuzzIt
-from test import BaseTestCase
+from openapi_server.test import BaseTestCase
 
 
 def get_token():

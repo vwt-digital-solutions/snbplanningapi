@@ -12,6 +12,7 @@ Flask-Caching==1.7.0
 Flask-Cors==3.0.7
 Flask-No-Cache==1.0
 Flask-SSLify==0.1.5
+Flask-Testing==0.7.1
 geopy==1.21.0
 google-api-core==1.16.0
 google-auth==1.11.0

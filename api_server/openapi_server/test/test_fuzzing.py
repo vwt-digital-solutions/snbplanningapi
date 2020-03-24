@@ -2,7 +2,7 @@ import adal
 
 import config
 from openapi3_fuzzer import FuzzIt
-from openapi_server.test import BaseTestCase
+from test import BaseTestCase
 
 
 def get_token():
@@ -10,7 +10,7 @@ def get_token():
     Create a token for testing
     :return:
     """
-    oauth_expected_authenticator = config.OAUTH_E2E_EXPECTED_AUDIENCE
+    oauth_expected_authenticator = config.OAUTH_E2E_AUTHORITY_URI
     client_id = config.OAUTH_E2E_APPID
     client_secret = config.OAUTH_E2E_CLIENT_SECRET
     resource = config.OAUTH_E2E_EXPECTED_AUDIENCE

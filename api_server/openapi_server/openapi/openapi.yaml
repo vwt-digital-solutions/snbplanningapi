@@ -141,18 +141,17 @@ paths:
       - in: query
         name: assigned
         schema:
-          default: false
           type: boolean
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tokens'
+                $ref: '#/components/schemas/TokensList'
           description: OK
       security:
       - OAuth2AzureAD:
-        - snbplanningapi.read
+        - snbplanningapi.planner
       summary: Get a list of tokens
       x-openapi-router-controller: openapi_server.controllers.cars_controller
   /workitems:
@@ -229,7 +228,7 @@ components:
             - 5.3
             - 52.6
           properties:
-            license_plate: AA-BB-11
+            token: vwt/hyrde/1234
         - type: Feature
           geometry:
             type: Point
@@ -258,9 +257,7 @@ components:
           - 5.3
           - 52.6
         properties:
-          id: 1
-          license_plate: AA-BB-11
-          driver_name: Pietje Puk
+          token: vwt/hyrde/token/104510
       properties:
         geometry:
           $ref: '#/components/schemas/Geometry'
@@ -300,13 +297,11 @@ components:
         items:
         - - id: 123456789
             administration: Klantteam Noord
-            license_plate: AB-12-CD
             driver_name: Billy Gates
             driver_skill: Metende
             token: some-token-value
         - - id: 123456789
             administration: Klantteam Noord
-            license_plate: AB-12-CD
             driver_name: Billy Gates
             driver_skill: Metende
             token: some-token-value
@@ -323,7 +318,6 @@ components:
       example:
       - id: 123456789
         administration: Klantteam Noord
-        license_plate: AB-12-CD
         driver_name: Billy Gates
         driver_skill: Metende
         token: some-token-value
@@ -331,8 +325,6 @@ components:
         id:
           type: string
         administration:
-          type: string
-        license_plate:
           type: string
         driver_name:
           type: string
@@ -353,21 +345,36 @@ components:
           type: string
       required:
       - driver_name
-      - license_plate
+      - token
       type: object
-    Tokens:
-      description: Collection of list with tokens
+    TokensList:
+      description: List of hyrde car tokens
       example:
         items:
-        - items
-        - items
+        - license: AB123C
+          id: vwt/hyrde/token/20120
+        - license: AB123C
+          id: vwt/hyrde/token/20120
       properties:
         items:
           items:
-            type: string
+            $ref: '#/components/schemas/Token'
           type: array
       required:
       - items
+      type: object
+    Token:
+      description: A hyrde car token and its' linked information
+      example:
+        license: AB123C
+        id: vwt/hyrde/token/20120
+      properties:
+        id:
+          example: vwt/hyrde/token/20120
+          type: string
+        license:
+          example: AB123C
+          type: string
       type: object
     WorkItemsList:
       example:

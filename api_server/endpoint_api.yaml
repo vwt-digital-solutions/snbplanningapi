@@ -136,15 +136,14 @@ paths:
           in: "query"
           type: boolean
           required: false
-          default: false
       responses:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Tokens'
+            $ref: '#/definitions/TokensList'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
-        - OAuth2AzureAD: [snbplanningapi.read]
+        - OAuth2AzureAD: [snbplanningapi.planner]
   /workitems:
     get:
       summary: Get a list of work items
@@ -217,7 +216,7 @@ definitions:
               - 5.3
               - 52.6
           properties:
-            license_plate: AA-BB-11
+            token: vwt/hyrde/1234
         - type: Feature
           geometry:
             type: Point
@@ -247,9 +246,7 @@ definitions:
           - 5.3
           - 52.6
       properties:
-        id: 1
-        license_plate: AA-BB-11
-        driver_name: Pietje Puk
+        token: vwt/hyrde/token/104510
   Geometry:
     description: Geometry element
     required:
@@ -284,7 +281,6 @@ definitions:
     example:
       - id: 123456789
         administration: Klantteam Noord
-        license_plate: AB-12-CD
         driver_name: Billy Gates
         driver_skill: Metende
         token: some-token-value
@@ -292,8 +288,6 @@ definitions:
       id:
         type: string
       administration:
-        type: string
-      license_plate:
         type: string
       driver_name:
         type: string
@@ -305,10 +299,10 @@ definitions:
       token:
         type: string
     required:
-      - license_plate
+      - token
       - driver_name
-  Tokens:
-    description: Collection of list with tokens
+  TokensList:
+    description: List of hyrde car tokens
     required:
       - items
     type: object
@@ -316,7 +310,17 @@ definitions:
       items:
         type: array
         items:
-          type: string
+          $ref: '#/definitions/Token'
+  Token:
+    description: A hyrde car token and its' linked information
+    type: object
+    properties:
+      id:
+        type: string
+        example: 'vwt/hyrde/token/20120'
+      license:
+        type: string
+        example: 'AB123C'
   WorkItemsList:
     properties:
       items:

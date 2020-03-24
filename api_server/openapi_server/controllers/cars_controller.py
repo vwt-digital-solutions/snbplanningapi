@@ -5,7 +5,7 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
-from openapi_server.models import Car, CarDistance, CarDistances, CarsList, Tokens
+from openapi_server.models import Car, CarDistance, CarDistances, CarsList, Token, TokensList
 from openapi_server.contrib.distance import calculate_distance, calculate_travel_times
 
 """
@@ -99,26 +99,33 @@ def cars_post(body):
     return make_response(jsonify(carinfo_id=str(entity.key.id_or_name)), 201)
 
 
-@cache.cached(timeout=300, key_prefix="list_tokens")
-def list_tokens(assigned):
+@cache.memoize(timeout=300)
+def list_tokens(assigned=None):
     """Enumerate tokens
 
     :param assigned: When set to true, only return tokens that have already been assigned a CarInfo entity.
-    Defaults to false.
+    When set to false, only return tokens that have not been assigned a CarInfo entity.
+    When not set, returns all tokens.
 
     :rtype list of strings
 
     """
-    tokens_query = db_client.query(kind='CarLocation')
-    car_tokens = []
+    car_locations = list(db_client.query(kind='CarLocation').fetch())
 
     if assigned is not None:
         car_tokens = get_car_info_tokens(db_client)
 
-    tokens = [token.key.id_or_name for token in tokens_query.fetch()
-              if is_assigned(token.key.id_or_name, car_tokens, assigned)]
+        car_locations = [car_location for car_location in car_locations
+                         if is_assigned(car_location.key.id_or_name, car_tokens, assigned)]
 
-    result = Tokens(items=tokens)
+    tokens = []
+
+    for entity in car_locations:
+        token = Token.from_dict(entity)
+        token.id = str(entity.key.id_or_name)
+        tokens.append(token)
+
+    result = TokensList(items=tokens)
 
     return make_response(jsonify(result), 200)
 

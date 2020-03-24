@@ -15,15 +15,13 @@ class Car(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, administration=None, license_plate=None, driver_name=None, driver_skill=None, driver_employee_number=None, token=None):  # noqa: E501
+    def __init__(self, id=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, token=None):  # noqa: E501
         """Car - a model defined in OpenAPI
 
         :param id: The id of this Car.  # noqa: E501
         :type id: str
         :param administration: The administration of this Car.  # noqa: E501
         :type administration: str
-        :param license_plate: The license_plate of this Car.  # noqa: E501
-        :type license_plate: str
         :param driver_name: The driver_name of this Car.  # noqa: E501
         :type driver_name: str
         :param driver_skill: The driver_skill of this Car.  # noqa: E501
@@ -36,7 +34,6 @@ class Car(Model):
         self.openapi_types = {
             'id': str,
             'administration': str,
-            'license_plate': str,
             'driver_name': str,
             'driver_skill': str,
             'driver_employee_number': str,
@@ -46,7 +43,6 @@ class Car(Model):
         self.attribute_map = {
             'id': 'id',
             'administration': 'administration',
-            'license_plate': 'license_plate',
             'driver_name': 'driver_name',
             'driver_skill': 'driver_skill',
             'driver_employee_number': 'driver_employee_number',
@@ -55,7 +51,6 @@ class Car(Model):
 
         self._id = id
         self._administration = administration
-        self._license_plate = license_plate
         self._driver_name = driver_name
         self._driver_skill = driver_skill
         self._driver_employee_number = driver_employee_number
@@ -113,29 +108,6 @@ class Car(Model):
         """
 
         self._administration = administration
-
-    @property
-    def license_plate(self):
-        """Gets the license_plate of this Car.
-
-
-        :return: The license_plate of this Car.
-        :rtype: str
-        """
-        return self._license_plate
-
-    @license_plate.setter
-    def license_plate(self, license_plate):
-        """Sets the license_plate of this Car.
-
-
-        :param license_plate: The license_plate of this Car.
-        :type license_plate: str
-        """
-        if license_plate is None:
-            raise ValueError("Invalid value for `license_plate`, must not be `None`")  # noqa: E501
-
-        self._license_plate = license_plate
 
     @property
     def driver_name(self):
@@ -226,5 +198,7 @@ class Car(Model):
         :param token: The token of this Car.
         :type token: str
         """
+        if token is None:
+            raise ValueError("Invalid value for `token`, must not be `None`")  # noqa: E501
 
         self._token = token

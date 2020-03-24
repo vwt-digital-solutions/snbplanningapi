@@ -40,7 +40,7 @@ class TestDefaultController(BaseTestCase):
                         ('limit', 3)]
         headers = {
             'Accept': 'application/json',
-            'Authorization': 'Bearer' + get_token(),
+            'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
             '/cars/distances',
@@ -58,7 +58,7 @@ class TestDefaultController(BaseTestCase):
         query_string = [('offset', 168)]
         headers = {
             'Accept': 'application/json',
-            'Authorization': 'Bearer' + get_token(),
+            'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
             '/cars/locations',
@@ -76,7 +76,7 @@ class TestDefaultController(BaseTestCase):
         query_string = [('offset', 168)]
         headers = {
             'Accept': 'application/json',
-            'Authorization': 'Bearer' + get_token(),
+            'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
             '/cars',
@@ -101,7 +101,7 @@ class TestDefaultController(BaseTestCase):
         }]
         headers = {
             'Accept': 'application/json',
-            'Authorization': 'Bearer' + get_token(),
+            'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
             '/cars',
@@ -120,7 +120,7 @@ class TestDefaultController(BaseTestCase):
         query_string = [('assigned', False)]
         headers = {
             'Accept': 'application/json',
-            'Authorization': 'Bearer' + get_token(),
+            'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
             '/tokens',
@@ -138,7 +138,7 @@ class TestDefaultController(BaseTestCase):
         query_string = [('active', False)]
         headers = {
             'Accept': 'application/json',
-            'Authorization': 'Bearer' + get_token(),
+            'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
             '/workitems',

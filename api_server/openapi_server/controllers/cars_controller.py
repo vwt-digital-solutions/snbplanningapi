@@ -111,6 +111,9 @@ def list_tokens(assigned=None):
 
     """
     car_locations = list(db_client.query(kind='CarLocation').fetch())
+    car_locations = list(query.fetch())
+
+    car_locations.sort(key=lambda x: x.get('license', 'ZZZZZZ'), reverse=False)
 
     if assigned is not None:
         car_tokens = get_car_info_tokens(db_client)

@@ -88,6 +88,11 @@ def cars_post(body):
 
     """
     car_info = Car.from_dict(body).to_dict()
+
+    # Remove unnecessary and read-only fields.
+    del car_info['id']
+    del car_info['license_plate']
+
     entity = None
 
     # for unknown reason attribute 'id' is received as 'id_'
@@ -96,7 +101,6 @@ def cars_post(body):
         entity = db_client.get(car_info_key)
         if entity is None:
             entity = datastore.Entity(key=car_info_key)
-        del car_info['id']
     else:
         # Check if a car with that token already exists.
         query = db_client.query(kind='CarInfo')

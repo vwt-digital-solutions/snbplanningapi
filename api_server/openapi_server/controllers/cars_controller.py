@@ -59,11 +59,18 @@ def cars_list(offset):
 
     query_iter = query.fetch()
 
+    car_locations = list(db_client.query(kind='CarLocation').fetch())
+
     result = []
 
     for entity in query_iter:
         car = Car.from_dict(entity)
         car.id = str(entity.key.id_or_name)
+
+        search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]
+        if len(search_list) > 0:
+            car.license_plate = search_list[0].get('license', None)
+
         result.append(car)
 
     result = CarsList(items=result)
@@ -96,7 +103,14 @@ def cars_post(body):
     entity.update(car_info)
     db_client.put(entity)
 
-    return make_response(jsonify(carinfo_id=str(entity.key.id_or_name)), 201)
+    car = Car.from_dict(entity)
+
+    car_locations = list(db_client.query(kind='CarLocation').fetch())
+    search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]
+    if len(search_list) > 0:
+        car.license_plate = search_list[0].get('license', None)
+
+    return make_response(jsonify(car), 201)
 
 
 @cache.memoize(timeout=300)

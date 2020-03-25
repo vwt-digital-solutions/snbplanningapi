@@ -49,7 +49,10 @@ paths:
         required: true
       responses:
         201:
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
           description: Successful POST
       security:
       - OAuth2AzureAD:
@@ -301,16 +304,20 @@ components:
       description: A list of Cars.
       example:
         items:
-        - - id: 123456789
-            administration: Klantteam Noord
-            driver_name: Billy Gates
-            driver_skill: Metende
-            token: some-token-value
-        - - id: 123456789
-            administration: Klantteam Noord
-            driver_name: Billy Gates
-            driver_skill: Metende
-            token: some-token-value
+        - driver_name: Billy Gates
+          license_plate: AA-123-BB
+          administration: Klantteam Noord
+          id: "123456789"
+          driver_skill: Metende
+          driver_employee_number: "1234"
+          token: vwt/hyrde/12345
+        - driver_name: Billy Gates
+          license_plate: AA-123-BB
+          administration: Klantteam Noord
+          id: "123456789"
+          driver_skill: Metende
+          driver_employee_number: "1234"
+          token: vwt/hyrde/12345
       properties:
         items:
           items:
@@ -322,17 +329,22 @@ components:
     Car:
       description: Information on a car and their driver
       example:
-      - id: 123456789
-        administration: Klantteam Noord
         driver_name: Billy Gates
+        license_plate: AA-123-BB
+        administration: Klantteam Noord
+        id: "123456789"
         driver_skill: Metende
-        token: some-token-value
+        driver_employee_number: "1234"
+        token: vwt/hyrde/12345
       properties:
         id:
+          example: "123456789"
           type: string
         administration:
+          example: Klantteam Noord
           type: string
         driver_name:
+          example: Billy Gates
           type: string
         driver_skill:
           enum:
@@ -344,10 +356,17 @@ components:
           - Overig
           - NLS
           - Cluster
+          example: Metende
           type: string
         driver_employee_number:
+          example: "1234"
+          type: string
+        license_plate:
+          example: AA-123-BB
+          readOnly: true
           type: string
         token:
+          example: vwt/hyrde/12345
           type: string
       required:
       - driver_name

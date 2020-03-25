@@ -286,26 +286,30 @@ definitions:
           $ref: '#/definitions/Car'
   Car:
     description: Information on a car and their driver
-    example:
-      - id: 123456789
-        administration: Klantteam Noord
-        driver_name: Billy Gates
-        driver_skill: Metende
-        token: some-token-value
     properties:
       id:
         type: string
+        example: 123456789
       administration:
         type: string
+        example: Klantteam Noord
       driver_name:
         type: string
+        example: Billy Gates
       driver_skill:
         type: string
         enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
+        example: Metende
       driver_employee_number:
+        type: string
+        example: 1234
+      license_plate:
+        readOnly: true
+        example: AA-123-BB
         type: string
       token:
         type: string
+        example: vwt/hyrde/12345
     required:
       - token
       - driver_name

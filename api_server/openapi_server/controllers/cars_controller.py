@@ -134,7 +134,7 @@ def list_tokens(offset, assigned=None):
 
     car_locations = list(get_car_locations(db_client, assigned, offset))
 
-    car_locations.sort(key=lambda x: x.get('license', 'ZZZZZZ'), reverse=False)
+    car_locations.sort(key=lambda x: x.get('license') or 'ZZZZZZ', reverse=False)
 
     if assigned is not None:
         car_tokens = get_car_info_tokens(db_client)

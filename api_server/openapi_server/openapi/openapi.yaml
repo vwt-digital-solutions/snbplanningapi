@@ -54,6 +54,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Car'
           description: Successful POST
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: There is an error with the data posted, for instance, a car
+            with the specified hyrde token already exists.
       security:
       - OAuth2AzureAD:
         - snbplanningapi.editor
@@ -190,6 +197,17 @@ paths:
       x-eac-ignore: true
 components:
   schemas:
+    Error:
+      description: An error message.
+      properties:
+        status:
+          example: 400.0
+          format: int32
+          type: number
+        message:
+          example: Could not create object, an object with that id already exists.
+          type: string
+      type: object
     CarDistances:
       description: Collection of car distances.
       example:

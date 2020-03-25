@@ -5,7 +5,7 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
-from openapi_server.models import Car, CarDistance, CarDistances, CarsList, Token, TokensList
+from openapi_server.models import Car, CarDistance, CarDistances, CarsList, Token, TokensList, Error
 from openapi_server.contrib.distance import calculate_distance, calculate_travel_times
 
 """
@@ -98,6 +98,13 @@ def cars_post(body):
             entity = datastore.Entity(key=car_info_key)
         car_info['id'] = entity.key.id_or_name
     else:
+        # Check if a car with that token already exists.
+        query = db_client.query(kind='CarInfo')
+        query.add_filter('token', '=', body['token'])
+        if len(list(query.fetch())) > 0:
+            error = Error('400', 'A Car with that token already exists.')
+            return make_response(jsonify(error), 400)
+
         entity = datastore.Entity(db_client.key('CarInfo'))
 
     entity.update(car_info)

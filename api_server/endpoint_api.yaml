@@ -54,6 +54,11 @@ paths:
           description: Successful POST
           schema:
             $ref: '#/definitions/Car'
+        '400':
+          description: There is an error with the data posted, for instance,
+                       a car with the specified hyrde token already exists.
+          schema:
+            $ref: '#/definitions/Error'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.editor]
@@ -174,6 +179,16 @@ paths:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-eac-ignore: true
 definitions:
+  Error:
+    description: An error message.
+    type: object
+    properties:
+      status:
+        type: string
+        example: "400"
+      detail:
+        type: string
+        example: 'Could not create object, an object with that id already exists.'
   CarDistances:
     description: Collection of car distances.
     type: object

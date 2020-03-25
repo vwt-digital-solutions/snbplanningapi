@@ -9,6 +9,7 @@ from openapi_server.models.car_distances import CarDistances
 from openapi_server.models.car_location import CarLocation
 from openapi_server.models.car_locations import CarLocations
 from openapi_server.models.cars_list import CarsList
+from openapi_server.models.error import Error
 from openapi_server.models.geometry import Geometry
 from openapi_server.models.token import Token
 from openapi_server.models.tokens_list import TokensList

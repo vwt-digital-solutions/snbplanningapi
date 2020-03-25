@@ -313,7 +313,7 @@ definitions:
         example: Billy Gates
       driver_skill:
         type: string
-        enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
+        #enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
         example: Metende
       driver_employee_number:
         type: string

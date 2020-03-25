@@ -201,10 +201,9 @@ components:
       description: An error message.
       properties:
         status:
-          example: 400.0
-          format: int32
-          type: number
-        message:
+          example: "400"
+          type: string
+        detail:
           example: Could not create object, an object with that id already exists.
           type: string
       type: object
@@ -365,15 +364,6 @@ components:
           example: Billy Gates
           type: string
         driver_skill:
-          enum:
-          - ""
-          - Metende
-          - Lasser
-          - Leerling
-          - Kraanmachinist
-          - Overig
-          - NLS
-          - Cluster
           example: Metende
           type: string
         driver_employee_number:

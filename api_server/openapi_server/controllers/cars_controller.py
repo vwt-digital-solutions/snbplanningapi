@@ -96,7 +96,7 @@ def cars_post(body):
         entity = db_client.get(car_info_key)
         if entity is None:
             entity = datastore.Entity(key=car_info_key)
-        car_info['id'] = entity.key.id_or_name
+        del car_info['id']
     else:
         # Check if a car with that token already exists.
         query = db_client.query(kind='CarInfo')

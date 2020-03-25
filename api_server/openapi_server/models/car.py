@@ -155,12 +155,6 @@ class Car(Model):
         :param driver_skill: The driver_skill of this Car.
         :type driver_skill: str
         """
-        allowed_values = ["", "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]  # noqa: E501
-        if driver_skill not in allowed_values:
-            raise ValueError(
-                "Invalid value for `driver_skill` ({0}), must be one of {1}"
-                .format(driver_skill, allowed_values)
-            )
 
         self._driver_skill = driver_skill
 

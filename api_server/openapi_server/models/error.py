@@ -15,26 +15,26 @@ class Error(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, status=None, message=None):  # noqa: E501
+    def __init__(self, status=None, detail=None):  # noqa: E501
         """Error - a model defined in OpenAPI
 
         :param status: The status of this Error.  # noqa: E501
-        :type status: float
-        :param message: The message of this Error.  # noqa: E501
-        :type message: str
+        :type status: str
+        :param detail: The detail of this Error.  # noqa: E501
+        :type detail: str
         """
         self.openapi_types = {
-            'status': float,
-            'message': str
+            'status': str,
+            'detail': str
         }
 
         self.attribute_map = {
             'status': 'status',
-            'message': 'message'
+            'detail': 'detail'
         }
 
         self._status = status
-        self._message = message
+        self._detail = detail
 
     @classmethod
     def from_dict(cls, dikt) -> 'Error':
@@ -53,7 +53,7 @@ class Error(Model):
 
 
         :return: The status of this Error.
-        :rtype: float
+        :rtype: str
         """
         return self._status
 
@@ -63,28 +63,28 @@ class Error(Model):
 
 
         :param status: The status of this Error.
-        :type status: float
+        :type status: str
         """
 
         self._status = status
 
     @property
-    def message(self):
-        """Gets the message of this Error.
+    def detail(self):
+        """Gets the detail of this Error.
 
 
-        :return: The message of this Error.
+        :return: The detail of this Error.
         :rtype: str
         """
-        return self._message
+        return self._detail
 
-    @message.setter
-    def message(self, message):
-        """Sets the message of this Error.
+    @detail.setter
+    def detail(self, detail):
+        """Sets the detail of this Error.
 
 
-        :param message: The message of this Error.
-        :type message: str
+        :param detail: The detail of this Error.
+        :type detail: str
         """
 
-        self._message = message
+        self._detail = detail

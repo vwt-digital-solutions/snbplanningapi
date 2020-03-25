@@ -1,6 +1,6 @@
 ---
 swagger: '2.0'
-x-zally-ignore: [101, 104, 105]
+x-zally-ignore: [101, 104, 105, 176]
 info:
   title: snbplanningtool
   description: Endpoint to retreive the latest car locations

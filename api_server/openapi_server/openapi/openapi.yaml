@@ -142,6 +142,12 @@ paths:
         name: assigned
         schema:
           type: boolean
+      - description: Time offset range in hours for retrieving entries
+        in: query
+        name: offset
+        schema:
+          default: 168
+          type: integer
       responses:
         200:
           content:

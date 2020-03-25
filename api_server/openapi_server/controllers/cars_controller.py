@@ -100,7 +100,7 @@ def cars_post(body):
 
 
 @cache.memoize(timeout=300)
-def list_tokens(assigned=None):
+def list_tokens(offset, assigned=None):
     """Enumerate tokens
 
     :param assigned: When set to true, only return tokens that have already been assigned a CarInfo entity.
@@ -110,8 +110,8 @@ def list_tokens(assigned=None):
     :rtype list of strings
 
     """
-    car_locations = list(db_client.query(kind='CarLocation').fetch())
-    car_locations = list(query.fetch())
+
+    car_locations = list(get_car_locations(db_client, assigned, offset))
 
     car_locations.sort(key=lambda x: x.get('license', 'ZZZZZZ'), reverse=False)
 

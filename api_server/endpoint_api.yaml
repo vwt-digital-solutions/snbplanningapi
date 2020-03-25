@@ -52,6 +52,8 @@ paths:
       responses:
         '201':
           description: Successful POST
+          schema:
+            $ref: '#/definitions/Car'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.editor]
@@ -132,10 +134,16 @@ paths:
       description: List of tokens
       operationId: list_tokens
       parameters:
-        - name: "assigned"
-          in: "query"
+        - in: query
+          name: assigned
           type: boolean
           required: false
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
       responses:
         200:
           description: OK

@@ -41,7 +41,7 @@ def list_work_items(active=False):  # noqa: E501
     work_items_list = [WorkItem.from_dict(res) for res in result]
 
     response = WorkItemsList(items=work_items_list)
-    return make_response(jsonify(response), 200, {'cache-control': 'private, max-age=300'})
+    return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
 
 
 """

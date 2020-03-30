@@ -42,7 +42,7 @@ def car_locations_list(offset):
             }
         })
 
-    return make_response(jsonify(result), 200, {'cache-control': 'private, max-age=300'})
+    return make_response(jsonify(result), 200, {'Cache-Control': 'private, max-age=300'})
 
 
 @cache.memoize(timeout=300)

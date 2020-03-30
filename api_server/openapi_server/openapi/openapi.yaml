@@ -138,6 +138,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/CarLocations'
           description: Successful response - returns an array of locations
+          headers:
+            Cache-Control:
+              description: Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache.
+              schema:
+                default: private, max-age=300
+                type: string
       security:
       - OAuth2AzureAD:
         - snbplanningapi.read
@@ -189,6 +196,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/WorkItemsList'
           description: OK
+          headers:
+            Cache-Control:
+              description: Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache.
+              schema:
+                default: private, max-age=300
+                type: string
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner

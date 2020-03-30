@@ -79,6 +79,12 @@ paths:
           description: Successful response - returns an array of locations
           schema:
             $ref: '#/definitions/CarLocations'
+          headers:
+            Cache-Control:
+              description: "Header describing the cache policy for this endpoints.
+              Defaults to a 300 seconds private cache."
+              type: string
+              default: "private, max-age=300"
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
@@ -174,6 +180,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/WorkItemsList'
+          headers:
+            Cache-Control:
+              description: "Header describing the cache policy for this endpoints.
+              Defaults to a 300 seconds private cache."
+              type: string
+              default: "private, max-age=300"
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]

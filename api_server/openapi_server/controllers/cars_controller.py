@@ -5,6 +5,7 @@ from flask import make_response
 from google.cloud import datastore
 
 from cache import cache
+import logging
 from openapi_server.models import Car, CarDistance, CarDistances, CarsList, Token, TokensList, Error
 from openapi_server.contrib.distance import calculate_distance, calculate_travel_times
 
@@ -12,6 +13,7 @@ from openapi_server.contrib.distance import calculate_distance, calculate_travel
 API endpoints.
 """
 db_client = datastore.Client()
+logger = logging.getLogger(__name__)
 
 
 @cache.memoize(timeout=300)
@@ -97,7 +99,11 @@ def cars_post(body):
 
     # for unknown reason attribute 'id' is received as 'id_'
     if 'id_' in body and body['id_'] is not None:
-        car_info_key = db_client.key('CarInfo', int(body['id_']))
+        try:
+            car_info_key = db_client.key('CarInfo', int(body['id_']))
+        except ValueError:
+            logger.warning(f"String to int conversion on {cars_post.__name__} with {body['id_']}")
+            return make_response(jsonify("The client should not repeat this request without modification."), 400)
         entity = db_client.get(car_info_key)
         if entity is None:
             entity = datastore.Entity(key=car_info_key)

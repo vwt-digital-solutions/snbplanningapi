@@ -173,6 +173,9 @@ def car_distances_list(work_item: str, offset, sort, limit, cars: str = None):
 
     car_locations = get_car_locations(db_client, True, offset)
 
+    if work_item_entity is None:
+        return make_response(jsonify("Work Item not found"), 404)
+
     if cars is not None:
         tokens = cars.split(',')
         car_locations = [car_location for car_location in car_locations if car_location.key.id_or_name in tokens]

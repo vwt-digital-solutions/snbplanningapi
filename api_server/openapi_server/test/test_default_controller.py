@@ -47,7 +47,7 @@ class TestDefaultController(BaseTestCase):
             method='GET',
             headers=headers,
             query_string=query_string)
-        self.assert200(response,
+        self.assert404(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
     def test_car_locations_list(self):
@@ -109,7 +109,7 @@ class TestDefaultController(BaseTestCase):
             headers=headers,
             data=json.dumps(body),
             content_type='application/json')
-        self.assert200(response,
+        self.assert400(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
     def test_list_tokens(self):

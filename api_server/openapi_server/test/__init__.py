@@ -3,6 +3,11 @@ import logging
 import connexion
 from flask_testing import TestCase
 
+from cache import cache
+
+from Flask_AuditLog import AuditLog
+from Flask_No_Cache import CacheControl
+
 from openapi_server.encoder import JSONEncoder
 
 
@@ -13,4 +18,7 @@ class BaseTestCase(TestCase):
         app = connexion.App(__name__, specification_dir='../openapi/')
         app.app.json_encoder = JSONEncoder
         app.add_api('openapi.yaml', pythonic_params=True)
+        AuditLog(app)
+        CacheControl(app)
+        cache.init_app(app.app)
         return app.app

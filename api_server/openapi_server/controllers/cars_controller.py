@@ -28,7 +28,7 @@ def car_locations_list(offset):
     :rtype: Cars
     """
 
-    car_locations = get_car_locations(db_client, True, offset)
+    car_locations = get_car_locations(True, offset)
 
     result = {
         "type": "FeatureCollection",
@@ -142,12 +142,12 @@ def list_tokens(offset, assigned=None):
 
     """
 
-    car_locations = list(get_car_locations(db_client, assigned, offset))
+    car_locations = list(get_car_locations(assigned, offset))
 
     car_locations.sort(key=lambda x: x.get('license') or 'ZZZZZZ', reverse=False)
 
     if assigned is not None:
-        car_tokens = get_car_info_tokens(db_client)
+        car_tokens = get_car_info_tokens()
 
         car_locations = [car_location for car_location in car_locations
                          if is_assigned(car_location.key.id_or_name, car_tokens, assigned)]
@@ -171,7 +171,7 @@ def car_distances_list(work_item: str, offset, sort, limit, cars: str = None):
 
     work_item_entity = db_client.get(db_client.key('WorkItem', work_item))
 
-    car_locations = get_car_locations(db_client, True, offset)
+    car_locations = get_car_locations(True, offset)
 
     if work_item_entity is None:
         return make_response(jsonify("Work Item not found"), 404)
@@ -223,7 +223,7 @@ def is_assigned(token, car_tokens, assigned=None):
 
 
 @cache.memoize(timeout=300)
-def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, offset=None):
+def get_car_locations(assigned_to_car_info=True, offset=None):
     """
     Retrieve a list of carLocations from CarLocations
 
@@ -246,7 +246,7 @@ def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, of
 
     # Filter query on CarInfo tokens
     if assigned_to_car_info:
-        car_info_tokens = get_car_info_tokens(db_client)
+        car_info_tokens = get_car_info_tokens()
         query_iter = [car_location for car_location in query_iter
                       if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]
 
@@ -254,7 +254,7 @@ def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, of
 
 
 @cache.memoize(timeout=300)
-def get_car_info_tokens(db_client: datastore.Client):
+def get_car_info_tokens():
     """Retrieve a list of tokens from CarInfo
 
     :param db_client: The datastore Client.

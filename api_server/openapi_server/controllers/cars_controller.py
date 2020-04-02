@@ -249,6 +249,8 @@ def get_car_locations(assigned_to_car_info=True, offset=None):
         car_info_tokens = get_car_info_tokens()
         query_iter = [car_location for car_location in query_iter
                       if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]
+    else:
+        query_iter = list(query_iter)
 
     return query_iter
 

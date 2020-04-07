@@ -1,6 +1,6 @@
 ---
 swagger: '2.0'
-x-zally-ignore: [101, 104, 105]
+x-zally-ignore: [101, 104, 105, 176]
 info:
   title: snbplanningtool
   description: Endpoint to retreive the latest car locations
@@ -52,6 +52,13 @@ paths:
       responses:
         '201':
           description: Successful POST
+          schema:
+            $ref: '#/definitions/Car'
+        '400':
+          description: There is an error with the data posted, for instance,
+                       a car with the specified hyrde token already exists.
+          schema:
+            $ref: '#/definitions/Error'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.editor]
@@ -72,6 +79,12 @@ paths:
           description: Successful response - returns an array of locations
           schema:
             $ref: '#/definitions/CarLocations'
+          headers:
+            Cache-Control:
+              description: "Header describing the cache policy for this endpoints.
+              Defaults to a 300 seconds private cache."
+              type: string
+              default: "private, max-age=300"
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
@@ -132,19 +145,24 @@ paths:
       description: List of tokens
       operationId: list_tokens
       parameters:
-        - name: "assigned"
-          in: "query"
+        - in: query
+          name: assigned
           type: boolean
           required: false
-          default: false
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          default: 168
+          description: Time offset range in hours for retrieving entries
       responses:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Tokens'
+            $ref: '#/definitions/TokensList'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
-        - OAuth2AzureAD: [snbplanningapi.read]
+        - OAuth2AzureAD: [snbplanningapi.planner]
   /workitems:
     get:
       summary: Get a list of work items
@@ -162,11 +180,27 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/WorkItemsList'
+          headers:
+            Cache-Control:
+              description: "Header describing the cache policy for this endpoints.
+              Defaults to a 300 seconds private cache."
+              type: string
+              default: "private, max-age=300"
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-eac-ignore: true
 definitions:
+  Error:
+    description: An error message.
+    type: object
+    properties:
+      status:
+        type: string
+        example: "400"
+      detail:
+        type: string
+        example: 'Could not create object, an object with that id already exists.'
   CarDistances:
     description: Collection of car distances.
     type: object
@@ -217,7 +251,7 @@ definitions:
               - 5.3
               - 52.6
           properties:
-            license_plate: AA-BB-11
+            token: vwt/hyrde/1234
         - type: Feature
           geometry:
             type: Point
@@ -247,9 +281,7 @@ definitions:
           - 5.3
           - 52.6
       properties:
-        id: 1
-        license_plate: AA-BB-11
-        driver_name: Pietje Puk
+        token: vwt/hyrde/token/104510
   Geometry:
     description: Geometry element
     required:
@@ -281,34 +313,35 @@ definitions:
           $ref: '#/definitions/Car'
   Car:
     description: Information on a car and their driver
-    example:
-      - id: 123456789
-        administration: Klantteam Noord
-        license_plate: AB-12-CD
-        driver_name: Billy Gates
-        driver_skill: Metende
-        token: some-token-value
     properties:
       id:
         type: string
+        example: 123456789
       administration:
         type: string
-      license_plate:
-        type: string
+        example: Klantteam Noord
       driver_name:
         type: string
+        example: Billy Gates
       driver_skill:
         type: string
-        enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
+        #enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
+        example: Metende
       driver_employee_number:
+        type: string
+        example: 1234
+      license_plate:
+        readOnly: true
+        example: AA-123-BB
         type: string
       token:
         type: string
+        example: vwt/hyrde/12345
     required:
-      - license_plate
+      - token
       - driver_name
-  Tokens:
-    description: Collection of list with tokens
+  TokensList:
+    description: List of hyrde car tokens
     required:
       - items
     type: object
@@ -316,7 +349,17 @@ definitions:
       items:
         type: array
         items:
-          type: string
+          $ref: '#/definitions/Token'
+  Token:
+    description: A hyrde car token and its' linked information
+    type: object
+    properties:
+      id:
+        type: string
+        example: 'vwt/hyrde/token/20120'
+      license:
+        type: string
+        example: 'AB123C'
   WorkItemsList:
     properties:
       items:

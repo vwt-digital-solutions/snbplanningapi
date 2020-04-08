@@ -344,6 +344,10 @@ definitions:
       token:
         type: string
         example: vwt/hyrde/12345
+      business_unit:
+        type: string
+        example: NLS
+        #enum: ["", null, "nls", "ftth", "service"]
     required:
       - token
       - driver_name

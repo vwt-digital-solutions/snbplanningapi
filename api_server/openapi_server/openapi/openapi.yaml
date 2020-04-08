@@ -351,6 +351,7 @@ components:
           administration: Klantteam Noord
           id: "123456789"
           driver_skill: Metende
+          business_unit: NLS
           driver_employee_number: "1234"
           token: vwt/hyrde/12345
         - driver_name: Billy Gates
@@ -358,6 +359,7 @@ components:
           administration: Klantteam Noord
           id: "123456789"
           driver_skill: Metende
+          business_unit: NLS
           driver_employee_number: "1234"
           token: vwt/hyrde/12345
       properties:
@@ -376,6 +378,7 @@ components:
         administration: Klantteam Noord
         id: "123456789"
         driver_skill: Metende
+        business_unit: NLS
         driver_employee_number: "1234"
         token: vwt/hyrde/12345
       properties:
@@ -400,6 +403,9 @@ components:
           type: string
         token:
           example: vwt/hyrde/12345
+          type: string
+        business_unit:
+          example: NLS
           type: string
       required:
       - driver_name

@@ -49,7 +49,7 @@ def list_work_items(active=False, task_type_category='service'):  # noqa: E501
                   isinstance(res.get('end_timestamp', None), datetime.datetime) and
                   res.get('start_timestamp', None) < datetime.datetime.now(pytz.utc) < res.get('end_timestamp', None)]
 
-    work_items_list = [WorkItem.from_dict(res) for res in result]
+    work_items_list = [WorkItem.from_dict(str(res)) for res in result]
 
     response = WorkItemsList(items=work_items_list)
     return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})

@@ -35,13 +35,13 @@ class WorkItem(Model):
         :param description: The description of this WorkItem.  # noqa: E501
         :type description: str
         :param start_timestamp: The start_timestamp of this WorkItem.  # noqa: E501
-        :type start_timestamp: str
+        :type start_timestamp: datetime
         :param end_timestamp: The end_timestamp of this WorkItem.  # noqa: E501
-        :type end_timestamp: str
+        :type end_timestamp: datetime
         :param last_updated: The last_updated of this WorkItem.  # noqa: E501
-        :type last_updated: str
+        :type last_updated: datetime
         :param resolve_before_timestamp: The resolve_before_timestamp of this WorkItem.  # noqa: E501
-        :type resolve_before_timestamp: str
+        :type resolve_before_timestamp: datetime
         :param city: The city of this WorkItem.  # noqa: E501
         :type city: str
         :param zip: The zip of this WorkItem.  # noqa: E501
@@ -75,10 +75,10 @@ class WorkItem(Model):
             'project': str,
             'status': str,
             'description': str,
-            'start_timestamp': str,
-            'end_timestamp': str,
-            'last_updated': str,
-            'resolve_before_timestamp': str,
+            'start_timestamp': datetime,
+            'end_timestamp': datetime,
+            'last_updated': datetime,
+            'resolve_before_timestamp': datetime,
             'city': str,
             'zip': str,
             'house': str,
@@ -307,7 +307,7 @@ class WorkItem(Model):
 
 
         :return: The start_timestamp of this WorkItem.
-        :rtype: str
+        :rtype: datetime
         """
         return self._start_timestamp
 
@@ -317,7 +317,7 @@ class WorkItem(Model):
 
 
         :param start_timestamp: The start_timestamp of this WorkItem.
-        :type start_timestamp: str
+        :type start_timestamp: datetime
         """
 
         self._start_timestamp = start_timestamp
@@ -328,7 +328,7 @@ class WorkItem(Model):
 
 
         :return: The end_timestamp of this WorkItem.
-        :rtype: str
+        :rtype: datetime
         """
         return self._end_timestamp
 
@@ -338,7 +338,7 @@ class WorkItem(Model):
 
 
         :param end_timestamp: The end_timestamp of this WorkItem.
-        :type end_timestamp: str
+        :type end_timestamp: datetime
         """
 
         self._end_timestamp = end_timestamp
@@ -349,7 +349,7 @@ class WorkItem(Model):
 
 
         :return: The last_updated of this WorkItem.
-        :rtype: str
+        :rtype: datetime
         """
         return self._last_updated
 
@@ -359,7 +359,7 @@ class WorkItem(Model):
 
 
         :param last_updated: The last_updated of this WorkItem.
-        :type last_updated: str
+        :type last_updated: datetime
         """
 
         self._last_updated = last_updated
@@ -370,7 +370,7 @@ class WorkItem(Model):
 
 
         :return: The resolve_before_timestamp of this WorkItem.
-        :rtype: str
+        :rtype: datetime
         """
         return self._resolve_before_timestamp
 
@@ -380,7 +380,7 @@ class WorkItem(Model):
 
 
         :param resolve_before_timestamp: The resolve_before_timestamp of this WorkItem.
-        :type resolve_before_timestamp: str
+        :type resolve_before_timestamp: datetime
         """
 
         self._resolve_before_timestamp = resolve_before_timestamp

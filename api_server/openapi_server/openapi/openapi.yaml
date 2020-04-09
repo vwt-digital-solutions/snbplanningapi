@@ -27,7 +27,7 @@ paths:
           default: 168
           type: integer
       responses:
-        "200":
+        200:
           content:
             application/json:
               schema:
@@ -48,13 +48,13 @@ paths:
               $ref: '#/components/schemas/Car'
         required: true
       responses:
-        "201":
+        201:
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Car'
           description: Successful POST
-        "400":
+        400:
           content:
             application/json:
               schema:
@@ -109,7 +109,7 @@ paths:
           default: 3
           type: integer
       responses:
-        "200":
+        200:
           content:
             application/json:
               schema:
@@ -132,7 +132,7 @@ paths:
           default: 168
           type: integer
       responses:
-        "200":
+        200:
           content:
             application/json:
               schema:
@@ -166,7 +166,7 @@ paths:
           default: 168
           type: integer
       responses:
-        "200":
+        200:
           content:
             application/json:
               schema:
@@ -189,10 +189,10 @@ paths:
         schema:
           default: false
           type: boolean
-      - description: The tasktype to filter on. Defaults to service, to return all
-          workitems for Service.
+      - description: The business_unit to filter on. Defaults to service, to return
+          all workitems for Service.
         in: query
-        name: task_type_category
+        name: business_unit
         schema:
           default: service
           enum:
@@ -201,7 +201,7 @@ paths:
           - ftth
           type: string
       responses:
-        "200":
+        200:
           content:
             application/json:
               schema:

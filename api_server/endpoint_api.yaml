@@ -175,12 +175,12 @@ paths:
           default: false
           description: Select only active workitems. When set to false, retrieves all workitems
         - in: query
-          name: task_type_category
+          name: business_unit
           type: string
           required: false
           default: service
           enum: [service, nls, ftth]
-          description: The tasktype to filter on. Defaults to service, to return all workitems for Service.
+          description: The business_unit to filter on. Defaults to service, to return all workitems for Service.
       operationId: list_work_items
       responses:
         "200":

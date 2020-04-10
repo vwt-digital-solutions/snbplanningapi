@@ -66,3 +66,4 @@ class CarsList(Model):
             raise ValueError("Invalid value for `items`, must not be `None`")  # noqa: E501
 
         self._items = items
+# flake8: noqa

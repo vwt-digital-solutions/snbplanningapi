@@ -88,3 +88,4 @@ class Token(Model):
         """
 
         self._license = license
+# flake8: noqa

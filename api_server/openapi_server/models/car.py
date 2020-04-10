@@ -248,3 +248,4 @@ class Car(Model):
         """
 
         self._business_unit = business_unit
+# flake8: noqa

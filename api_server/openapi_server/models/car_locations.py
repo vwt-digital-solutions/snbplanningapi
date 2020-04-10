@@ -94,3 +94,4 @@ class CarLocations(Model):
             raise ValueError("Invalid value for `features`, must not be `None`")  # noqa: E501
 
         self._features = features
+# flake8: noqa

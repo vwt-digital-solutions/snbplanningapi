@@ -14,7 +14,7 @@ work_item_attribute_map = {
     'L2GUID': 'l2_guid',
     'isGeocoded': 'is_geocoded'
 }
-task_type_categories = {
+business_unit_task_types = {
     'service': 'Service',
     'nls': 'NLS',
     'ftth': 'FttH',
@@ -27,21 +27,21 @@ Controller functions
 
 
 @cache.memoize(timeout=300)
-def list_work_items(active=False, task_type_category='service'):  # noqa: E501
+def list_work_items(active=False, business_unit='service'):  # noqa: E501
     """Get a list of work items
 
     Get a list of work items # noqa: E501
 
     :rtype: a response containing an array of work items
     """
-    if task_type_category not in task_type_categories:
+    if business_unit not in business_unit_task_types:
         error = Error('400',
-                      'task_type_category is not valid. Possible choices are: {0}'
-                      .format(', '.join(task_type_categories.keys()))
+                      'business_unit is not valid. Possible choices are: {0}'
+                      .format(', '.join(business_unit_task_types.keys()))
                       )
         return make_response(jsonify(error), 400)
 
-    result = get_work_items(task_type_categories[task_type_category])
+    result = get_work_items(business_unit_task_types[business_unit])
 
     if active:
         result = [res for res in result if
@@ -49,7 +49,7 @@ def list_work_items(active=False, task_type_category='service'):  # noqa: E501
                   isinstance(res.get('end_timestamp', None), datetime.datetime) and
                   res.get('start_timestamp', None) < datetime.datetime.now(pytz.utc) < res.get('end_timestamp', None)]
 
-    work_items_list = [WorkItem.from_dict(str(res)) for res in result]
+    work_items_list = [WorkItem.from_dict(res) for res in result]
 
     response = WorkItemsList(items=work_items_list)
     return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
@@ -61,7 +61,7 @@ Helper functions
 
 
 @cache.memoize(timeout=300)
-def get_work_items(task_type_category_search_value):
+def get_work_items(business_unit):
     """Get a list of work items
 
     Get a list of work items from the DataStore # noqa: E501
@@ -71,8 +71,8 @@ def get_work_items(task_type_category_search_value):
     db_client = datastore.Client()
     query = db_client.query(kind='WorkItem')
 
-    query.add_filter('task_type', '>=', task_type_category_search_value)
-    query.add_filter('task_type', '<=', '{0}z'.format(task_type_category_search_value))
+    query.add_filter('task_type', '>=', business_unit)
+    query.add_filter('task_type', '<=', '{0}z'.format(business_unit))
 
     work_items = [remap_attributes(res, work_item_attribute_map)
                   for res in query.fetch() if res['status'] in work_items_statuses]

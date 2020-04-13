@@ -1,12 +1,15 @@
 import base64
-import googlemaps
 import json
 import logging
-
 import config
+import googlemaps
+
+from google.cloud import datastore
 from dbprocessor import DBProcessor
 
-parser = DBProcessor()
+
+client = datastore.Client()
+parser = DBProcessor(client)
 
 
 def topic_to_datastore(request):
@@ -16,20 +19,15 @@ def topic_to_datastore(request):
 
     # Extract data from request
     envelope = json.loads(request.data.decode('utf-8'))
-
     payload = base64.b64decode(envelope['message']['data'])
 
     # Extract subscription from subscription string
     try:
         subscription = envelope['subscription'].split('/')[-1]
         logging.info(f'Message received from {subscription} [{payload}]')
-
         parser.process(json.loads(payload), gmaps)
-
-    except Exception as e:
-        logging.info('Extract of subscription failed')
-        logging.debug(e)
-        raise e
+    except Exception:
+        logging.exception('Extract of subscription failed')
 
     # Returning any 2xx status indicates successful receipt of the message.
     # 204: no content, delivery successfull, no further actions needed

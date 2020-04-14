@@ -48,7 +48,7 @@ def car_locations_list(offset):
 
 
 @cache.memoize(timeout=300)
-def cars_list(offset):
+def cars_list(offset, business_unit=None):
     """Get car info
 
     Get a list of all car information
@@ -58,6 +58,9 @@ def cars_list(offset):
 
     """
     query = db_client.query(kind='CarInfo')
+
+    if business_unit is not None:
+        query.add_filter('business_unit', '=', business_unit)
 
     query_iter = query.fetch()
 

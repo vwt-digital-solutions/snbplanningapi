@@ -30,6 +30,12 @@ paths:
           required: false
           default: 168
           description: Time offset range in hours for retrieving entries
+        - in: query
+          name: business_unit
+          type: string
+          required: false
+          description: Business unit the car and driver belong to.
+          enum: [service, nls, ftth]
       responses:
         "200":
           description: Successful response - returns an array of locations with info
@@ -332,7 +338,7 @@ definitions:
         example: Billy Gates
       driver_skill:
         type: string
-        #enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
+        # enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
         example: Metende
       driver_employee_number:
         type: string
@@ -347,7 +353,7 @@ definitions:
       business_unit:
         type: string
         example: NLS
-        #enum: ["", null, "nls", "ftth", "service"]
+        # enum: ["", null, "nls", "ftth", "service"]
     required:
       - token
       - driver_name

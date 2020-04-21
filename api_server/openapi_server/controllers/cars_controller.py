@@ -271,6 +271,6 @@ def get_car_info_tokens():
 
     car_tokens = [car_info['token'] for
                   car_info in cars_query.fetch()
-                  if car_info['token'] is not None and len(car_info['token']) > 0]
+                  if 'token' in car_info is not None and len(car_info['token']) > 0]
 
     return car_tokens

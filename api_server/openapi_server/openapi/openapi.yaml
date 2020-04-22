@@ -356,6 +356,7 @@ components:
       example:
         items:
         - driver_name: Billy Gates
+          division: "90117"
           license_plate: AA-123-BB
           administration: Klantteam Noord
           id: "123456789"
@@ -364,6 +365,7 @@ components:
           driver_employee_number: "1234"
           token: vwt/hyrde/12345
         - driver_name: Billy Gates
+          division: "90117"
           license_plate: AA-123-BB
           administration: Klantteam Noord
           id: "123456789"
@@ -383,6 +385,7 @@ components:
       description: Information on a car and their driver
       example:
         driver_name: Billy Gates
+        division: "90117"
         license_plate: AA-123-BB
         administration: Klantteam Noord
         id: "123456789"
@@ -399,6 +402,7 @@ components:
           type: string
         driver_name:
           example: Billy Gates
+          readOnly: true
           type: string
         driver_skill:
           example: Metende
@@ -413,8 +417,13 @@ components:
         token:
           example: vwt/hyrde/12345
           type: string
+        division:
+          example: "90117"
+          readOnly: true
+          type: string
         business_unit:
           example: NLS
+          readOnly: true
           type: string
       required:
       - driver_name

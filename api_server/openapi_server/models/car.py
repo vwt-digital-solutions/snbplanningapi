@@ -15,7 +15,7 @@ class Car(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, license_plate=None, token=None, business_unit=None):  # noqa: E501
+    def __init__(self, id=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, license_plate=None, token=None, division=None, business_unit=None):  # noqa: E501
         """Car - a model defined in OpenAPI
 
         :param id: The id of this Car.  # noqa: E501
@@ -32,6 +32,8 @@ class Car(Model):
         :type license_plate: str
         :param token: The token of this Car.  # noqa: E501
         :type token: str
+        :param division: The division of this Car.  # noqa: E501
+        :type division: str
         :param business_unit: The business_unit of this Car.  # noqa: E501
         :type business_unit: str
         """
@@ -43,6 +45,7 @@ class Car(Model):
             'driver_employee_number': str,
             'license_plate': str,
             'token': str,
+            'division': str,
             'business_unit': str
         }
 
@@ -54,6 +57,7 @@ class Car(Model):
             'driver_employee_number': 'driver_employee_number',
             'license_plate': 'license_plate',
             'token': 'token',
+            'division': 'division',
             'business_unit': 'business_unit'
         }
 
@@ -64,6 +68,7 @@ class Car(Model):
         self._driver_employee_number = driver_employee_number
         self._license_plate = license_plate
         self._token = token
+        self._division = division
         self._business_unit = business_unit
 
     @classmethod
@@ -229,6 +234,27 @@ class Car(Model):
         self._token = token
 
     @property
+    def division(self):
+        """Gets the division of this Car.
+
+
+        :return: The division of this Car.
+        :rtype: str
+        """
+        return self._division
+
+    @division.setter
+    def division(self, division):
+        """Sets the division of this Car.
+
+
+        :param division: The division of this Car.
+        :type division: str
+        """
+
+        self._division = division
+
+    @property
     def business_unit(self):
         """Gets the business_unit of this Car.
 
@@ -248,4 +274,3 @@ class Car(Model):
         """
 
         self._business_unit = business_unit
-# flake8: noqa

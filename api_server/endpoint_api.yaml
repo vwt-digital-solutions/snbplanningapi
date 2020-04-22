@@ -336,6 +336,7 @@ definitions:
       driver_name:
         type: string
         example: Billy Gates
+        readOnly: true
       driver_skill:
         type: string
         # enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
@@ -350,9 +351,14 @@ definitions:
       token:
         type: string
         example: vwt/hyrde/12345
+      division:
+        type: string
+        example: 90117
+        readOnly: true
       business_unit:
         type: string
         example: NLS
+        readOnly: true
         # enum: ["", null, "nls", "ftth", "service"]
     required:
       - token

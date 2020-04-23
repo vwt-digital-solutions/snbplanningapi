@@ -426,7 +426,6 @@ components:
           readOnly: true
           type: string
       required:
-      - driver_name
       - token
       type: object
     TokensList:

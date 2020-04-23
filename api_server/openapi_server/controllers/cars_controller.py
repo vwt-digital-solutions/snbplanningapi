@@ -72,11 +72,17 @@ def cars_list(offset, business_unit=None):
         car = Car.from_dict(entity)
         car.id = str(entity.key.id_or_name)
 
-        search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]
+        # Check cars for matching car_locations either on token or on license_plate.
+        search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token
+                       or car_location.get('license', False) == car.license_plate]
         if len(search_list) > 0:
             car.license_plate = search_list[0].get('license', None)
+            car.token = search_list[0].key.id_or_name
 
-        result.append(car)
+        # Only return results where token is set.
+        # Car information which does not have a tracker is not relevant.
+        if car.token is not None:
+            result.append(car)
 
     result = CarsList(items=result)
 

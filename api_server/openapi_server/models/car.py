@@ -142,8 +142,6 @@ class Car(Model):
         :param driver_name: The driver_name of this Car.
         :type driver_name: str
         """
-        if driver_name is None:
-            raise ValueError("Invalid value for `driver_name`, must not be `None`")  # noqa: E501
 
         self._driver_name = driver_name
 

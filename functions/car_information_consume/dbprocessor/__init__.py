@@ -20,7 +20,6 @@ class DBProcessor(object):
                 'driver_name': '{0} {1} {2}'.format(car_information.get('Voorletter', ''),
                                                     car_information.get('Tussenvg', ''),
                                                     car_information.get('Achternaam', ''), ),
-                'driver_skill': car_information.get('Functienaam', ''),
                 'driver_employee_number': car_information.get('Registratienr', ''),
                 'license_plate': car_information.get('Kenteken', ''),
                 'division': car_information.get('Afdeling', ''),

@@ -19,6 +19,10 @@ class DBProcessor(object):
                 'name': '{0} - {1}'.format(division_dict['Nivo 1'], division_dict['Nivo 2']),
                 'business_unit': division_dict.get('Business unit', '')
             })
-            batch.put(division)
-            logging.debug('Updating business_unit {} - {}'.format(division.key, division))
+            if division_dict['Status'] == 'Vervallen':
+                batch.delete(division.key)
+                logging.debug('Removing business_unit {} - {}'.format(division.key, division))
+            else:
+                batch.put(division)
+                logging.debug('Updating business_unit {} - {}'.format(division.key, division))
         batch.commit()

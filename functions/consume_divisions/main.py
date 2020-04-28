@@ -1,6 +1,5 @@
 import logging
-from google.cloud import storage as gcs
-import csv
+import pandas as pd
 
 from dbprocessor import DBProcessor
 
@@ -14,13 +13,12 @@ def process_csv_file(data, context):
     Mainly because this allows us to easily switch to a PubSub messaging based consume function.
     """
 
-    filename = '{0}/{1}'.format(data['bucket'], data['name'])
+    filename = 'gs://{0}/{1}'.format(data['bucket'], data['name'])
     parser = DBProcessor()
 
     try:
-        with gcs.open(filename) as csvfile:
-            reader = csv.DictReader(csvfile)
-            parser.process({'divisions': reader})
+        df = pd.read_csv(filename)
+        parser.process({'divisions': df.to_dict('records')})
     except Exception as e:
         logging.info('Processing of divisions failed.')
         logging.debug(e)

@@ -64,3 +64,4 @@ class WorkItemsList(Model):
         """
 
         self._items = items
+# flake8: noqa

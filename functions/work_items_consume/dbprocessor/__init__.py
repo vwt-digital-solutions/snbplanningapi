@@ -1,12 +1,13 @@
-import dateutil.parser
-from google.cloud import datastore
 import logging
+import dateutil.parser
+
+from google.cloud import datastore
 
 
 class DBProcessor(object):
-    def __init__(self):
-        self.client = datastore.Client()
-        pass
+
+    def __init__(self, client):
+        self.client = client
 
     def process(self, payload, gmaps):
         when = dateutil.parser.isoparse(payload['when'])

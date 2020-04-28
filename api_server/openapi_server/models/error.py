@@ -88,3 +88,4 @@ class Error(Model):
         """
 
         self._detail = detail
+# flake8: noqa

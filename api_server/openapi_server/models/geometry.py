@@ -96,3 +96,4 @@ class Geometry(Model):
             raise ValueError("Invalid value for `coordinates`, must not be `None`")  # noqa: E501
 
         self._coordinates = coordinates
+# flake8: noqa

@@ -64,3 +64,4 @@ class Cars(Model):
         """
 
         self._items = items
+# flake8: noqa

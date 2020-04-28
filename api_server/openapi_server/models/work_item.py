@@ -636,3 +636,4 @@ class WorkItem(Model):
         """
 
         self._stagnation = stagnation
+# flake8: noqa

@@ -48,32 +48,46 @@ def car_locations_list(offset):
 
 
 @cache.memoize(timeout=300)
-def cars_list(offset):
+def cars_list(offset, business_unit=None):
     """Get car info
 
     Get a list of all car information
-
-
     :rtype: CarsInfo
 
     """
     query = db_client.query(kind='CarInfo')
-
     query_iter = query.fetch()
 
     car_locations = list(db_client.query(kind='CarLocation').fetch())
+    car_locations_dict_by_token = {e.key.id_or_name: e for e in car_locations}
+    car_locations_dict_by_license_plate = {e['license']: e for e in car_locations if 'license' in e}
 
     result = []
+
+    divisions_to_return = []
+    if business_unit is not None:
+        query = db_client.query(kind='Divisions')
+        query.add_filter('business_unit', '=', business_unit)
+        divisions_list = list(query.fetch())
+        divisions_to_return = [int(entity.key.id_or_name) for entity in divisions_list]
 
     for entity in query_iter:
         car = Car.from_dict(entity)
         car.id = str(entity.key.id_or_name)
 
-        search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]
-        if len(search_list) > 0:
-            car.license_plate = search_list[0].get('license', None)
+        car_location = car_locations_dict_by_token.get(car.token, None)
+        if car_location is None and car.license_plate is not None:
+            car_location = car_locations_dict_by_license_plate.get(car.license_plate, None)
 
-        result.append(car)
+        if car_location is not None:
+            car.license_plate = car_location.get('license', None)
+            car.token = car_location.key.id_or_name
+
+        # Only return results where token is set.
+        # Car information which does not have a tracker is not relevant.
+        if car.token is not None:
+            if business_unit is not None and car.division is not None and int(car.division) in divisions_to_return:
+                result.append(car)
 
     result = CarsList(items=result)
 
@@ -94,6 +108,9 @@ def cars_post(body):
     # Remove unnecessary and read-only fields.
     del car_info['id']
     del car_info['license_plate']
+    del car_info['driver_name']
+    del car_info['division']
+    del car_info['business_unit']
 
     entity = None
 
@@ -126,6 +143,7 @@ def cars_post(body):
     search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]
     if len(search_list) > 0:
         car.license_plate = search_list[0].get('license', None)
+        car.token = search_list[0].key.id_or_name
 
     return make_response(jsonify(car), 201)
 
@@ -268,6 +286,6 @@ def get_car_info_tokens():
 
     car_tokens = [car_info['token'] for
                   car_info in cars_query.fetch()
-                  if car_info['token'] is not None and len(car_info['token']) > 0]
+                  if 'token' in car_info is not None and len(car_info['token']) > 0]
 
     return car_tokens

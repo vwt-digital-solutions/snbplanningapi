@@ -15,7 +15,7 @@ class Car(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, license_plate=None, token=None):  # noqa: E501
+    def __init__(self, id=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, license_plate=None, token=None, division=None, business_unit=None):  # noqa: E501
         """Car - a model defined in OpenAPI
 
         :param id: The id of this Car.  # noqa: E501
@@ -32,6 +32,10 @@ class Car(Model):
         :type license_plate: str
         :param token: The token of this Car.  # noqa: E501
         :type token: str
+        :param division: The division of this Car.  # noqa: E501
+        :type division: str
+        :param business_unit: The business_unit of this Car.  # noqa: E501
+        :type business_unit: str
         """
         self.openapi_types = {
             'id': str,
@@ -40,7 +44,9 @@ class Car(Model):
             'driver_skill': str,
             'driver_employee_number': str,
             'license_plate': str,
-            'token': str
+            'token': str,
+            'division': str,
+            'business_unit': str
         }
 
         self.attribute_map = {
@@ -50,7 +56,9 @@ class Car(Model):
             'driver_skill': 'driver_skill',
             'driver_employee_number': 'driver_employee_number',
             'license_plate': 'license_plate',
-            'token': 'token'
+            'token': 'token',
+            'division': 'division',
+            'business_unit': 'business_unit'
         }
 
         self._id = id
@@ -60,6 +68,8 @@ class Car(Model):
         self._driver_employee_number = driver_employee_number
         self._license_plate = license_plate
         self._token = token
+        self._division = division
+        self._business_unit = business_unit
 
     @classmethod
     def from_dict(cls, dikt) -> 'Car':
@@ -132,8 +142,6 @@ class Car(Model):
         :param driver_name: The driver_name of this Car.
         :type driver_name: str
         """
-        if driver_name is None:
-            raise ValueError("Invalid value for `driver_name`, must not be `None`")  # noqa: E501
 
         self._driver_name = driver_name
 
@@ -222,3 +230,45 @@ class Car(Model):
             raise ValueError("Invalid value for `token`, must not be `None`")  # noqa: E501
 
         self._token = token
+
+    @property
+    def division(self):
+        """Gets the division of this Car.
+
+
+        :return: The division of this Car.
+        :rtype: str
+        """
+        return self._division
+
+    @division.setter
+    def division(self, division):
+        """Sets the division of this Car.
+
+
+        :param division: The division of this Car.
+        :type division: str
+        """
+
+        self._division = division
+
+    @property
+    def business_unit(self):
+        """Gets the business_unit of this Car.
+
+
+        :return: The business_unit of this Car.
+        :rtype: str
+        """
+        return self._business_unit
+
+    @business_unit.setter
+    def business_unit(self, business_unit):
+        """Sets the business_unit of this Car.
+
+
+        :param business_unit: The business_unit of this Car.
+        :type business_unit: str
+        """
+
+        self._business_unit = business_unit

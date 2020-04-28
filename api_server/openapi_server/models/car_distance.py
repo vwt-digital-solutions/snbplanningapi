@@ -120,3 +120,4 @@ class CarDistance(Model):
         """
 
         self._travel_time = travel_time
+# flake8: noqa

@@ -30,6 +30,7 @@ paths:
         in: query
         name: business_unit
         schema:
+          default: service
           enum:
           - service
           - nls

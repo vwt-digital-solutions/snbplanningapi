@@ -34,6 +34,7 @@ paths:
           name: business_unit
           type: string
           required: false
+          default: service
           description: Business unit the car and driver belong to.
           enum: [service, nls, ftth]
       responses:

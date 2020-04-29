@@ -138,6 +138,7 @@ def cars_post(body):
     db_client.put(entity)
 
     car = Car.from_dict(entity)
+    car.id = str(entity.key.id_or_name)
 
     car_locations = list(db_client.query(kind='CarLocation').fetch())
     search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]

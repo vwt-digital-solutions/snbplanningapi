@@ -19,7 +19,10 @@ class DBProcessor(object):
             self.client.put(work_item_entity)
 
     def get_work_item(self, work_item, when, gmaps):
-        loc_key = self.client.key('WorkItem', work_item['L2GUID'])
+        if 'id' not in work_item:
+            loc_key = self.client.key('WorkItem', work_item['L2GUID'])
+        else:
+            loc_key = self.client.key('WorkItem', work_item['id'])
         entity = self.client.get(loc_key)
 
         if work_item.get('status') not in ['Te Plannen', 'Gepland', 'Niet Gereed']:

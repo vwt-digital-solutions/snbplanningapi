@@ -85,8 +85,14 @@ def cars_list(offset, business_unit=None):
 
         # Only return results where token is set.
         # Car information which does not have a tracker is not relevant.
-        if car.token is not None:
-            if business_unit is not None and car.division is not None and int(car.division) in divisions_to_return:
+        elif car.token is not None:
+            if business_unit is None:
+                result.append(car)
+
+            # CarInfo for which a division is not set is assumed to be info from service.
+            if car.division is None and business_unit == 'service':
+                result.append(car)
+            elif business_unit is not None and car.division is not None and int(car.division) in divisions_to_return:
                 result.append(car)
 
     result = CarsList(items=result)

@@ -3,7 +3,7 @@ swagger: '2.0'
 x-zally-ignore: [101, 104, 105, 176]
 info:
   title: snbplanningtool
-  description: Endpoint to retreive the latest car locations
+  description: Endpoint to retrieve the latest car locations
   contact:
     name: VolkerWessels Telecom - Digital Ambition Team
     url: 'https://vwt-digital.github.io/'
@@ -81,6 +81,13 @@ paths:
           required: false
           default: 168
           description: Time offset range in hours for retrieving entries
+        - in: query
+          name: business_unit
+          type: string
+          required: false
+          default: service
+          description: Business unit the car and driver belong to.
+          enum: [service, nls, ftth]
       responses:
         "200":
           description: Successful response - returns an array of locations

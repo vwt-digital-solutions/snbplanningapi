@@ -4,7 +4,7 @@ info:
     email: opensource@vwt.digital
     name: VolkerWessels Telecom - Digital Ambition Team
     url: https://vwt-digital.github.io/
-  description: Endpoint to retreive the latest car locations
+  description: Endpoint to retrieve the latest car locations
   license:
     name: GNU GPLv3
     url: https://www.gnu.org/licenses/gpl.txt
@@ -141,6 +141,16 @@ paths:
         schema:
           default: 168
           type: integer
+      - description: Business unit the car and driver belong to.
+        in: query
+        name: business_unit
+        schema:
+          default: service
+          enum:
+          - service
+          - nls
+          - ftth
+          type: string
       responses:
         "200":
           content:

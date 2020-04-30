@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 @cache.memoize(timeout=300)
-def car_locations_list(offset):
+def car_locations_list(offset, business_unit=None):
     """Get car locations
 
     Get a list of all car geolocations.
@@ -28,7 +28,7 @@ def car_locations_list(offset):
     :rtype: Cars
     """
 
-    car_locations = get_car_locations(True, offset)
+    car_locations = get_car_locations(True, offset, business_unit)
 
     result = {
         "type": "FeatureCollection",
@@ -242,7 +242,7 @@ def is_assigned(token, car_tokens, assigned=None):
 
 
 @cache.memoize(timeout=300)
-def get_car_locations(assigned_to_car_info=True, offset=None):
+def get_car_locations(assigned_to_car_info=True, offset=None, business_unit=None):
     """
     Retrieve a list of carLocations from CarLocations
 
@@ -260,6 +260,10 @@ def get_car_locations(assigned_to_car_info=True, offset=None):
         offset_date = offset_date.isoformat()
 
         query.add_filter('when', '>=', offset_date)
+
+    # FIXME: Add queryparam filter once CarLocation entities have a business_unit property.
+    # if business_unit is not None:
+        # Filter the query here
 
     query_iter = query.fetch()
 

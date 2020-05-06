@@ -39,7 +39,9 @@ paths:
           enum: [service, nls, ftth]
       responses:
         "200":
-          description: Successful response - returns an array of locations with info
+          description: >
+            Successful response
+            Returns an array of locations with info
           schema:
             $ref: '#/definitions/CarsList'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
@@ -63,7 +65,7 @@ paths:
             $ref: '#/definitions/Car'
         "400":
           description: There is an error with the data posted, for instance,
-                       a car with the specified hyrde token already exists.
+            a car with the specified hyrde token already exists.
           schema:
             $ref: '#/definitions/Error'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
@@ -73,7 +75,8 @@ paths:
     get:
       summary: Get car locations
       operationId: car_locations_list
-      description: Get a list of all car geolocations, with their linked Hyrde tokens.
+      description: >
+        Get a list of all car geolocations, with their linked Hyrde tokens.
       parameters:
         - in: query
           name: offset
@@ -95,8 +98,9 @@ paths:
             $ref: '#/definitions/CarLocations'
           headers:
             Cache-Control:
-              description: "Header describing the cache policy for this endpoints.
-              Defaults to a 300 seconds private cache."
+              description:
+                "Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache."
               type: string
               default: "private, max-age=300"
       x-openapi-router-controller: openapi_server.controllers.cars_controller
@@ -106,15 +110,20 @@ paths:
     get:
       summary: Get car distances from a point or workitem
       operationId: car_distances_list
-      description: Get a list of Hyrde car tokens along with the distance and travel time from the specified point.
-                   Optionally, a list of car tokens can be supplied, for which to calculate the distance.
-                   If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
+      description: >
+        Get a list of Hyrde car tokens along with the distance and
+        travel time from the specified point.
+        Optionally, a list of car tokens can be supplied,
+        for which to calculate the distance.
+        If no list is supplied, this endpoint will query all cars.
+        Only returns tokens linked to cars.
 
-                   When passing a list of car tokens, make sure that
-                   1. All tokens are linked to a car info.
-                   2. All cars have been updated within the time determined by offset (defaults to 168 hours, or 1 week)
+        When passing a list of car tokens, make sure that
+        1. All tokens are linked to a car info.
+        2. All cars have been updated within the time determined by
+           offset (defaults to 168 hours, or 1 week)
 
-                   Otherwise, these cars will not be accounted for in the response.
+        Otherwise, these cars will not be accounted for in the response.
       parameters:
         - in: query
           name: work_item
@@ -125,7 +134,9 @@ paths:
           name: cars
           type: string
           required: false
-          description: A comma separated list of car tokens to for which to calculate the distance.
+          description: >
+            A comma separated list of car tokens to
+            for which to calculate the distance.
         - in: query
           name: offset
           type: integer
@@ -187,14 +198,18 @@ paths:
           type: boolean
           required: false
           default: false
-          description: Select only active workitems. When set to false, retrieves all workitems
+          description: >
+            Select only active workitems.
+            When set to false, retrieves all workitems
         - in: query
           name: business_unit
           type: string
           required: false
           default: service
           enum: [service, nls, ftth]
-          description: The business_unit to filter on. Defaults to service, to return all workitems for Service.
+          description: >
+            The business_unit to filter on.
+            Defaults to service, to return all workitems for Service.
       operationId: list_work_items
       responses:
         "200":
@@ -203,10 +218,12 @@ paths:
             $ref: '#/definitions/WorkItemsList'
           headers:
             Cache-Control:
-              description: "Header describing the cache policy for this endpoints.
-              Defaults to a 300 seconds private cache."
+              description:
+                "Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache."
               type: string
               default: "private, max-age=300"
+      # yamllint disable-line rule:line-length
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -221,7 +238,8 @@ definitions:
         example: "400"
       detail:
         type: string
-        example: 'Could not create object, an object with that id already exists.'
+        example: 'Could not create object,
+          an object with that id already exists.'
   CarDistances:
     description: Collection of car distances.
     type: object
@@ -347,7 +365,8 @@ definitions:
         readOnly: true
       driver_skill:
         type: string
-        # enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
+        # enum: ["", null, "Metende", "Lasser", "Leerling",
+        # "Kraanmachinist", "Overig", "NLS", "Cluster"]
         example: Metende
       driver_employee_number:
         type: string
@@ -462,5 +481,6 @@ securityDefinitions:
       snbplanningapi.read: View
       snbplanningapi.planner: Planner
       snbplanningapi.editor: Editor
+    # yamllint disable-line rule:line-length
     x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
     x-scopeValidateFunc: connexion.decorators.security.validate_scope

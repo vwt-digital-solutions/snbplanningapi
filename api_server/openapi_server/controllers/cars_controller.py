@@ -85,7 +85,7 @@ def cars_list(offset, business_unit=None):
 
         # Only return results where token is set.
         # Car information which does not have a tracker is not relevant.
-        elif car.token is not None:
+        if car.token is not None:
             if business_unit is None:
                 result.append(car)
 

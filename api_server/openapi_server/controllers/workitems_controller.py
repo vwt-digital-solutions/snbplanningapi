@@ -1,12 +1,11 @@
 import datetime
 import pytz
 
-from flask import jsonify
-from flask import make_response
+from flask import make_response, request, jsonify
 from google.cloud import datastore
 
 from cache import cache
-from openapi_server.controllers.util import remap_attributes
+from openapi_server.controllers.util import remap_attributes, HALSelfRef, HALEmbedded
 from openapi_server.models import WorkItem, WorkItemsList, Error
 
 work_items_statuses = ['Te Plannen', 'Gepland', 'Niet Gereed']
@@ -54,6 +53,31 @@ def list_work_items(active=False, business_unit='service'):  # noqa: E501
     response = WorkItemsList(items=work_items_list)
     return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
 
+@cache.memoize(timeout=300)
+def get_work_item(sub_order_id):  # noqa: E501
+    """Get a work item
+
+    Get a single work item # noqa: E501
+
+    :rtype: a response containing a work item
+    """
+    # !FIXME: please convert this to a db_client.get after
+    # we change our key from L2GUID to sub_order_id
+    db_client = datastore.Client()
+    query = db_client.query(kind='WorkItem')
+    
+    if sub_order_id:
+        query.add_filter('sub_order_id', '=', sub_order_id)
+
+    result = list(query.fetch())
+
+    if result:
+        response = HALEmbedded(workitem=create_workitem(result[0]))
+    else:
+        response = {}
+
+    return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
+
 
 """
 Helper functions
@@ -77,3 +101,14 @@ def get_work_items(business_unit):
     work_items = [remap_attributes(res, work_item_attribute_map)
                   for res in query.fetch() if res['status'] in work_items_statuses]
     return work_items
+
+def create_workitem(workitem):
+    """ A helper method for creating a workitem with HAL references
+    :rtype: WorkItem
+    """
+    return WorkItem.from_dict({
+        **HALSelfRef(
+            path=f'{request.url_root}workitems/{workitem["sub_order_id"]}'
+        ),
+        **workitem,
+    })

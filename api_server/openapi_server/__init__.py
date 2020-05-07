@@ -1,11 +1,12 @@
+import logging
+import os
+
+import config
+
 import connexion
 from flask_cors import CORS
 from flask import request
 from flask import g
-
-import os
-import config
-import logging
 
 from openapi_server import encoder
 
@@ -14,9 +15,10 @@ logging.basicConfig(level=logging.INFO)
 app = connexion.App(__name__, specification_dir='./openapi/')
 app.app.json_encoder = encoder.JSONEncoder
 app.add_api('openapi.yaml',
-            arguments={'title': 'snbplanningtool'},
+            arguments={'title': 'SNBPlanning API'},
             pythonic_params=True,
-            validate_responses=True)
+            validate_responses=True
+)
 if 'GAE_INSTANCE' in os.environ:
     CORS(app.app, origins=config.ORIGINS)
 else:

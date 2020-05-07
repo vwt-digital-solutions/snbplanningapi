@@ -10,3 +10,25 @@ def remap_attributes(dictionary, attribute_map, reverse=False):
     new_dictionary = {attribute_map.get(k, k): v for (k, v) in dictionary.items()}
 
     return new_dictionary
+
+def HALSelfRef(path):
+    """Create a HAL self-reference
+    :rtype: dict
+    """
+    return {
+        "_links": {
+            "self": {
+                "href": path
+            }
+        },
+    }
+
+def HALEmbedded(**obj):
+    """Create a HAL embedded structure
+    :rtype: dict
+    """
+    return {
+        "_embedded": {
+            **obj
+        }
+    }

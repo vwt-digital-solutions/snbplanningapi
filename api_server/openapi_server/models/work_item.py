@@ -17,9 +17,11 @@ class WorkItem(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, l2_guid=None, administration=None, category=None, task_type=None, project=None, status=None, description=None, start_timestamp=None, end_timestamp=None, last_updated=None, resolve_before_timestamp=None, city=None, zip=None, house=None, street=None, extra=None, is_geocoded=None, geometry=None, employee_name=None, employee_number=None, order_id=None, sub_order_id=None, stagnation=None):  # noqa: E501
+    def __init__(self, links=None, l2_guid=None, administration=None, category=None, task_type=None, project=None, status=None, description=None, start_timestamp=None, end_timestamp=None, last_updated=None, resolve_before_timestamp=None, city=None, zip=None, house=None, street=None, extra=None, is_geocoded=None, geometry=None, employee_name=None, employee_number=None, order_id=None, sub_order_id=None, stagnation=None):  # noqa: E501
         """WorkItem - a model defined in OpenAPI
 
+        :param links: The links of this WorkItem.  # noqa: E501
+        :type links: object
         :param l2_guid: The l2_guid of this WorkItem.  # noqa: E501
         :type l2_guid: str
         :param administration: The administration of this WorkItem.  # noqa: E501
@@ -68,6 +70,7 @@ class WorkItem(Model):
         :type stagnation: bool
         """
         self.openapi_types = {
+            'links': object,
             'l2_guid': str,
             'administration': str,
             'category': str,
@@ -94,6 +97,7 @@ class WorkItem(Model):
         }
 
         self.attribute_map = {
+            'links': '_links',
             'l2_guid': 'l2_guid',
             'administration': 'administration',
             'category': 'category',
@@ -119,6 +123,7 @@ class WorkItem(Model):
             'stagnation': 'stagnation'
         }
 
+        self._links = links
         self._l2_guid = l2_guid
         self._administration = administration
         self._category = category
@@ -153,6 +158,27 @@ class WorkItem(Model):
         :rtype: WorkItem
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def links(self):
+        """Gets the links of this WorkItem.
+
+
+        :return: The links of this WorkItem.
+        :rtype: object
+        """
+        return self._links
+
+    @links.setter
+    def links(self, links):
+        """Sets the links of this WorkItem.
+
+
+        :param links: The links of this WorkItem.
+        :type links: object
+        """
+
+        self._links = links
 
     @property
     def l2_guid(self):

@@ -48,31 +48,25 @@ def list_work_items(active=False, business_unit='service'):  # noqa: E501
                   isinstance(res.get('end_timestamp', None), datetime.datetime) and
                   res.get('start_timestamp', None) < datetime.datetime.now(pytz.utc) < res.get('end_timestamp', None)]
 
-    work_items_list = [WorkItem.from_dict(res) for res in result]
-
-    response = WorkItemsList(items=work_items_list)
+    response = WorkItemsList(items=result)
     return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
 
+
 @cache.memoize(timeout=300)
-def get_work_item(sub_order_id):  # noqa: E501
+def get_work_item(work_item_id):  # noqa: E501
     """Get a work item
 
     Get a single work item # noqa: E501
 
     :rtype: a response containing a work item
     """
-    # !FIXME: please convert this to a db_client.get after
-    # we change our key from L2GUID to sub_order_id
     db_client = datastore.Client()
-    query = db_client.query(kind='WorkItem')
-    
-    if sub_order_id:
-        query.add_filter('sub_order_id', '=', sub_order_id)
 
-    result = list(query.fetch())
+    key = db_client.key("WorkItem", work_item_id)
+    work_item = db_client.get(key=key)
 
-    if result:
-        response = HALEmbedded(workitem=create_workitem(result[0]))
+    if work_item:
+        response = HALEmbedded(workitem=create_workitem(work_item))
     else:
         response = {}
 
@@ -98,17 +92,28 @@ def get_work_items(business_unit):
     query.add_filter('task_type', '>=', business_unit)
     query.add_filter('task_type', '<=', '{0}z'.format(business_unit))
 
-    work_items = [remap_attributes(res, work_item_attribute_map)
+    work_items = [create_workitem(res, False)
                   for res in query.fetch() if res['status'] in work_items_statuses]
     return work_items
 
-def create_workitem(workitem):
+
+def create_workitem(entity, with_hal=True):
     """ A helper method for creating a workitem with HAL references
     :rtype: WorkItem
     """
-    return WorkItem.from_dict({
-        **HALSelfRef(
-            path=f'{request.url_root}workitems/{workitem["sub_order_id"]}'
-        ),
-        **workitem,
-    })
+
+    work_item_dict = remap_attributes(entity, work_item_attribute_map)
+
+    if with_hal:
+        work_item = WorkItem.from_dict({
+            **HALSelfRef(
+                path=f'{request.url_root}workitems/{entity.key.id_or_name}'
+            ),
+            **work_item_dict,
+        })
+    else:
+        work_item = WorkItem.from_dict(work_item_dict)
+
+    work_item.id = entity.key.id_or_name
+
+    return work_item

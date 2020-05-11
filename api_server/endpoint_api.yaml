@@ -162,7 +162,7 @@ paths:
                 $ref: '#/components/schemas/CarLocations'
           headers:
             Cache-Control:
-              description: 
+              description:
                 "Header describing the cache policy for this endpoints.
                 Defaults to a 300 seconds private cache."
               schema:
@@ -308,18 +308,18 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-eac-ignore: true
-  /workitems/{subOrderId}:
+  /workitems/{WorkItemId}:
     get:
       summary: Get a work item
       description: Get a single work item
       parameters:
         - in: path
-          name: subOrderId
+          name: WorkItemId
           schema:
             type: string
           required: true
           description: >
-            Select a workitem on it's suborder-id
+            Select a workitem on it's id
       operationId: get_work_item
       responses:
         "200":
@@ -627,9 +627,11 @@ components:
                   type: string
                   example: '/workitems/00fbd832-4242-4242-4242-7fe9b03a3f0f'
         # Data
-        l2_guid:
+        id:
           type: string
           format: uuid
+        l2_guid:
+          type: string
         administration:
           type: string
         category:

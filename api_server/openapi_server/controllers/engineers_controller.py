@@ -1,5 +1,3 @@
-import datetime
-
 from flask import jsonify, make_response, request
 from google.cloud import datastore
 
@@ -8,11 +6,13 @@ import logging
 from openapi_server.models import Engineer, EngineersList, Error
 from openapi_server.controllers.util import HALSelfRef, HALEmbedded
 
+
 """
 API endpoints.
 """
 db_client = datastore.Client()
 logger = logging.getLogger(__name__)
+
 
 @cache.memoize(timeout=300)
 def engineers_list(business_unit=None):
@@ -25,7 +25,7 @@ def engineers_list(business_unit=None):
     query = db_client.query(kind="CarInfo")
 
     if business_unit:
-        query.add_filter('business_unit','=', business_unit)
+        query.add_filter('business_unit', '=', business_unit)
 
     query_res = list(query.fetch())
 
@@ -38,7 +38,8 @@ def engineers_list(business_unit=None):
         links=HALSelfRef(request.url))
     ), 200)
 
-# @cache.memoize(timeout=300)
+
+@cache.memoize(timeout=300)
 def get_engineer(engineer_id):
     """Get engineer info
 
@@ -47,7 +48,7 @@ def get_engineer(engineer_id):
 
     """
 
-    try: 
+    try:
         engineer_id = int(engineer_id)
     except ValueError:
         response = Error('400', "This engineer_id is not an integer value")

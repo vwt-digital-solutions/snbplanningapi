@@ -11,6 +11,7 @@ def remap_attributes(dictionary, attribute_map, reverse=False):
 
     return new_dictionary
 
+
 def HALSelfRef(path):
     """Create a HAL self-reference
     :rtype: dict
@@ -22,6 +23,7 @@ def HALSelfRef(path):
             }
         },
     }
+
 
 def HALEmbedded(**obj):
     """Create a HAL embedded structure

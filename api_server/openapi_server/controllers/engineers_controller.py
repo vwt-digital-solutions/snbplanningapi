@@ -56,7 +56,13 @@ def get_engineer(engineer_id):
 
     # !NOTE We might want to change the datastore entity to Engineers
     key = db_client.key("CarInfo", engineer_id)
-    engineer = db_client.get(key=key)
+    engineer = None
+    try:
+        engineer = db_client.get(key=key)
+    except ValueError:
+        response = Error('400', "The specified id is not valid")
+        return make_response(jsonify(response), 400)
+
 
     if engineer:
         response = HALEmbedded(
@@ -64,7 +70,7 @@ def get_engineer(engineer_id):
         )
         return make_response(jsonify(response), 200)
 
-    response = Error('400', "This Engineer wasn't found")
+    response = Error('404', "This Engineer wasn't found")
     return make_response(jsonify(response), 400)
 
 

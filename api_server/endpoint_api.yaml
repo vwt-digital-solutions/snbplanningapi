@@ -104,6 +104,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EngineersList'
+        "400":
+          description: There is an error with the data posted, for instance,
+            the engineer id specified is not an integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: No engineer was found for the specified id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
@@ -304,6 +317,12 @@ paths:
               schema:
                 type: string
                 default: "private, max-age=300"
+            "404":
+              description: Workitem not found.
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Error'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]

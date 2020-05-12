@@ -1,2 +1,5 @@
 [flake8]
-exclude = api_server/openapi_server/models/*
+exclude = 
+	api_server/setup.py
+	api_server/openapi_server/util.py
+max-line-length=139

@@ -1,9 +1,10 @@
 ---
-swagger: '2.0'
+openapi: 3.0.2
 x-zally-ignore: [101, 104, 105, 176]
 info:
-  title: snbplanningtool
-  description: Endpoint to retreive the latest car locations
+  title: SNBPlanning API
+  description: An API for the snbplanning
+  version: 1.0.0
   contact:
     name: VolkerWessels Telecom - Digital Ambition Team
     url: 'https://vwt-digital.github.io/'
@@ -11,12 +12,10 @@ info:
   license:
     name: GNU GPLv3
     url: 'https://www.gnu.org/licenses/gpl.txt'
-  version: 1.0.0
   x-audience: company-internal
   x-api-id: e2a63575-f436-4e31-8f34-fadbad0d9693
-host: PROJECT_ID.appspot.com
-produces:
-  - application/json
+servers:
+  - url: /
 paths:
   /cars:
     get:
@@ -25,72 +24,163 @@ paths:
       description: Get a list of all cars and their driver information.
       parameters:
         - in: query
-          name: offset
-          type: integer
+          name: license_plate
+          schema:
+            type: string
           required: false
-          default: 168
+          description: The license_plate of the car.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 168
+          required: false
           description: Time offset range in hours for retrieving entries
         - in: query
           name: business_unit
-          type: string
+          schema:
+            type: string
+            default: service
+            enum: [service, nls, ftth]
           required: false
           description: Business unit the car and driver belong to.
-          enum: [service, nls, ftth]
       responses:
         "200":
-          description: Successful response - returns an array of locations with info
-          schema:
-            $ref: '#/definitions/CarsList'
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
+          description: >
+            Successful response
+            Returns an array of locations with info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarsList'
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
     post:
       summary: Post car info
       description: Post a list of all car geolocations with info
-      consumes:
-        - application/json
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/Car'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
       responses:
         "201":
           description: Successful POST
-          schema:
-            $ref: '#/definitions/Car'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
         "400":
           description: There is an error with the data posted, for instance,
-                       a car with the specified hyrde token already exists.
-          schema:
-            $ref: '#/definitions/Error'
+            a car with the specified hyrde token already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.editor]
+  /engineers:
+    get:
+      summary: Get info of all engineers
+      operationId: engineers_list
+      description: Get a list of all engineers.
+      parameters:
+        - in: query
+          name: business_unit
+          schema:
+            type: string
+            enum: [service, nls, ftth]
+          required: false
+          description: Business unit the engineer belongs to.
+      responses:
+        "200":
+          description: >
+            Successful response
+            Returns an array of engineers with info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineersList'
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
+      x-openapi-router-controller: openapi_server.controllers.engineers_controller
+  /engineers/{engineerId}:
+    get:
+      summary: Get info of a single engineer
+      operationId: get_engineer
+      description: Get the info of an engineer.
+      parameters:
+        - in: path
+          name: engineerId
+          schema:
+            type: string
+          required: true
+          description: The id of the engineer to retrieve
+      responses:
+        "200":
+          description: >
+            Successful response
+            Returns an array of engineers with info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Engineer'
+        "400":
+          description: There is an error with the data posted, for instance,
+            the engineer id specified is not an integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: No engineer was found for the specified id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
+      x-openapi-router-controller: openapi_server.controllers.engineers_controller
   /cars/locations:
     get:
       summary: Get car locations
       operationId: car_locations_list
-      description: Get a list of all car geolocations, with their linked Hyrde tokens.
+      description: >
+        Get a list of all car geolocations, with their linked Hyrde tokens.
       parameters:
         - in: query
           name: offset
-          type: integer
+          schema:
+            type: integer
+            default: 168
           required: false
-          default: 168
           description: Time offset range in hours for retrieving entries
+        - in: query
+          name: business_unit
+          schema:
+            type: string
+            default: service
+            enum: [service, nls, ftth]
+          required: false
+          description: Business unit the car and driver belong to.
       responses:
         "200":
           description: Successful response - returns an array of locations
-          schema:
-            $ref: '#/definitions/CarLocations'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarLocations'
           headers:
             Cache-Control:
-              description: "Header describing the cache policy for this endpoints.
-              Defaults to a 300 seconds private cache."
-              type: string
-              default: "private, max-age=300"
+              description:
+                "Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache."
+              schema:
+                type: string
+                default: "private, max-age=300"
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
@@ -98,50 +188,64 @@ paths:
     get:
       summary: Get car distances from a point or workitem
       operationId: car_distances_list
-      description: Get a list of Hyrde car tokens along with the distance and travel time from the specified point.
-                   Optionally, a list of car tokens can be supplied, for which to calculate the distance.
-                   If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
+      description: >
+        Get a list of Hyrde car tokens along with the distance and
+        travel time from the specified point.
+        Optionally, a list of car tokens can be supplied,
+        for which to calculate the distance.
+        If no list is supplied, this endpoint will query all cars.
+        Only returns tokens linked to cars.
 
-                   When passing a list of car tokens, make sure that
-                   1. All tokens are linked to a car info.
-                   2. All cars have been updated within the time determined by offset (defaults to 168 hours, or 1 week)
+        When passing a list of car tokens, make sure that
+        1. All tokens are linked to a car info.
+        2. All cars have been updated within the time determined by
+           offset (defaults to 168 hours, or 1 week)
 
-                   Otherwise, these cars will not be accounted for in the response.
+        Otherwise, these cars will not be accounted for in the response.
       parameters:
         - in: query
           name: work_item
-          type: string
+          schema:
+            type: string
           required: true
           description: The workitem for which to find the nearest car locations
         - in: query
           name: cars
-          type: string
+          schema:
+            type: string
           required: false
-          description: A comma separated list of car tokens to for which to calculate the distance.
+          description: >
+            A comma separated list of car tokens to
+            for which to calculate the distance.
         - in: query
           name: offset
-          type: integer
+          schema:
+            type: integer
+            default: 168
           required: false
-          default: 168
           description: Time offset range in hours for retrieving entries
         - in: query
           name: sort
-          type: string
-          enum: [travel_time, distance]
+          schema:
+            type: string
+            enum: [travel_time, distance]
+            default: travel_time
           required: false
-          default: travel_time
           description: Sort results by distance or travel time.
         - in: query
           name: limit
-          type: integer
+          schema:
+            type: integer
+            default: 3
           required: false
-          default: 3
           description: Total numer of distances to return.
       responses:
         "200":
           description: Successful response - returns an array of distances
-          schema:
-            $ref: '#/definitions/CarDistances'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDistances'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -153,19 +257,23 @@ paths:
       parameters:
         - in: query
           name: assigned
-          type: boolean
+          schema:
+            type: boolean
           required: false
         - in: query
           name: offset
-          type: integer
+          schema:
+            type: integer
+            default: 168
           required: false
-          default: 168
           description: Time offset range in hours for retrieving entries
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/TokensList'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensList'
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
@@ -176,283 +284,457 @@ paths:
       parameters:
         - in: query
           name: active
-          type: boolean
+          schema:
+            type: boolean
+            default: false
           required: false
-          default: false
-          description: Select only active workitems. When set to false, retrieves all workitems
+          description: >
+            Select only active workitems.
+            When set to false, retrieves all workitems
         - in: query
           name: business_unit
-          type: string
+          schema:
+            type: string
+            default: service
+            enum: [service, nls, ftth]
           required: false
-          default: service
-          enum: [service, nls, ftth]
-          description: The business_unit to filter on. Defaults to service, to return all workitems for Service.
+          description: >
+            The business_unit to filter on.
+            Defaults to service, to return all workitems for Service.
       operationId: list_work_items
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/WorkItemsList'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemsList'
           headers:
             Cache-Control:
-              description: "Header describing the cache policy for this endpoints.
-              Defaults to a 300 seconds private cache."
-              type: string
-              default: "private, max-age=300"
+              description:
+                "Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache."
+              schema:
+                type: string
+                default: "private, max-age=300"
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
+      x-openapi-router-controller: openapi_server.controllers.workitems_controller
+      x-eac-ignore: true
+  /workitems/{WorkItemId}:
+    get:
+      summary: Get a work item
+      description: Get a single work item
+      parameters:
+        - in: path
+          name: WorkItemId
+          schema:
+            type: string
+          required: true
+          description: >
+            Select a workitem on it's id
+      operationId: get_work_item
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+          headers:
+            Cache-Control:
+              description:
+                "Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache."
+              schema:
+                type: string
+                default: "private, max-age=300"
+        "404":
+          description: Workitem not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-eac-ignore: true
-definitions:
-  Error:
-    description: An error message.
-    type: object
-    properties:
-      status:
-        type: string
-        example: "400"
-      detail:
-        type: string
-        example: 'Could not create object, an object with that id already exists.'
-  CarDistances:
-    description: Collection of car distances.
-    type: object
-    properties:
-      items:
-        type: array
-        items:
-          $ref: '#/definitions/CarDistance'
-  CarDistance:
-    description: Hyrde token with distance and traveltime.
-    type: object
-    properties:
-      token:
-        type: string
-        description: the Hyrde car token
-      distance:
-        type: number
-        format: decimal
-        description: distance in km.
-      travel_time:
-        type: integer
-        format: int32
-        description: Estimated travel time in seconds.
-    example:
-      token: 'vwt/hyrde/01202321'
-      distance: 5.0
-      travel_time: 1200
-  CarLocations:
-    description: Collection of car locations.
-    required:
-      - type
-      - features
-    type: object
-    properties:
-      type:
-        type: string
-      features:
-        type: array
-        items:
-          $ref: '#/definitions/CarLocation'
-    example:
-      type: FeatureCollection
-      features:
-        - type: Feature
-          geometry:
-            type: Point
-            coordinates:
-              - 5.3
-              - 52.6
-          properties:
-            token: vwt/hyrde/1234
-        - type: Feature
-          geometry:
-            type: Point
-            coordinates:
-              - 5.4
-              - 52.5
-          properties: {}
-  CarLocation:
-    description: The location of a car.
-    required:
-      - type
-      - geometry
-      - properties
-    type: object
-    properties:
-      geometry:
-        $ref: '#/definitions/Geometry'
-      type:
-        type: string
+  /plannings:
+    get:
+      summary: Retrieve planning items from the planning engine
+      description: This endpoint returns planning-items for the next morning.
+      operationId: list_planning_items
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanningItemsList'
+          headers:
+            Cache-Control:
+              description: "Header describing the cache policy for this endpoints.
+              Defaults to a 300 seconds private cache."
+              schema:
+                type: string
+                default: "private, max-age=300"
+      x-openapi-router-controller: openapi_server.controllers.plannings_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.planner]
+      x-eac-ignore: true
+components:
+  schemas:
+    Error:
+      description: An error message.
+      type: object
       properties:
-        type: object
-    example:
-      type: Feature
-      geometry:
-        type: Point
-        coordinates:
-          - 5.3
-          - 52.6
+        status:
+          type: string
+          example: "400"
+        detail:
+          type: string
+          example:
+            'Could not create object,
+            an object with that id already exists.'
+    CarDistances:
+      description: Collection of car distances.
+      type: object
       properties:
-        token: vwt/hyrde/token/104510
-  Geometry:
-    description: Geometry element
-    required:
-      - coordinates
-      - type
-    type: object
-    properties:
-      type:
-        enum:
-          - Point
-      coordinates:
-        type: array
         items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarDistance'
+    CarDistance:
+      description: Hyrde token with distance and traveltime.
+      type: object
+      properties:
+        token:
+          type: string
+          description: the Hyrde car token
+        distance:
           type: number
-    example: |-
-      type: "Point",
-      coordinates:
-        - 5.2,
-        - 52.4
-  CarsList:
-    description: A list of Cars.
-    required:
-      - items
-    type: object
-    properties:
-      items:
-        type: array
+          format: decimal
+          description: distance in km.
+        travel_time:
+          type: integer
+          format: int32
+          description: Estimated travel time in seconds.
+      example:
+        token: 'vwt/hyrde/01202321'
+        distance: 5.0
+        travel_time: 1200
+    CarLocations:
+      description: Collection of car locations.
+      required:
+        - type
+        - features
+      type: object
+      properties:
+        type:
+          type: string
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarLocation'
+      example:
+        type: FeatureCollection
+        features:
+          - type: Feature
+            geometry:
+              type: Point
+              coordinates:
+                - 5.3
+                - 52.6
+            properties:
+              token: vwt/hyrde/1234
+          - type: Feature
+            geometry:
+              type: Point
+              coordinates:
+                - 5.4
+                - 52.5
+            properties: {}
+    CarLocation:
+      description: The location of a car.
+      required:
+        - type
+        - geometry
+        - properties
+      type: object
+      properties:
+        geometry:
+          $ref: '#/components/schemas/Geometry'
+        type:
+          type: string
+        properties:
+          type: object
+      example:
+        type: Feature
+        geometry:
+          type: Point
+          coordinates:
+            - 5.3
+            - 52.6
+        properties:
+          token: vwt/hyrde/token/104510
+    Geometry:
+      description: Geometry element
+      required:
+        - coordinates
+        - type
+      type: object
+      properties:
+        type:
+          enum:
+            - Point
+        coordinates:
+          type: array
+          items:
+            type: number
+      example:
+        type: "Point"
+        coordinates:
+          - 5.2
+          - 52.4
+    CarsList:
+      description: A list of Cars.
+      required:
+        - items
+      type: object
+      properties:
         items:
-          $ref: '#/definitions/Car'
-  Car:
-    description: Information on a car and their driver
-    properties:
-      id:
-        type: string
-        example: 123456789
-      administration:
-        type: string
-        example: Klantteam Noord
-      driver_name:
-        type: string
-        example: Billy Gates
-        readOnly: true
-      driver_skill:
-        type: string
-        # enum: ["", null, "Metende", "Lasser", "Leerling", "Kraanmachinist", "Overig", "NLS", "Cluster"]
-        example: Metende
-      driver_employee_number:
-        type: string
-        example: 1234
-      license_plate:
-        readOnly: true
-        example: AA-123-BB
-        type: string
-      token:
-        type: string
-        example: vwt/hyrde/12345
-      division:
-        type: string
-        example: 90117
-        readOnly: true
-      business_unit:
-        type: string
-        example: NLS
-        readOnly: true
-        # enum: ["", null, "nls", "ftth", "service"]
-    required:
-      - token
-  TokensList:
-    description: List of hyrde car tokens
-    required:
-      - items
-    type: object
-    properties:
-      items:
-        type: array
+          type: array
+          items:
+            $ref: '#/components/schemas/Car'
+    Car:
+      description: Information on a car and their driver
+      properties:
+        id:
+          type: string
+          example: 123456789
+        administration:
+          type: string
+          example: Klantteam Noord
+        driver_name:
+          type: string
+          example: Billy Gates
+          readOnly: true
+        driver_skill:
+          type: string
+          # enum: ["", null, "Metende", "Lasser", "Leerling",
+          # "Kraanmachinist", "Overig", "NLS", "Cluster"]
+          example: Metende
+        driver_employee_number:
+          type: string
+          example: 1234
+        license_plate:
+          readOnly: true
+          example: AA-123-BB
+          type: string
+        token:
+          type: string
+          example: vwt/hyrde/12345
+        division:
+          type: string
+          example: 90117
+          readOnly: true
+        business_unit:
+          type: string
+          example: NLS
+          readOnly: true
+          # enum: ["", null, "nls", "ftth", "service"]
+      required:
+        - token
+    EngineersList:
+      description: A list of Engineers.
+      required:
+        - items
+      type: object
+      properties:
+        _links:
+          properties:
+            self:
+              properties:
+                href:
+                  type: string
+                  example: /engineers?business_unit=nls
         items:
-          $ref: '#/definitions/Token'
-  Token:
-    description: A hyrde car token and its' linked information
-    type: object
-    properties:
-      id:
-        type: string
-        example: 'vwt/hyrde/token/20120'
-      license:
-        type: string
-        example: 'AB123C'
-  WorkItemsList:
-    properties:
-      items:
-        type: array
+          type: array
+          items:
+            $ref: '#/components/schemas/Engineer'
+    Engineer:
+      description: Information about an Engineer
+      properties:
+        # HAL
+        _links:
+          properties:
+            self:
+              properties:
+                href:
+                  type: string
+                  example: '/engineers/1'
+        # Data
+        id:
+          type: string
+          example: 123456789
+        administration:
+          type: string
+          example: Klantteam Noord
+          nullable: true
+        driver_name:
+          type: string
+          example: Billy Gates
+          readOnly: true
+        driver_skill:
+          type: string
+          # enum: ["", null, "Metende", "Lasser", "Leerling",
+          # "Kraanmachinist", "Overig", "NLS", "Cluster"]
+          example: Metende
+          nullable: true
+        driver_employee_number:
+          type: string
+          example: 1234
+        license_plate:
+          readOnly: true
+          example: AA-123-BB
+          type: string
+          nullable: true
+        division:
+          type: string
+          example: 90117
+          readOnly: true
+        business_unit:
+          type: string
+          example: NLS
+          readOnly: true
+          # enum: ["", null, "nls", "ftth", "service"]
+    TokensList:
+      description: List of hyrde car tokens
+      required:
+        - items
+      type: object
+      properties:
         items:
-          $ref: '#/definitions/WorkItem'
-  WorkItem:
-    description: Link2 work item
-    properties:
-      l2_guid:
-        type: string
-        format: uuid
-      administration:
-        type: string
-      category:
-        type: string
-      task_type:
-        type: string
-      project:
-        type: string
-      status:
-        type: string
-      description:
-        type: string
-      start_timestamp:
-        type: string
-        format: date-time
-      end_timestamp:
-        type: string
-        format: date-time
-      last_updated:
-        type: string
-        format: date-time
-      resolve_before_timestamp:
-        type: string
-        format: date-time
-      city:
-        type: string
-      zip:
-        type: string
-      house:
-        type: string
-      street:
-        type: string
-      extra:
-        type: string
-      is_geocoded:
-        type: boolean
-      geometry:
-        $ref: '#/definitions/Geometry'
-      employee_name:
-        type: string
-      employee_number:
-        type: string
-      order_id:
-        type: string
-      sub_order_id:
-        type: string
-        format: uuid
-      stagnation:
-        type: boolean
-securityDefinitions:
-  OAuth2AzureAD:
-    type: oauth2
-    description: OAuth through Azure AD
-    flow: accessCode
-    authorizationUrl: 'https://azuread.url'
-    tokenUrl: 'https://azuread.url'
-    scopes:
-      snbplanningapi.read: View
-      snbplanningapi.planner: Planner
-      snbplanningapi.editor: Editor
-    x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
-    x-scopeValidateFunc: connexion.decorators.security.validate_scope
+          type: array
+          items:
+            $ref: '#/components/schemas/Token'
+    Token:
+      description: A hyrde car token and its' linked information
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'vwt/hyrde/token/20120'
+        license:
+          type: string
+          example: 'AB123C'
+    WorkItemsList:
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItem'
+    WorkItem:
+      description: Link2 work item
+      properties:
+        # HAL
+        _links:
+          properties:
+            self:
+              properties:
+                href:
+                  type: string
+                  example: '/workitems/00fbd832-4242-4242-4242-7fe9b03a3f0f'
+        # Data
+        id:
+          type: string
+          format: uuid
+        l2_guid:
+          type: string
+        administration:
+          type: string
+        category:
+          type: string
+        task_type:
+          type: string
+        project:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        start_timestamp:
+          type: string
+          format: date-time
+        end_timestamp:
+          type: string
+          format: date-time
+        last_updated:
+          type: string
+          format: date-time
+        resolve_before_timestamp:
+          type: string
+          format: date-time
+        city:
+          type: string
+        zip:
+          type: string
+        house:
+          type: string
+        street:
+          type: string
+        extra:
+          type: string
+        is_geocoded:
+          type: boolean
+        geometry:
+          $ref: '#/components/schemas/Geometry'
+        employee_name:
+          type: string
+        employee_number:
+          type: string
+        order_id:
+          type: string
+        sub_order_id:
+          type: string
+          format: uuid
+        stagnation:
+          type: boolean
+    PlanningItemsList:
+      description: A collection of planned items.
+      properties:
+        _links:
+          properties:
+            self:
+              properties:
+                href:
+                  type: string
+                  example: /plannings
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanningItem'
+    PlanningItem:
+      description: A single planned item generated by the SNBPlanning Engine.
+      properties:
+        _embedded:
+          properties:
+            engineer:
+              $ref: '#/components/schemas/Engineer'
+            workitem:
+              $ref: '#/components/schemas/WorkItem'
+  securitySchemes:
+    OAuth2AzureAD:
+      type: oauth2
+      description: OAuth through Azure AD
+      flows:
+        authorizationCode:
+          authorizationUrl: 'https://azuread.url'
+          tokenUrl: 'https://azuread.url'
+          scopes:
+            snbplanningapi.read: View
+            snbplanningapi.planner: Planner
+            snbplanningapi.editor: Editor
+      # yamllint disable-line rule:line-length
+      x-tokenInfoFunc: openapi_server.controllers.security_controller_.info_from_OAuth2AzureAD
+      x-scopeValidateFunc: connexion.decorators.security.validate_scope

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 @cache.memoize(timeout=300)
-def car_locations_list(offset):
+def car_locations_list(offset, business_unit=None):
     """Get car locations
 
     Get a list of all car geolocations.
@@ -28,7 +28,7 @@ def car_locations_list(offset):
     :rtype: Cars
     """
 
-    car_locations = get_car_locations(True, offset)
+    car_locations = get_car_locations(True, offset, business_unit)
 
     result = {
         "type": "FeatureCollection",
@@ -86,7 +86,13 @@ def cars_list(offset, business_unit=None):
         # Only return results where token is set.
         # Car information which does not have a tracker is not relevant.
         if car.token is not None:
-            if business_unit is not None and car.division is not None and int(car.division) in divisions_to_return:
+            if business_unit is None:
+                result.append(car)
+
+            # CarInfo for which a division is not set is assumed to be info from service.
+            if car.division is None and business_unit == 'service':
+                result.append(car)
+            elif business_unit is not None and car.division is not None and int(car.division) in divisions_to_return:
                 result.append(car)
 
     result = CarsList(items=result)
@@ -138,6 +144,7 @@ def cars_post(body):
     db_client.put(entity)
 
     car = Car.from_dict(entity)
+    car.id = str(entity.key.id_or_name)
 
     car_locations = list(db_client.query(kind='CarLocation').fetch())
     search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]
@@ -241,7 +248,7 @@ def is_assigned(token, car_tokens, assigned=None):
 
 
 @cache.memoize(timeout=300)
-def get_car_locations(assigned_to_car_info=True, offset=None):
+def get_car_locations(assigned_to_car_info=True, offset=None, business_unit=None):
     """
     Retrieve a list of carLocations from CarLocations
 
@@ -259,6 +266,10 @@ def get_car_locations(assigned_to_car_info=True, offset=None):
         offset_date = offset_date.isoformat()
 
         query.add_filter('when', '>=', offset_date)
+
+    # FIXME: Add queryparam filter once CarLocation entities have a business_unit property.
+    # if business_unit is not None:
+        # Filter the query here
 
     query_iter = query.fetch()
 

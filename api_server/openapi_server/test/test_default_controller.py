@@ -91,14 +91,12 @@ class TestDefaultController(BaseTestCase):
 
         Post car info
         """
-        body = [{
-            "id": 123456789,
+        body = {
+            "id": "123456789",
             "administration": "Klantteam Noord",
-            "license_plate": "AB-12-CD",
-            "driver_name": "Billy Gates",
             "driver_skill": "Metende",
             "token": "some-token-value"
-        }]
+        }
         headers = {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + get_token(),

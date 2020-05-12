@@ -63,7 +63,6 @@ def get_engineer(engineer_id):
         response = Error('400', "The specified id is not valid")
         return make_response(jsonify(response), 400)
 
-
     if engineer:
         response = HALEmbedded(
             engineer=create_engineer(engineer)

@@ -319,6 +319,7 @@ paths:
                 default: "private, max-age=300"
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
+      x-openapi-router-controller: openapi_server.controllers.workitems_controller
       x-eac-ignore: true
   /workitems/{WorkItemId}:
     get:
@@ -354,7 +355,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          x-openapi-router-controller: openapi_server.controllers.workitems_controller
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]

@@ -386,8 +386,8 @@ paths:
       - OAuth2AzureAD:
         - snbplanningapi.planner
       summary: Get a list of work items
+      x-openapi-router-controller: openapi_server.controllers.workitems_controller
       x-eac-ignore: true
-      x-openapi-router-controller: openapi_server.controllers.default_controller
   /workitems/{WorkItemId}:
     get:
       description: Get a single work item
@@ -424,7 +424,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Workitem not found.
-          x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner

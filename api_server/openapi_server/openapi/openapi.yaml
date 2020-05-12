@@ -382,14 +382,12 @@ paths:
                 default: private, max-age=300
                 type: string
               style: simple
-            "404":
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Error'
-              description: Workitem not found.
-              explode: false
-              style: simple
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Workitem not found.
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner

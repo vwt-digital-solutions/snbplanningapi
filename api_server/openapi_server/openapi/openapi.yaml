@@ -234,19 +234,6 @@ paths:
                 $ref: '#/components/schemas/EngineersList'
           description: |
             Successful response Returns an array of engineers with info
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: There is an error with the data posted, for instance, the engineer
-            id specified is not an integer
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: No engineer was found for the specified id.
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner
@@ -273,6 +260,19 @@ paths:
                 $ref: '#/components/schemas/Engineer'
           description: |
             Successful response Returns an array of engineers with info
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: There is an error with the data posted, for instance, the engineer
+            id specified is not an integer
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: No engineer was found for the specified id.
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner
@@ -382,18 +382,12 @@ paths:
                 default: private, max-age=300
                 type: string
               style: simple
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Workitem not found.
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner
       summary: Get a list of work items
-      x-openapi-router-controller: openapi_server.controllers.workitems_controller
       x-eac-ignore: true
+      x-openapi-router-controller: openapi_server.controllers.default_controller
   /workitems/{WorkItemId}:
     get:
       description: Get a single work item
@@ -424,6 +418,13 @@ paths:
                 default: private, max-age=300
                 type: string
               style: simple
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Workitem not found.
+          x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner

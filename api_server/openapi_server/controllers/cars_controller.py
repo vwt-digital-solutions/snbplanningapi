@@ -121,11 +121,11 @@ def cars_post(body):
     entity = None
 
     # for unknown reason attribute 'id' is received as 'id_'
-    if 'id_' in body and body['id_'] is not None:
+    if 'id' in body and body['id'] is not None:
         try:
-            car_info_key = db_client.key('CarInfo', int(body['id_']))
+            car_info_key = db_client.key('CarInfo', int(body['id']))
         except ValueError:
-            logger.warning(f"String to int conversion on {cars_post.__name__} with {body['id_']}")
+            logger.warning(f"String to int conversion on {cars_post.__name__} with {body['id']}")
             return make_response(jsonify("The client should not repeat this request without modification."), 400)
         entity = db_client.get(car_info_key)
         if entity is None:

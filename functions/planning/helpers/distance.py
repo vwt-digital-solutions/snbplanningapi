@@ -1,5 +1,5 @@
 from contrib import distance
-from functions.planning.node import Node, NodeType
+from .node import Node, NodeType
 
 INFINITY = 9999999999
 

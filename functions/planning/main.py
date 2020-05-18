@@ -5,12 +5,12 @@ import logging
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
-from functions.planning.data import data_provider
-from functions.planning.constraints import PenaltyConstraint, CapacityConstraint, DistanceConstraint
-from functions.planning.data.data_model import DataModel
+from .data import data_provider
+from .constraints import PenaltyConstraint, CapacityConstraint, DistanceConstraint
+from .data.data_model import DataModel
 
-from functions.planning.helpers.distance import calculate_distance_matrix
-from functions.planning.process_solution import print_solution, process_solution
+from .helpers.distance import calculate_distance_matrix
+from .process_solution import print_solution, process_solution
 
 
 def create_data_model() -> DataModel:

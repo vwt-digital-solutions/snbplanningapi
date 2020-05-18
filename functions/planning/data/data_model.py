@@ -1,4 +1,4 @@
-from functions.planning.node import Node, NodeType
+from node import Node, NodeType
 
 
 class DataModel:

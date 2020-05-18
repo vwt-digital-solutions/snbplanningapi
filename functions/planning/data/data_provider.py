@@ -1,6 +1,6 @@
 from google.cloud import datastore
 
-from functions.planning.node import Node, NodeType
+from .node import Node, NodeType
 
 import config
 

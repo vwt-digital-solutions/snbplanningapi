@@ -1,6 +1,6 @@
 from ortools.constraint_solver import pywrapcp
-from .constraints.constraint import Constraint
-from .data.data_model import DataModel
+from constraints.constraint import Constraint
+from data.data_model import DataModel
 
 
 class CapacityConstraint(Constraint):

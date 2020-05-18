@@ -1,8 +1,8 @@
 import logging
 
 from google.cloud import datastore
-from .data.data_model import DataModel
-from .node import NodeType
+from data.data_model import DataModel
+from node import NodeType
 
 
 db_client = datastore.Client()

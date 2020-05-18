@@ -5,12 +5,14 @@ import logging
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
-from .data import data_provider
-from .constraints import PenaltyConstraint, CapacityConstraint, DistanceConstraint
-from .data.data_model import DataModel
+from data import data_provider
+from data.data_model import DataModel
 
-from .helpers.distance import calculate_distance_matrix
-from .process_solution import print_solution, process_solution
+from constraints import PenaltyConstraint, CapacityConstraint, DistanceConstraint
+
+
+from helpers.distance import calculate_distance_matrix
+from process_solution import print_solution, process_solution
 
 
 def create_data_model() -> DataModel:
@@ -53,8 +55,8 @@ def generate_planning():
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
     search_parameters.time_limit.seconds = 60
+
     logging.debug('Calculating solution')
-    routing.solver
     solution = routing.SolveWithParameters(search_parameters)
     if solution:
         print_solution(data_model, manager, routing, solution)

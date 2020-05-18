@@ -4,7 +4,7 @@ from node import Node, NodeType
 
 import config
 
-from api_server.contrib.cars import get_car_locations
+from contrib.cars import get_car_locations
 
 db_client = datastore.Client()
 

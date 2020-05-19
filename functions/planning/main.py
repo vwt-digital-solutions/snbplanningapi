@@ -1,7 +1,6 @@
 from __future__ import print_function
 
-import logging
-
+import config
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
@@ -12,7 +11,7 @@ from constraints import PenaltyConstraint, CapacityConstraint, DistanceConstrain
 
 
 from helpers.distance import calculate_distance_matrix
-from process_solution import print_solution, process_solution
+from process_solution import process_solution
 
 
 def create_data_model() -> DataModel:
@@ -35,10 +34,19 @@ def generate_planning():
         - Returns a list of engineers and workitems.
     :return:
     """
-    logging.debug('Creating datamodel')
+    try:
+
+        print('Debug is set to: ', config.PLANNING_ENGINE_DEBUG)
+        if config.PLANNING_ENGINE_DEBUG:
+            print('Will use only a subset of workitems and employees.')
+    except AttributeError:
+        print('Debug not set')
+        print('Will use the full set of workitems and employees.')
+
+    print('Creating datamodel')
     data_model = create_data_model()
 
-    logging.debug('Creating manager')
+    print('Creating manager')
     manager = pywrapcp.RoutingIndexManager(len(data_model.nodes),
                                            data_model.number_of_cars,
                                            data_model.start_positions,
@@ -46,7 +54,7 @@ def generate_planning():
 
     routing = pywrapcp.RoutingModel(manager)
 
-    logging.debug('Applying constraints')
+    print('Applying constraints')
     routing = DistanceConstraint().apply(manager, routing, data_model)
     routing = CapacityConstraint().apply(manager, routing, data_model)
     routing = PenaltyConstraint().apply(manager, routing, data_model)
@@ -54,17 +62,19 @@ def generate_planning():
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
-    search_parameters.time_limit.seconds = 60
+    search_parameters.time_limit.seconds = 10
 
-    logging.debug('Calculating solution')
+    print('Calculating solutions')
     solution = routing.SolveWithParameters(search_parameters)
+    print('Solution calculated')
     if solution:
-        print_solution(data_model, manager, routing, solution)
-
-        return process_solution(data_model, manager, routing, solution)
+        print('Processing solution')
+        value = process_solution(data_model, manager, routing, solution)
     else:
-        logging.debug('No solution found')
-        return []
+        print('No solution found')
+        value = 'No response'
+
+    return value
 
 
 def perform_request(request):
@@ -77,7 +87,10 @@ def perform_request(request):
         Response object using `make_response`
         <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
     """
-    return generate_planning()
+
+    return {
+        'result': generate_planning()
+    }
 
 
 if __name__ == '__main__':

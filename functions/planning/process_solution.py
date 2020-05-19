@@ -1,5 +1,3 @@
-import logging
-
 from google.cloud import datastore
 from data.data_model import DataModel
 from node import NodeType
@@ -32,14 +30,16 @@ def print_solution(data_model: DataModel, manager, routing, solution):
         print(plan_output)
         total_distance += route_distance
         total_load += route_load
-    logging.debug('Total distance of all routes: {}m'.format(total_distance))
-    logging.debug('Total load of all routes: {}'.format(total_load))
+    print('Total distance of all routes: {}m'.format(total_distance))
+    print('Total load of all routes: {}'.format(total_load))
 
 
 def process_solution(data_model: DataModel, manager, routing, solution):
     query = db_client.query(kind='CarInfo')
     car_info_list = query.fetch()
     car_info_dict_by_token = {e['token']: e for e in car_info_list}
+
+    entities = []
 
     for vehicle_id in range(data_model.number_of_cars):
         car_location = data_model.nodes[vehicle_id].entity
@@ -49,8 +49,6 @@ def process_solution(data_model: DataModel, manager, routing, solution):
 
         route_distance = 0
         route_load = 0
-
-        entities = []
 
         while not routing.IsEnd(index):
             node_index = manager.IndexToNode(index)
@@ -65,7 +63,7 @@ def process_solution(data_model: DataModel, manager, routing, solution):
 
             entities.append({
                         'engineer': car_info.key.id_or_name,
-                        'workitem': data_model.nodes[node_index].entity.key
+                        'workitem': data_model.nodes[node_index].entity.key.id_or_name
                       })
 
-        return entities
+    return entities

@@ -18,7 +18,7 @@ def get_work_items():
 
     try:
         if config.PLANNING_ENGINE_DEBUG:
-            work_items = work_items[100:400]
+            work_items = work_items[200:350]
     except AttributeError:
         pass
 
@@ -30,7 +30,7 @@ def get_cars():
 
     try:
         if config.PLANNING_ENGINE_DEBUG:
-            engineers = engineers[50:150]
+            engineers = engineers[50:100]
     except AttributeError:
         pass
 

@@ -1,46 +1,21 @@
-import time
+import json
 
 import config
-import google
-import requests
-from flask import jsonify, request, make_response
-from google.cloud import datastore
-
 from cache import cache
 
-from openapi_server.controllers.util import HALSelfRef, HALEmbedded
+import requests
+from flask import jsonify, request, make_response
+
+from google.auth.transport.requests import Request
+from google.oauth2 import id_token
+from google.cloud import datastore
+
 from openapi_server.controllers.engineers_controller import create_engineer
+from openapi_server.controllers.util import HALSelfRef, HALEmbedded
+
 from openapi_server.models import PlanningItem, PlanningItemsList, WorkItem
 
 db_client = datastore.Client()
-
-
-def generate_jwt(sa_keyfile, sa_email, audience, expiry_length=260):
-    """Generates a signed JSON Web Token using a Google API Service Account."""
-    now = int(time.time())
-
-    # build payload
-    payload = {
-        'iat': now,
-        # expires after 'expiry_length' seconds.
-        "exp": now + expiry_length,
-        # iss must match 'issuer' in the security configuration in your
-        # swagger spec (e.g. service account email). It can be any string.
-        'iss': sa_email,
-        # aud must be either your Endpoints service name, or match the value
-        # specified as the 'x-google-audience' in the OpenAPI document.
-        'aud':  audience,
-        # sub and email should match the service account's email address
-        'sub': sa_email,
-        'email': sa_email
-    }
-
-    # sign with keyfile
-    signer = google.auth.crypt.RSASigner.from_service_account_file(sa_keyfile)
-    jwt = google.auth.jwt.encode(signer, payload)
-
-    return jwt
-
 
 """
 Controller functions
@@ -49,20 +24,14 @@ Controller functions
 
 @cache.memoize(timeout=300)
 def list_planning_items():  # noqa: E501
+    service_account_token = id_token.fetch_id_token(Request(), config.PLANNING_ENGINE_FUNCTION_URL)
+    function_url = config.PLANNING_ENGINE_FUNCTION_URL
 
-    signed_jwt = generate_jwt(
-        sa_email=config.PLANNING_ENGINE_SERVICE_ACCOUNT_EMAIL,
-        sa_keyfile=config.PLANNING_ENGINE_SERVICE_ACCOUNT_KEY,
-        audience=config.PLANNING_ENGINE_FUNCTION_URL
-    )
+    # Provide the token in the request to the receiving function
+    function_headers = {'Authorization': f'bearer {service_account_token}'}
 
-    """Makes an authorized request to the endpoint"""
-    headers = {
-        'Authorization': 'Bearer {}'.format(signed_jwt.decode('utf-8')),
-        'content-type': 'application/json'
-    }
-
-    response = requests.get(config.PLANNING_ENGINE_FUNCTION_URL, headers=headers)
+    response = requests.get(function_url, headers=function_headers)
+    planning_result = json.loads(response.content)['result']
 
     workitems_query = db_client.query(kind='WorkItem')
     workitems = list(workitems_query.fetch())
@@ -76,7 +45,7 @@ def list_planning_items():  # noqa: E501
 
     result = []
 
-    for item in response.data.result:
+    for item in planning_result:
         engineer = engineers_by_id[item['engineer']]
         workitem = workitems_by_id[item['workitem']]
         result.append(create_planning_item(engineer, workitem))

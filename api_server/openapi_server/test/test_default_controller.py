@@ -107,8 +107,8 @@ class TestDefaultController(BaseTestCase):
             headers=headers,
             data=json.dumps(body),
             content_type='application/json')
-        self.assert400(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+        self.assertStatus(response, 201,
+                          'Response body is : ' + response.data.decode('utf-8'))
 
     def test_list_tokens(self):
         """Test case for list_tokens

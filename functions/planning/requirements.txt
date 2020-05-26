@@ -21,6 +21,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 jsonschema==3.2.0
 MarkupSafe==1.1.1
+numpy==1.18.4
 openapi-spec-validator==0.2.8
 ortools==7.6.7691
 protobuf==3.12.0

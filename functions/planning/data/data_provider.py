@@ -35,3 +35,11 @@ def get_cars():
         pass
 
     return [Node(NodeType.car, engineer.key.id_or_name, engineer) for engineer in engineers]
+
+
+def get_car_info():
+    query = db_client.query(kind='CarInfo')
+
+    car_info_list = query.fetch()
+
+    return car_info_list

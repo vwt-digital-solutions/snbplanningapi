@@ -8,13 +8,21 @@ class DataModel:
     locations to be visited, the distance matrix between them, their capacity etc.
     """
     cars = []
+    car_info_list = []
     work_items = []
+
+    car_info_dict_by_token = {}
 
     distance_matrix = []
 
+    _nodes = None
+
     @property
     def nodes(self) -> [Node]:
-        return self.cars + self.work_items
+        if not self._nodes or len(self._nodes) != len(self.cars) + len(self.work_items):
+            self._nodes = self.cars + self.work_items
+
+        return self._nodes
 
     @property
     def number_of_nodes(self) -> int:

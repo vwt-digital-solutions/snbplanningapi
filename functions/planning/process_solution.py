@@ -35,9 +35,7 @@ def print_solution(data_model: DataModel, manager, routing, solution):
 
 
 def process_solution(data_model: DataModel, manager, routing, solution):
-    query = db_client.query(kind='CarInfo')
-    car_info_list = query.fetch()
-    car_info_dict_by_token = {e['token']: e for e in car_info_list}
+    car_info_dict_by_token = data_model.car_info_dict_by_token
 
     entities = []
 

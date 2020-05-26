@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import config
+from constraints.is_allowed_to_visit_constraint import IsAllowedToVisitConstraint
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
@@ -11,15 +12,25 @@ from constraints import PenaltyConstraint, CapacityConstraint, DistanceConstrain
 
 
 from helpers.distance import calculate_distance_matrix
-from process_solution import process_solution
+from process_solution import process_solution, print_solution
 
 
 def create_data_model() -> DataModel:
     data_model = DataModel()
+    print('getting Cars')
     data_model.cars = data_provider.get_cars()
+    print('getting Workitems')
     data_model.work_items = data_provider.get_work_items()
+    print('getting CarInfo')
+    data_model.car_info_list = data_provider.get_car_info()
+    data_model.car_info_dict_by_token = {e['token']: e for e in data_model.car_info_list}
 
+    print(data_model.number_of_cars, ' cars')
+    print(data_model.number_of_workitems, ' workitems')
+
+    print('Calculating distance matrix')
     data_model.distance_matrix = calculate_distance_matrix(data_model.nodes)
+
     return data_model
 
 
@@ -58,17 +69,19 @@ def generate_planning():
     routing = DistanceConstraint().apply(manager, routing, data_model)
     routing = CapacityConstraint().apply(manager, routing, data_model)
     routing = PenaltyConstraint().apply(manager, routing, data_model)
+    routing = IsAllowedToVisitConstraint().apply(manager, routing, data_model)
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
-    search_parameters.time_limit.seconds = 10
+    search_parameters.time_limit.seconds = 20
 
     print('Calculating solutions')
     solution = routing.SolveWithParameters(search_parameters)
     print('Solution calculated')
     if solution:
         print('Processing solution')
+        print_solution(data_model, manager, routing, solution)
         value = process_solution(data_model, manager, routing, solution)
     else:
         print('No solution found')

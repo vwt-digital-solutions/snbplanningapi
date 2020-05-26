@@ -8,9 +8,7 @@ from google.cloud import datastore
 import logging
 
 from contrib.cars import get_car_locations, get_car_info_tokens, is_assigned
-from contrib.distance import calculate_distance, calculate_travel_times
-
-from openapi_server.models import Car, CarDistance, CarDistances, CarsList, Token, TokensList, Error
+from openapi_server.models import Car, CarsList, Token, TokensList, Error
 
 
 """
@@ -189,41 +187,5 @@ def list_tokens(offset, assigned=None):
         tokens.append(token)
 
     result = TokensList(items=tokens)
-
-    return make_response(jsonify(result), 200)
-
-
-@cache.memoize(timeout=300)
-def car_distances_list(work_item: str, offset, sort, limit, cars: str = None):
-    """Get a list of carlocations together with their travel time in seconds,
-     ordered by the distance from specified workitem"""
-
-    work_item_entity = db_client.get(db_client.key('WorkItem', work_item))
-
-    car_locations = get_car_locations(db_client, True, offset)
-
-    if work_item_entity is None:
-        return make_response(jsonify("Work Item not found"), 404)
-
-    if cars is not None:
-        tokens = cars.split(',')
-        car_locations = [car_location for car_location in car_locations if car_location.key.id_or_name in tokens]
-
-    # Calculate euclidean distances for all locations
-    euclidean_distances = [(calculate_distance(work_item_entity, car_location), car_location)
-                           for car_location in car_locations]
-
-    # Sort and splice distances.
-    sorted_euclidean_distances = sorted(euclidean_distances, key=lambda tup: tup[0])
-    spliced_euclidean_distances = sorted_euclidean_distances[:limit * 2]
-
-    # Calculate actual travel times, resort and splice.
-    travel_times = calculate_travel_times(work_item_entity, [tup[1] for tup in spliced_euclidean_distances])
-    sorted_travel_times = sorted(travel_times, key=lambda travel_time: travel_time[sort])
-    spliced_travel_times = sorted_travel_times[:limit]
-
-    # Generate valid CarDistances response.
-    car_distances = [CarDistance(**travel_time) for travel_time in spliced_travel_times]
-    result = CarDistances(items=car_distances)
 
     return make_response(jsonify(result), 200)

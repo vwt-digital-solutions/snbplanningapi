@@ -1,12 +1,14 @@
 import datetime
 import pytz
+from contrib.cars import get_car_locations
+from contrib.distance import calculate_travel_times, calculate_distance
 
 from flask import make_response, request, jsonify
 from google.cloud import datastore
 
 from cache import cache
 from openapi_server.controllers.util import remap_attributes, HALSelfRef, HALEmbedded
-from openapi_server.models import WorkItem, WorkItemsList, Error
+from openapi_server.models import WorkItem, WorkItemsList, Error, CarDistances, CarDistance
 
 work_items_statuses = ['Te Plannen', 'Gepland', 'Niet Gereed']
 work_item_attribute_map = {
@@ -117,3 +119,41 @@ def create_workitem(entity, with_hal=True):
     work_item.id = entity.key.id_or_name
 
     return work_item
+
+
+@cache.memoize(timeout=300)
+def car_distances_list(workitem_id: str, offset, sort, limit, cars: str = None):
+    """Get a list of carlocations together with their travel time in seconds,
+     ordered by the distance from specified workitem"""
+    db_client = datastore.Client()
+
+    work_item_entity = db_client.get(db_client.key('WorkItem', workitem_id))
+
+    car_locations = get_car_locations(db_client, True, offset)
+
+    if work_item_entity is None:
+        response = Error('400', "Work Item not found")
+        return make_response(jsonify(response), 404)
+
+    if cars is not None:
+        tokens = cars.split(',')
+        car_locations = [car_location for car_location in car_locations if car_location.key.id_or_name in tokens]
+
+    # Calculate euclidean distances for all locations
+    euclidean_distances = [(calculate_distance(work_item_entity, car_location), car_location)
+                           for car_location in car_locations]
+
+    # Sort and splice distances.
+    sorted_euclidean_distances = sorted(euclidean_distances, key=lambda tup: tup[0])
+    spliced_euclidean_distances = sorted_euclidean_distances[:limit * 2]
+
+    # Calculate actual travel times, resort and splice.
+    travel_times = calculate_travel_times(work_item_entity, [tup[1] for tup in spliced_euclidean_distances])
+    sorted_travel_times = sorted(travel_times, key=lambda travel_time: travel_time[sort])
+    spliced_travel_times = sorted_travel_times[:limit]
+
+    # Generate valid CarDistances response.
+    car_distances = [CarDistance(**travel_time) for travel_time in spliced_travel_times]
+    result = CarDistances(items=car_distances)
+
+    return make_response(jsonify(result), 200)

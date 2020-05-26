@@ -184,7 +184,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.cars_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.read]
-  /cars/distances:
+  /workitems/{workitem_id}/distances:
     get:
       summary: Get car distances from a point or workitem
       operationId: car_distances_list
@@ -203,8 +203,8 @@ paths:
 
         Otherwise, these cars will not be accounted for in the response.
       parameters:
-        - in: query
-          name: work_item
+        - in: path
+          name: workitem_id
           schema:
             type: string
           required: true
@@ -246,7 +246,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CarDistances'
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
   /tokens:

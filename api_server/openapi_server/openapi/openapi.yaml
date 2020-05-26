@@ -91,55 +91,6 @@ paths:
         - snbplanningapi.editor
       summary: Post car info
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /cars/locations:
-    get:
-      description: |
-        Get a list of all car geolocations, with their linked Hyrde tokens.
-      operationId: car_locations_list
-      parameters:
-      - description: Time offset range in hours for retrieving entries
-        explode: true
-        in: query
-        name: offset
-        required: false
-        schema:
-          default: 168
-          type: integer
-        style: form
-      - description: Business unit the car and driver belong to.
-        explode: true
-        in: query
-        name: business_unit
-        required: false
-        schema:
-          default: service
-          enum:
-          - service
-          - nls
-          - ftth
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CarLocations'
-          description: Successful response - returns an array of locations
-          headers:
-            Cache-Control:
-              description: Header describing the cache policy for this endpoints.
-                Defaults to a 300 seconds private cache.
-              explode: false
-              schema:
-                default: private, max-age=300
-                type: string
-              style: simple
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.read
-      summary: Get car locations
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /engineers:
     get:
       description: Get a list of all engineers.
@@ -209,6 +160,55 @@ paths:
         - snbplanningapi.planner
       summary: Get info of a single engineer
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
+  /locations/cars:
+    get:
+      description: |
+        Get a list of all car geolocations, with their linked Hyrde tokens.
+      operationId: car_locations_list
+      parameters:
+      - description: Time offset range in hours for retrieving entries
+        explode: true
+        in: query
+        name: offset
+        required: false
+        schema:
+          default: 168
+          type: integer
+        style: form
+      - description: Business unit the car and driver belong to.
+        explode: true
+        in: query
+        name: business_unit
+        required: false
+        schema:
+          default: service
+          enum:
+          - service
+          - nls
+          - ftth
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarLocations'
+          description: Successful response - returns an array of locations
+          headers:
+            Cache-Control:
+              description: Header describing the cache policy for this endpoints.
+                Defaults to a 300 seconds private cache.
+              explode: false
+              schema:
+                default: private, max-age=300
+                type: string
+              style: simple
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.read
+      summary: Get car locations
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /plannings:
     get:
       description: This endpoint returns planning-items for the next morning.

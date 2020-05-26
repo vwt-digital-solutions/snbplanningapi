@@ -144,7 +144,7 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
-  /cars/locations:
+  /locations/cars:
     get:
       summary: Get car locations
       operationId: car_locations_list

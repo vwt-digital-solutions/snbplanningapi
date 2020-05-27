@@ -246,6 +246,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CarDistances'
+        "404":
+          description: Workitem not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]

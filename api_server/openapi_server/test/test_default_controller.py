@@ -67,7 +67,7 @@ class TestDefaultController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
-    def test_cars_list(self):
+    def test_engineers_list(self):
         """Test case for cars_list
 
         Get car info
@@ -78,7 +78,7 @@ class TestDefaultController(BaseTestCase):
             'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
-            '/cars',
+            '/engineers',
             method='GET',
             headers=headers,
             query_string=query_string)
@@ -101,7 +101,7 @@ class TestDefaultController(BaseTestCase):
             'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
-            '/cars',
+            '/engineers',
             method='POST',
             headers=headers,
             data=json.dumps(body),

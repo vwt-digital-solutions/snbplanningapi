@@ -15,82 +15,6 @@ info:
 servers:
 - url: /
 paths:
-  /cars:
-    get:
-      description: Get a list of all cars and their driver information.
-      operationId: cars_list
-      parameters:
-      - description: The license_plate of the car.
-        explode: true
-        in: query
-        name: license_plate
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: Time offset range in hours for retrieving entries
-        explode: true
-        in: query
-        name: offset
-        required: false
-        schema:
-          default: 168
-          type: integer
-        style: form
-      - description: Business unit the car and driver belong to.
-        explode: true
-        in: query
-        name: business_unit
-        required: false
-        schema:
-          default: service
-          enum:
-          - service
-          - nls
-          - ftth
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CarsList'
-          description: |
-            Successful response Returns an array of locations with info
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.planner
-      summary: Get car info
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-    post:
-      description: Post a list of all car geolocations with info
-      operationId: cars_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Car'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Car'
-          description: Successful POST
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: There is an error with the data posted, for instance, a car
-            with the specified hyrde token already exists.
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.editor
-      summary: Post car info
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /engineers:
     get:
       description: Get a list of all engineers.
@@ -120,6 +44,34 @@ paths:
       - OAuth2AzureAD:
         - snbplanningapi.planner
       summary: Get info of all engineers
+      x-openapi-router-controller: openapi_server.controllers.engineers_controller
+    post:
+      description: Create or update the information for an engineer.
+      operationId: engineers_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Engineer'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Engineer'
+          description: Successful POST
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: There is an error with the data posted, for instance, an engineer
+            related to the specified hyrde token already exists.
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.editor
+      summary: Post Engineer
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
   /engineers/{engineerId}:
     get:
@@ -160,6 +112,7 @@ paths:
         - snbplanningapi.planner
       summary: Get info of a single engineer
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
+      x-eac-ignore: true
   /locations/cars:
     get:
       description: |
@@ -436,6 +389,7 @@ paths:
         - snbplanningapi.planner
       summary: Get car distances from a point or workitem
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
+      x-eac-ignore: true
 components:
   schemas:
     Error:
@@ -557,82 +511,6 @@ components:
       - coordinates
       - type
       type: object
-    CarsList:
-      description: A list of Cars.
-      example:
-        items:
-        - driver_name: Billy Gates
-          division: "90117"
-          license_plate: AA-123-BB
-          administration: Klantteam Noord
-          id: "123456789"
-          driver_skill: Metende
-          business_unit: NLS
-          driver_employee_number: "1234"
-          token: vwt/hyrde/12345
-        - driver_name: Billy Gates
-          division: "90117"
-          license_plate: AA-123-BB
-          administration: Klantteam Noord
-          id: "123456789"
-          driver_skill: Metende
-          business_unit: NLS
-          driver_employee_number: "1234"
-          token: vwt/hyrde/12345
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/Car'
-          type: array
-      required:
-      - items
-      type: object
-    Car:
-      description: Information on a car and their driver
-      example:
-        driver_name: Billy Gates
-        division: "90117"
-        license_plate: AA-123-BB
-        administration: Klantteam Noord
-        id: "123456789"
-        driver_skill: Metende
-        business_unit: NLS
-        driver_employee_number: "1234"
-        token: vwt/hyrde/12345
-      properties:
-        id:
-          example: "123456789"
-          type: string
-        administration:
-          example: Klantteam Noord
-          type: string
-        driver_name:
-          example: Billy Gates
-          readOnly: true
-          type: string
-        driver_skill:
-          example: Metende
-          type: string
-        driver_employee_number:
-          example: "1234"
-          type: string
-        license_plate:
-          example: AA-123-BB
-          readOnly: true
-          type: string
-        token:
-          example: vwt/hyrde/12345
-          type: string
-        division:
-          example: "90117"
-          readOnly: true
-          type: string
-        business_unit:
-          example: NLS
-          readOnly: true
-          type: string
-      required:
-      - token
     EngineersList:
       description: A list of Engineers.
       example:
@@ -646,6 +524,7 @@ components:
           id: "123456789"
           driver_skill: Metende
           business_unit: NLS
+          token: hyrde/token/302010
           driver_employee_number: "1234"
         - driver_name: Billy Gates
           division: "90117"
@@ -655,6 +534,7 @@ components:
           id: "123456789"
           driver_skill: Metende
           business_unit: NLS
+          token: hyrde/token/302010
           driver_employee_number: "1234"
       properties:
         _links:
@@ -682,6 +562,7 @@ components:
         id: "123456789"
         driver_skill: Metende
         business_unit: NLS
+        token: hyrde/token/302010
         driver_employee_number: "1234"
       properties:
         _links:
@@ -691,8 +572,12 @@ components:
                 href:
                   example: /engineers/1
                   type: string
+          readOnly: true
         id:
           example: "123456789"
+          type: string
+        token:
+          example: hyrde/token/302010
           type: string
         administration:
           example: Klantteam Noord
@@ -700,7 +585,6 @@ components:
           type: string
         driver_name:
           example: Billy Gates
-          readOnly: true
           type: string
         driver_skill:
           example: Metende
@@ -720,7 +604,6 @@ components:
           type: string
         business_unit:
           example: NLS
-          readOnly: true
           type: string
     TokensList:
       description: List of hyrde car tokens

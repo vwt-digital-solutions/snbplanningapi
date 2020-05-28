@@ -17,71 +17,6 @@ info:
 servers:
   - url: /
 paths:
-  /cars:
-    get:
-      summary: Get car info
-      operationId: cars_list
-      description: Get a list of all cars and their driver information.
-      parameters:
-        - in: query
-          name: license_plate
-          schema:
-            type: string
-          required: false
-          description: The license_plate of the car.
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            default: 168
-          required: false
-          description: Time offset range in hours for retrieving entries
-        - in: query
-          name: business_unit
-          schema:
-            type: string
-            default: service
-            enum: [service, nls, ftth]
-          required: false
-          description: Business unit the car and driver belong to.
-      responses:
-        "200":
-          description: >
-            Successful response
-            Returns an array of locations with info
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CarsList'
-      security:
-        - OAuth2AzureAD: [snbplanningapi.planner]
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-    post:
-      summary: Post car info
-      description: Post a list of all car geolocations with info
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Car'
-      responses:
-        "201":
-          description: Successful POST
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Car'
-        "400":
-          description: There is an error with the data posted, for instance,
-            a car with the specified hyrde token already exists.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-      security:
-        - OAuth2AzureAD: [snbplanningapi.editor]
   /engineers:
     get:
       summary: Get info of all engineers
@@ -107,6 +42,33 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
+    post:
+      summary: Post Engineer
+      operationId: engineers_post
+      description: Create or update the information for an engineer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Engineer'
+      responses:
+        "201":
+          description: Successful POST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Engineer'
+        "400":
+          description: There is an error with the data posted, for instance,
+            an engineer related to the specified hyrde token already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: openapi_server.controllers.engineers_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.editor]
   /engineers/{engineerId}:
     get:
       summary: Get info of a single engineer
@@ -144,6 +106,7 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
+      x-eac-ignore: true
   /locations/cars:
     get:
       summary: Get car locations
@@ -253,6 +216,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
+      x-eac-ignore: true
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
   /tokens:
@@ -502,55 +466,6 @@ components:
         coordinates:
           - 5.2
           - 52.4
-    CarsList:
-      description: A list of Cars.
-      required:
-        - items
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Car'
-    Car:
-      description: Information on a car and their driver
-      properties:
-        id:
-          type: string
-          example: 123456789
-        administration:
-          type: string
-          example: Klantteam Noord
-        driver_name:
-          type: string
-          example: Billy Gates
-          readOnly: true
-        driver_skill:
-          type: string
-          # enum: ["", null, "Metende", "Lasser", "Leerling",
-          # "Kraanmachinist", "Overig", "NLS", "Cluster"]
-          example: Metende
-        driver_employee_number:
-          type: string
-          example: 1234
-        license_plate:
-          readOnly: true
-          example: AA-123-BB
-          type: string
-        token:
-          type: string
-          example: vwt/hyrde/12345
-        division:
-          type: string
-          example: 90117
-          readOnly: true
-        business_unit:
-          type: string
-          example: NLS
-          readOnly: true
-          # enum: ["", null, "nls", "ftth", "service"]
-      required:
-        - token
     EngineersList:
       description: A list of Engineers.
       required:
@@ -579,10 +494,14 @@ components:
                 href:
                   type: string
                   example: '/engineers/1'
+          readOnly: true
         # Data
         id:
           type: string
           example: 123456789
+        token:
+          type: string
+          example: hyrde/token/302010
         administration:
           type: string
           example: Klantteam Noord
@@ -590,7 +509,6 @@ components:
         driver_name:
           type: string
           example: Billy Gates
-          readOnly: true
         driver_skill:
           type: string
           # enum: ["", null, "Metende", "Lasser", "Leerling",
@@ -612,7 +530,6 @@ components:
         business_unit:
           type: string
           example: NLS
-          readOnly: true
           # enum: ["", null, "nls", "ftth", "service"]
     TokensList:
       description: List of hyrde car tokens

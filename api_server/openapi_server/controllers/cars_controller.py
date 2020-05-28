@@ -8,8 +8,7 @@ from google.cloud import datastore
 import logging
 
 from contrib.cars import get_car_locations, get_car_info_tokens, is_assigned
-from openapi_server.models import Car, CarsList, Token, TokensList, Error
-
+from openapi_server.models import Token, TokensList
 
 """
 API endpoints.
@@ -47,114 +46,6 @@ def car_locations_list(offset):
         })
 
     return make_response(jsonify(result), 200, {'Cache-Control': 'private, max-age=300'})
-
-
-@cache.memoize(timeout=300)
-def cars_list(offset, business_unit=None):
-    """Get car info
-
-    Get a list of all car information
-    :rtype: CarsInfo
-
-    """
-    query = db_client.query(kind='CarInfo')
-    query_iter = list(query.fetch())
-
-    car_locations = list(db_client.query(kind='CarLocation').fetch())
-    car_locations_dict_by_token = {e.key.id_or_name: e for e in car_locations}
-    car_locations_dict_by_license_plate = {e['license']: e for e in car_locations if 'license' in e}
-
-    result = []
-
-    divisions_to_return = []
-    if business_unit is not None:
-        query = db_client.query(kind='Divisions')
-        query.add_filter('business_unit', '=', business_unit)
-        divisions_list = list(query.fetch())
-        divisions_to_return = [int(entity.key.id_or_name) for entity in divisions_list]
-
-    for entity in query_iter:
-        car = Car.from_dict(entity)
-        car.id = str(entity.key.id_or_name)
-
-        car_location = car_locations_dict_by_token.get(car.token, None)
-        if car_location is None and car.license_plate is not None:
-            car_location = car_locations_dict_by_license_plate.get(car.license_plate, None)
-
-        if car_location is not None:
-            car.license_plate = car_location.get('license', None)
-            car.token = car_location.key.id_or_name
-
-        # Only return results where token is set.
-        # Car information which does not have a tracker is not relevant.
-        if car.token is not None:
-            if business_unit is None:
-                result.append(car)
-
-            # CarInfo for which a division is not set is assumed to be info from service.
-            if car.division is None and business_unit == 'service':
-                result.append(car)
-            elif business_unit is not None and car.division is not None and int(car.division) in divisions_to_return:
-                result.append(car)
-
-    result = CarsList(items=result)
-
-    return make_response(jsonify(result), 200)
-
-
-def cars_post(body):
-    """Post car info
-
-    Post a car information
-
-
-    :rtype: CarInfo id
-
-    """
-    car_info = Car.from_dict(body).to_dict()
-
-    # Remove unnecessary and read-only fields.
-    del car_info['id']
-    del car_info['license_plate']
-    del car_info['driver_name']
-    del car_info['division']
-    del car_info['business_unit']
-
-    entity = None
-
-    # for unknown reason attribute 'id' is received as 'id_'
-    if 'id' in body and body['id'] is not None:
-        try:
-            car_info_key = db_client.key('CarInfo', int(body['id']))
-        except ValueError:
-            logger.warning(f"String to int conversion on {cars_post.__name__} with {body['id']}")
-            return make_response(jsonify("The client should not repeat this request without modification."), 400)
-        entity = db_client.get(car_info_key)
-        if entity is None:
-            entity = datastore.Entity(key=car_info_key)
-    else:
-        # Check if a car with that token already exists.
-        query = db_client.query(kind='CarInfo')
-        query.add_filter('token', '=', body['token'])
-        if len(list(query.fetch())) > 0:
-            error = Error('400', 'A Car with that token already exists.')
-            return make_response(jsonify(error), 400)
-
-        entity = datastore.Entity(db_client.key('CarInfo'))
-
-    entity.update(car_info)
-    db_client.put(entity)
-
-    car = Car.from_dict(entity)
-    car.id = str(entity.key.id_or_name)
-
-    car_locations = list(db_client.query(kind='CarLocation').fetch())
-    search_list = [car_location for car_location in car_locations if car_location.key.id_or_name == car.token]
-    if len(search_list) > 0:
-        car.license_plate = search_list[0].get('license', None)
-        car.token = search_list[0].key.id_or_name
-
-    return make_response(jsonify(car), 201)
 
 
 @cache.memoize(timeout=300)

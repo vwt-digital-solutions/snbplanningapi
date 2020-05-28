@@ -64,6 +64,6 @@ def get_car_info_tokens(db_client: datastore.Client):
 
     car_tokens = [car_info['token'] for
                   car_info in cars_query.fetch()
-                  if 'token' in car_info is not None and len(car_info['token']) > 0]
+                  if 'token' in car_info and car_info['token'] is not None and len(car_info['token']) > 0]
 
     return car_tokens

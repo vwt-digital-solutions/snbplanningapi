@@ -49,7 +49,7 @@ def np_distance_on_sphere(coordinate_array):
     arc = np.arccos(angle)
 
     # Multiply by earth's radius to obtain distance in km
-    return arc * EARTH_RADIUS
+    return np.minimum(arc * EARTH_RADIUS, 200)
 
 
 def get_coordinates_or_np_nan(entity):
@@ -60,7 +60,7 @@ def get_coordinates_or_np_nan(entity):
     try:
         return get_coordinates_from_entity(entity)
     except KeyError:
-        return np.nan, np.nan
+        return 52.0907, 5.1214
 
 
 def calculate_distance_matrix(nodes: [Node]):
@@ -70,7 +70,7 @@ def calculate_distance_matrix(nodes: [Node]):
     coordinates_array = np.array([get_coordinates_or_np_nan(node.entity) for node in nodes])
 
     distance_matrix = np_distance_on_sphere(coordinates_array)
-    distance_matrix = np.nan_to_num(distance_matrix, nan=INFINITY)
+    distance_matrix = np.nan_to_num(distance_matrix, nan=20)
 
     return distance_matrix
 

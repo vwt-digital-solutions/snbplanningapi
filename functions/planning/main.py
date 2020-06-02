@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+from datetime import datetime
+
 import config
 from constraints.is_allowed_to_visit_constraint import IsAllowedToVisitConstraint
 from ortools.constraint_solver import routing_enums_pb2
@@ -9,7 +11,6 @@ from data import data_provider
 from data.data_model import DataModel
 
 from constraints import PenaltyConstraint, CapacityConstraint, DistanceConstraint
-
 
 from helpers.distance import calculate_distance_matrix
 from process_solution import process_solution, print_solution
@@ -34,7 +35,7 @@ def create_data_model() -> DataModel:
     return data_model
 
 
-def generate_planning():
+def generate_planning(timeout):
     """
     The main planning function. This function does the following:
         - Create a datamodel for the routing manager to reference.
@@ -45,9 +46,9 @@ def generate_planning():
         - Returns a list of engineers and workitems.
     :return:
     """
+    print("Timeout set to", timeout)
     try:
-
-        print('Debug is set to: ', config.PLANNING_ENGINE_DEBUG)
+        print('Debug is set to:', config.PLANNING_ENGINE_DEBUG)
         if config.PLANNING_ENGINE_DEBUG:
             print('Will use only a subset of workitems and employees.')
     except AttributeError:
@@ -58,7 +59,7 @@ def generate_planning():
     data_model = create_data_model()
 
     print('Creating manager')
-    manager = pywrapcp.RoutingIndexManager(len(data_model.nodes),
+    manager = pywrapcp.RoutingIndexManager(data_model.number_of_nodes,
                                            data_model.number_of_cars,
                                            data_model.start_positions,
                                            data_model.end_positions)
@@ -72,22 +73,33 @@ def generate_planning():
     routing = IsAllowedToVisitConstraint().apply(manager, routing, data_model)
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-    search_parameters.first_solution_strategy = (
-        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
-    search_parameters.time_limit.seconds = 20
+    search_parameters.local_search_metaheuristic = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
+    # search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.BEST_INSERTION
+    search_parameters.time_limit.seconds = timeout
+
+    datetime.now().strftime("%H:%M:%S")
+    print("date and time: ", datetime.now().strftime("%H:%M:%S"))
+
+    def record_solution():
+        print("date and time: ", datetime.now().strftime("%H:%M:%S"))
+        print(routing.CostVar().Max())
+    routing.AddAtSolutionCallback(record_solution)
 
     print('Calculating solutions')
     solution = routing.SolveWithParameters(search_parameters)
+    # solution = routing.SolveFromAssignmentWithParameters(
+    #    initial_solution, search_parameters)
+    print(solution.ObjectiveValue())
     print('Solution calculated')
     if solution:
         print('Processing solution')
         print_solution(data_model, manager, routing, solution)
-        value = process_solution(data_model, manager, routing, solution)
+        (value, metadata) = process_solution(data_model, manager, routing, solution)
     else:
         print('No solution found')
-        value = 'No response'
+        value, metadata = ('No result', {})
 
-    return value
+    return value, metadata
 
 
 def perform_request(request):
@@ -101,10 +113,20 @@ def perform_request(request):
         <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
     """
 
+    request_json = request.get_json(silent=True)
+
+    if request_json and 'timeout' in request_json:
+        timeout = request_json['timeout']
+    else:
+        timeout = 60
+
+    result, metadata = generate_planning(timeout)
+
     return {
-        'result': generate_planning()
+        'result': result,
+        'metadata': metadata
     }
 
 
 if __name__ == '__main__':
-    generate_planning()
+    generate_planning(30)

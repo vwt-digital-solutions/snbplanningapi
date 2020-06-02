@@ -65,7 +65,7 @@ def process_solution(data_model: DataModel, manager, routing, solution):
 
             travel_time_list = travel_times.get(car_info.key.id_or_name, [])
             travel_time_list.append({
-                'description': 'from {0} {1} to {0} {1}'.format(from_node.type, from_node.entity.key.id_or_name,
+                'description': 'from {0} {1} to {2} {3}'.format(from_node.type, from_node.entity.key.id_or_name,
                                                                 to_node.type, to_node.entity.key.id_or_name),
                 'distance': route_distance,
                 'from': data_model.nodes[node_index].entity.key.id_or_name,

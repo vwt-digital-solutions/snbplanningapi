@@ -48,39 +48,42 @@ def process_solution(data_model: DataModel, manager, routing, solution):
         index = routing.Start(vehicle_id)
 
         route_distance = 0
-        route_load = 0
 
         while not routing.IsEnd(index):
-            node_index = manager.IndexToNode(index)
-            previous_index = index
+            from_index = manager.IndexToNode(index)
             index = solution.Value(routing.NextVar(index))
+            to_index = manager.IndexToNode(index)
 
-            route_load += data_model.demands[node_index]
-            route_distance += routing.GetArcCostForVehicle(previous_index, index, vehicle_id)
+            distance = routing.GetArcCostForVehicle(from_index, to_index, vehicle_id)
+            route_distance += distance
 
-            to_node = data_model.nodes[node_index]
-            from_node = data_model.nodes[manager.IndexToNode(index)]
+            from_node = data_model.nodes[from_index]
+            to_node = data_model.nodes[to_index]
 
-            travel_time = calculate_travel_times(to_node.entity, [from_node.entity])[0]
+            try:
+                travel_time = calculate_travel_times(to_node.entity, [from_node.entity])[0]
+            except KeyError:
+                travel_time = {
+                    'distance': 'NaN',
+                    'travel_time': 'NaN'
+                 }
 
             travel_time_list = travel_times.get(car_info.key.id_or_name, [])
+
             travel_time_list.append({
-                'description': 'from {0} {1} to {2} {3}'.format(from_node.type, from_node.entity.key.id_or_name,
-                                                                to_node.type, to_node.entity.key.id_or_name),
-                'distance': route_distance,
-                'from': data_model.nodes[node_index].entity.key.id_or_name,
-                'to': data_model.nodes[manager.IndexToNode(index)].entity.key.id_or_name,
-                'actual_distance': travel_time['distance'],
-                'actual_travel_time': travel_time['travel_time']
+                'euclidean_distance': distance,
+                'from': from_node.entity.key.id_or_name,
+                'to': to_node.entity.key.id_or_name,
+                'distance': travel_time['distance'],
+                'travel_time': travel_time['travel_time']
             })
+
             travel_times[car_info.key.id_or_name] = travel_time_list
 
-            if not data_model.nodes[node_index].type == NodeType.location:
-                continue
-
-            entities.append({
-                'engineer': car_info.key.id_or_name,
-                'workitem': data_model.nodes[node_index].entity.key.id_or_name,
-            })
+            if to_node.type == NodeType.location:
+                entities.append({
+                    'engineer': car_info.key.id_or_name,
+                    'workitem': to_node.entity.key.id_or_name,
+                })
 
     return entities, {'travel_times': travel_times}

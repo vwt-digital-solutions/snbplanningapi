@@ -106,7 +106,7 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
-      x-eac-ignore: true
+    x-eac-ignore: true
   /locations/cars:
     get:
       summary: Get car locations
@@ -216,9 +216,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      x-eac-ignore: true
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
+    x-eac-ignore: true
   /tokens:
     get:
       summary: Get a list of tokens
@@ -290,7 +290,6 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      x-eac-ignore: true
   /workitems/{WorkItemId}:
     get:
       summary: Get a work item
@@ -328,7 +327,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
-      x-eac-ignore: true
+    x-eac-ignore: true
   /plannings:
     get:
       summary: Retrieve planning items from the planning engine
@@ -351,7 +350,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.plannings_controller
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
-      x-eac-ignore: true
+    x-eac-ignore: true
 components:
   schemas:
     Error:

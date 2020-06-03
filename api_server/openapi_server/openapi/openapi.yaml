@@ -112,7 +112,7 @@ paths:
         - snbplanningapi.planner
       summary: Get info of a single engineer
       x-openapi-router-controller: openapi_server.controllers.engineers_controller
-      x-eac-ignore: true
+    x-eac-ignore: true
   /locations/cars:
     get:
       description: |
@@ -187,7 +187,7 @@ paths:
         - snbplanningapi.planner
       summary: Retrieve planning items from the planning engine
       x-openapi-router-controller: openapi_server.controllers.plannings_controller
-      x-eac-ignore: true
+    x-eac-ignore: true
   /tokens:
     get:
       description: List of tokens
@@ -271,7 +271,6 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      x-eac-ignore: true
   /workitems/{WorkItemId}:
     get:
       description: Get a single work item
@@ -313,7 +312,7 @@ paths:
         - snbplanningapi.planner
       summary: Get a work item
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      x-eac-ignore: true
+    x-eac-ignore: true
   /workitems/{workitem_id}/distances:
     get:
       description: |
@@ -389,7 +388,7 @@ paths:
         - snbplanningapi.planner
       summary: Get car distances from a point or workitem
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      x-eac-ignore: true
+    x-eac-ignore: true
 components:
   schemas:
     Error:

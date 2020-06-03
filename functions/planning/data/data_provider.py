@@ -9,16 +9,21 @@ from contrib.cars import get_car_locations
 db_client = datastore.Client()
 
 
+def add_key_as_id(entity):
+    entity['id'] = entity.key.id_or_name
+    return entity
+
+
 def get_work_items():
     work_items_query = db_client.query(kind='WorkItem')
     work_items_query.add_filter('task_type', '>=', 'Service Koper')
 
     work_items = list(work_items_query.fetch())
-    work_items = [work_item for work_item in work_items if work_item['status'] == 'Te Plannen']
+    work_items = [add_key_as_id(work_item) for work_item in work_items if work_item['status'] == 'Te Plannen']
 
     try:
         if config.PLANNING_ENGINE_DEBUG:
-            work_items = work_items[200:350]
+            work_items = work_items[200:600]
     except AttributeError:
         pass
 
@@ -30,11 +35,11 @@ def get_cars():
 
     try:
         if config.PLANNING_ENGINE_DEBUG:
-            engineers = engineers[50:100]
+            engineers = engineers[:100]
     except AttributeError:
         pass
 
-    return [Node(NodeType.car, engineer.key.id_or_name, engineer) for engineer in engineers]
+    return [Node(NodeType.car, engineer.key.id_or_name, add_key_as_id(engineer)) for engineer in engineers]
 
 
 def get_car_info():
@@ -42,4 +47,4 @@ def get_car_info():
 
     car_info_list = query.fetch()
 
-    return car_info_list
+    return [add_key_as_id(entity) for entity in car_info_list]

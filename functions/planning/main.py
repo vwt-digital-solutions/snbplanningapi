@@ -4,6 +4,7 @@ from datetime import datetime
 
 import config
 from constraints.is_allowed_to_visit_constraint import IsAllowedToVisitConstraint
+from flask import json
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
@@ -16,14 +17,14 @@ from helpers.distance import calculate_distance_matrix
 from process_solution import process_solution, print_solution
 
 
-def create_data_model() -> DataModel:
+def create_data_model(car_info=None, car_locations=None, workitems=None) -> DataModel:
     data_model = DataModel()
     print('getting Cars')
-    data_model.cars = data_provider.get_cars()
+    data_model.cars = data_provider.get_cars(car_locations)
     print('getting Workitems')
-    data_model.work_items = data_provider.get_work_items()
+    data_model.work_items = data_provider.get_work_items(workitems)
     print('getting CarInfo')
-    data_model.car_info_list = data_provider.get_car_info()
+    data_model.car_info_list = data_provider.get_car_info(car_info)
     data_model.car_info_dict_by_token = {e['token']: e for e in data_model.car_info_list}
 
     print(data_model.number_of_cars, ' cars')
@@ -35,7 +36,7 @@ def create_data_model() -> DataModel:
     return data_model
 
 
-def generate_planning(timeout):
+def generate_planning(timeout, engineers=None, car_locations=None, work_items=None):
     """
     The main planning function. This function does the following:
         - Create a datamodel for the routing manager to reference.
@@ -56,7 +57,7 @@ def generate_planning(timeout):
         print('Will use the full set of workitems and employees.')
 
     print('Creating datamodel')
-    data_model = create_data_model()
+    data_model = create_data_model(engineers, car_locations, work_items)
 
     print('Creating manager')
     manager = pywrapcp.RoutingIndexManager(data_model.number_of_nodes,
@@ -74,7 +75,6 @@ def generate_planning(timeout):
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.local_search_metaheuristic = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
-    # search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.BEST_INSERTION
     search_parameters.time_limit.seconds = timeout
 
     datetime.now().strftime("%H:%M:%S")
@@ -115,18 +115,34 @@ def perform_request(request):
 
     request_json = request.get_json(silent=True)
 
-    if request_json and 'timeout' in request_json:
+    if not request_json:
+        request_json = {}
+
+    if 'timeout' in request_json:
         timeout = request_json['timeout']
     else:
         timeout = 60
 
-    result, metadata = generate_planning(timeout)
+    engineers = request_json.get('car_info', None)
+    car_locations = request_json.get('car_locations', None)
+    work_items = request_json.get('work_items', None)
 
-    return {
+    result, metadata = generate_planning(timeout, engineers=engineers, car_locations=car_locations, work_items=work_items)
+
+    return json.dumps({
         'result': result,
         'metadata': metadata
-    }
+    })
 
 
 if __name__ == '__main__':
-    generate_planning(30)
+    with open('engineers.json') as json_file:
+        engineers = json.load(json_file)
+
+    with open('workitems.json') as json_file:
+        work_items = json.load(json_file)
+
+    with open('carlocations.json') as json_file:
+        car_locations = json.load(json_file)
+
+    generate_planning(20, work_items=work_items, car_locations=car_locations, engineers=engineers)

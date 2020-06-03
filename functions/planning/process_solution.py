@@ -12,13 +12,13 @@ def print_solution(data_model: DataModel, manager, routing, solution):
     total_load = 0
     for vehicle_id in range(data_model.number_of_cars):
         index = routing.Start(vehicle_id)
-        plan_output = 'Route for vehicle {}:\n'.format(data_model.nodes[vehicle_id].entity.key)
+        plan_output = 'Route for vehicle {}:\n'.format(data_model.nodes[vehicle_id].entity['id'])
         route_distance = 0
         route_load = 0
         while not routing.IsEnd(index):
             node_index = manager.IndexToNode(index)
             route_load += data_model.demands[node_index]
-            plan_output += ' {0} Load({1}) -> '.format(data_model.nodes[node_index].entity.key, route_load)
+            plan_output += ' {0} Load({1}) -> '.format(data_model.nodes[node_index].entity['id'], route_load)
             previous_index = index
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(

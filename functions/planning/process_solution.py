@@ -39,7 +39,7 @@ def process_solution(data_model: DataModel, manager, routing, solution):
 
     entities = []
 
-    travel_times = {}
+    travel_times = []
 
     for vehicle_id in range(data_model.number_of_cars):
         car_location = data_model.nodes[vehicle_id].entity
@@ -68,17 +68,14 @@ def process_solution(data_model: DataModel, manager, routing, solution):
                     'travel_time': 'NaN'
                  }
 
-            travel_time_list = travel_times.get(car_info['id'], [])
-
-            travel_time_list.append({
+            travel_times.append({
+                'engineer': car_info['id'],
                 'euclidean_distance': distance,
                 'from': from_node.entity['id'],
                 'to': to_node.entity['id'],
                 'distance': travel_time['distance'],
                 'travel_time': travel_time['travel_time']
             })
-
-            travel_times[car_info['id']] = travel_time_list
 
             if to_node.type == NodeType.location:
                 entities.append({

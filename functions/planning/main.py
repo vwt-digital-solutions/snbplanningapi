@@ -36,7 +36,7 @@ def create_data_model(car_info=None, car_locations=None, workitems=None) -> Data
     return data_model
 
 
-def generate_planning(timeout, engineers=None, car_locations=None, work_items=None):
+def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_locations=None, work_items=None):
     """
     The main planning function. This function does the following:
         - Create a datamodel for the routing manager to reference.
@@ -93,8 +93,9 @@ def generate_planning(timeout, engineers=None, car_locations=None, work_items=No
     print('Solution calculated')
     if solution:
         print('Processing solution')
-        print_solution(data_model, manager, routing, solution)
-        (value, metadata) = process_solution(data_model, manager, routing, solution)
+        if verbose:
+            print_solution(data_model, manager, routing, solution)
+        (value, metadata) = process_solution(data_model, manager, routing, solution, calculate_distance)
     else:
         print('No solution found')
         value, metadata = ('No result', {})
@@ -118,16 +119,19 @@ def perform_request(request):
     if not request_json:
         request_json = {}
 
-    if 'timeout' in request_json:
-        timeout = request_json['timeout']
-    else:
-        timeout = 60
-
+    timeout = request_json.get('timeout', 60)
+    verbose = request_json.get('verbose', False)
+    calculate_distance = request_json.get('calculate_distances', False)
     engineers = request_json.get('car_info', None)
     car_locations = request_json.get('car_locations', None)
     work_items = request_json.get('work_items', None)
 
-    result, metadata = generate_planning(timeout, engineers=engineers, car_locations=car_locations, work_items=work_items)
+    result, metadata = generate_planning(timeout,
+                                         verbose,
+                                         calculate_distance,
+                                         engineers=engineers,
+                                         car_locations=car_locations,
+                                         work_items=work_items)
 
     return json.dumps({
         'result': result,
@@ -136,13 +140,13 @@ def perform_request(request):
 
 
 if __name__ == '__main__':
-    with open('engineers.json') as json_file:
+    with open('tests/data/engineers.json') as json_file:
         engineers = json.load(json_file)
 
-    with open('workitems.json') as json_file:
+    with open('tests/data/workitems.json') as json_file:
         work_items = json.load(json_file)
 
-    with open('carlocations.json') as json_file:
+    with open('tests/data/carlocations.json') as json_file:
         car_locations = json.load(json_file)
 
-    generate_planning(20, work_items=work_items, car_locations=car_locations, engineers=engineers)
+    generate_planning(20, True, False, work_items=work_items, car_locations=car_locations, engineers=engineers)

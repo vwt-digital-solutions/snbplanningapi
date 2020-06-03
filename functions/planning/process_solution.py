@@ -34,7 +34,7 @@ def print_solution(data_model: DataModel, manager, routing, solution):
     print('Total load of all routes: {}'.format(total_load))
 
 
-def process_solution(data_model: DataModel, manager, routing, solution):
+def process_solution(data_model: DataModel, manager, routing, solution, calculate_distance):
     car_info_dict_by_token = data_model.car_info_dict_by_token
 
     entities = []
@@ -60,22 +60,23 @@ def process_solution(data_model: DataModel, manager, routing, solution):
             from_node = data_model.nodes[from_index]
             to_node = data_model.nodes[to_index]
 
-            try:
-                travel_time = calculate_travel_times(to_node.entity, [from_node.entity])[0]
-            except KeyError:
-                travel_time = {
-                    'distance': 'NaN',
-                    'travel_time': 'NaN'
-                 }
+            if calculate_distance:
+                try:
+                    travel_time = calculate_travel_times(to_node.entity, [from_node.entity])[0]
+                except KeyError:
+                    travel_time = {
+                        'distance': 'NaN',
+                        'travel_time': 'NaN'
+                     }
 
-            travel_times.append({
-                'engineer': car_info['id'],
-                'euclidean_distance': distance,
-                'from': from_node.entity['id'],
-                'to': to_node.entity['id'],
-                'distance': travel_time['distance'],
-                'travel_time': travel_time['travel_time']
-            })
+                travel_times.append({
+                    'engineer': car_info['id'],
+                    'euclidean_distance': distance,
+                    'from': from_node.entity['id'],
+                    'to': to_node.entity['id'],
+                    'distance': travel_time['distance'],
+                    'travel_time': travel_time['travel_time']
+                })
 
             if to_node.type == NodeType.location:
                 entities.append({

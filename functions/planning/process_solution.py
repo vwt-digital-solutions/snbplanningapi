@@ -38,8 +38,11 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
     car_info_dict_by_token = data_model.car_info_dict_by_token
 
     entities = []
-
     travel_times = []
+
+    # Construct a set here, so that we can build unplanned work_items in O(n) time instead of O(n^2)
+    planned_workitems = set()
+    unplanned_engineers = []
 
     for vehicle_id in range(data_model.number_of_cars):
         car_location = data_model.nodes[vehicle_id].entity
@@ -49,6 +52,7 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
 
         route_distance = 0
 
+        engineer_is_planned = False
         while not routing.IsEnd(index):
             from_index = manager.IndexToNode(index)
             index = solution.Value(routing.NextVar(index))
@@ -79,9 +83,18 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
                 })
 
             if to_node.type == NodeType.location:
+                planned_workitems.add(to_node.entity['id'])
+                engineer_is_planned = True
                 entities.append({
                     'engineer': car_info['id'],
                     'workitem': to_node.entity['id'],
                 })
 
-    return entities, {'travel_times': travel_times}
+        if not engineer_is_planned:
+            unplanned_engineers.append(car_info['id'])
+
+    unplanned_workitems = [work_item.entity['id'] for work_item in
+                           data_model.work_items
+                           if work_item.entity['id'] in planned_workitems]
+
+    return entities, unplanned_engineers, unplanned_workitems, {'travel_times': travel_times}

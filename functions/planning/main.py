@@ -83,6 +83,7 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
     def record_solution():
         print("date and time: ", datetime.now().strftime("%H:%M:%S"))
         print(routing.CostVar().Max())
+
     routing.AddAtSolutionCallback(record_solution)
 
     print('Calculating solutions')
@@ -95,12 +96,11 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
         print('Processing solution')
         if verbose:
             print_solution(data_model, manager, routing, solution)
-        (value, metadata) = process_solution(data_model, manager, routing, solution, calculate_distance)
+        return process_solution(data_model, manager, routing, solution, calculate_distance)
     else:
         print('No solution found')
-        value, metadata = ('No result', {})
-
-    return value, metadata
+        return [], [engineer['id'] for engineer in data_model.car_info_list], \
+               [work_item['id'] for work_item in data_model.work_items], {}
 
 
 def perform_request(request):
@@ -126,15 +126,17 @@ def perform_request(request):
     car_locations = request_json.get('car_locations', None)
     work_items = request_json.get('work_items', None)
 
-    result, metadata = generate_planning(timeout,
-                                         verbose,
-                                         calculate_distance,
-                                         engineers=engineers,
-                                         car_locations=car_locations,
-                                         work_items=work_items)
+    result, unplanned_engineers, unplanned_work_items, metadata = generate_planning(timeout,
+                                                                                    verbose,
+                                                                                    calculate_distance,
+                                                                                    engineers=engineers,
+                                                                                    car_locations=car_locations,
+                                                                                    work_items=work_items)
 
     return json.dumps({
         'result': result,
+        'unplanned_engineers': unplanned_engineers,
+        'unplanned_workitems': unplanned_work_items,
         'metadata': metadata
     })
 

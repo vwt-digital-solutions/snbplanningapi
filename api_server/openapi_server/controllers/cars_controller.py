@@ -6,6 +6,7 @@ from flask import make_response
 from google.cloud import datastore
 
 import logging
+import config
 
 from contrib.cars import get_car_locations, get_car_info_tokens, is_assigned
 from openapi_server.models import Token, TokensList
@@ -80,3 +81,10 @@ def list_tokens(offset, assigned=None):
     result = TokensList(items=tokens)
 
     return make_response(jsonify(result), 200)
+
+
+def map_configurations_get():
+    """Get the map configurations
+    :rtype: str
+    """
+    return make_response(jsonify(config.GEO_API_KEY), 200)

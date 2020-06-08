@@ -162,6 +162,18 @@ paths:
         - snbplanningapi.read
       summary: Get car locations
       x-openapi-router-controller: openapi_server.controllers.cars_controller
+  /map-configurations:
+    get:
+      description: This endpoint returns the map configuration api key.
+      operationId: map_configurations_get
+      responses:
+        "200":
+          description: OK
+      security:
+        - OAuth2AzureAD:
+            - snbplanningapi.read
+      summary: Get the map configurations
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /plannings:
     get:
       description: This endpoint returns planning-items for the next morning.

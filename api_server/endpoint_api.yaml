@@ -351,6 +351,17 @@ paths:
       security:
         - OAuth2AzureAD: [snbplanningapi.planner]
     x-eac-ignore: true
+  /map-configurations:
+    get:
+      summary: Get the map configurations
+      description: This endpoint returns the map configuration api key.
+      operationId: map_configurations_get
+      responses:
+        "200":
+          description: OK
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      security:
+        - OAuth2AzureAD: [snbplanningapi.read]
 components:
   schemas:
     Error:

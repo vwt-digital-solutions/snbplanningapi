@@ -24,7 +24,7 @@ def topic_to_datastore(request):
     # Extract subscription from subscription string
     try:
         subscription = envelope['subscription'].split('/')[-1]
-        logging.info(f'Message received from {subscription} [{payload}]')
+        logging.info(f'Message received from {subscription}')
         parser.process(json.loads(payload), gmaps)
     except Exception:
         logging.exception('Extract of subscription failed')

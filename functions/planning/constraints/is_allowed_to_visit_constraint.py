@@ -20,7 +20,7 @@ class IsAllowedToVisitConstraint(Constraint):
         return routing
 
     def can_visit(self, data_model: DataModel, location_node: Node, car_node: Node):
-        car_info = data_model.car_info_dict_by_token[car_node.entity.key.id_or_name]
+        car_info = data_model.car_info_dict_by_token[car_node.entity['id']]
         driver_skill = car_info.get('driver_skill', '')
 
         if 'category' not in location_node.entity:

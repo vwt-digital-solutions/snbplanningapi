@@ -33,8 +33,7 @@ class TestDefaultController(BaseTestCase):
 
         Get car distances from a point or workitem
         """
-        query_string = [('work_item', 'work_item_example'),
-                        ('cars', 'cars_example'),
+        query_string = [('cars', 'cars_example'),
                         ('offset', 168),
                         ('sort', 'travel_time'),
                         ('limit', 3)]
@@ -43,7 +42,7 @@ class TestDefaultController(BaseTestCase):
             'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
-            '/cars/distances',
+            '/workitem/{0}/distances'.format('work_item_example'),
             method='GET',
             headers=headers,
             query_string=query_string)
@@ -61,14 +60,14 @@ class TestDefaultController(BaseTestCase):
             'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
-            '/cars/locations',
+            '/locations/cars',
             method='GET',
             headers=headers,
             query_string=query_string)
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
-    def test_cars_list(self):
+    def test_engineers_list(self):
         """Test case for cars_list
 
         Get car info
@@ -79,7 +78,7 @@ class TestDefaultController(BaseTestCase):
             'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
-            '/cars',
+            '/engineers',
             method='GET',
             headers=headers,
             query_string=query_string)
@@ -102,7 +101,7 @@ class TestDefaultController(BaseTestCase):
             'Authorization': 'Bearer ' + get_token(),
         }
         response = self.client.open(
-            '/cars',
+            '/engineers',
             method='POST',
             headers=headers,
             data=json.dumps(body),

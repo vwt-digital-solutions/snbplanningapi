@@ -11,6 +11,7 @@ from google.oauth2 import id_token
 from google.cloud import datastore
 
 from openapi_server.controllers.engineers_controller import create_engineer
+from openapi_server.controllers.workitems_controller import create_workitem
 from openapi_server.controllers.util import HALSelfRef, HALEmbedded
 
 from openapi_server.models import PlanningItem, PlanningItemsList, WorkItem
@@ -30,8 +31,8 @@ def list_planning_items():  # noqa: E501
     # Provide the token in the request to the receiving function
     function_headers = {'Authorization': f'bearer {service_account_token}'}
 
-    response = requests.get(function_url, headers=function_headers)
-    planning_result = json.loads(response.content)['result']
+    res = requests.get(function_url, headers=function_headers)
+    res = json.loads(res.content)
 
     workitems_query = db_client.query(kind='WorkItem')
     workitems = list(workitems_query.fetch())
@@ -43,22 +44,40 @@ def list_planning_items():  # noqa: E501
     engineers_by_id = {engineer.key.id_or_name: engineer for engineer in engineers}
     workitems_by_id = {workitem.key.id_or_name: workitem for workitem in workitems}
 
-    result = []
+    planning = []
+    for planning_item in res['result']:
+        planning.append(create_planning_item(
+            engineers_by_id,
+            workitems_by_id,
+            planning_item
+        ))
 
-    for item in planning_result:
-        engineer = engineers_by_id[item['engineer']]
-        workitem = workitems_by_id[item['workitem']]
-        result.append(create_planning_item(engineer, workitem))
+    unplanned_engineers = []
+    for engineer_item in res['unplanned_engineers']:
+        unplanned_engineers.append(create_engineer(
+            engineers_by_id[engineer_item]
+        ))
+
+    unplanned_workitems = []
+    for work_item in res['unplanned_workitems']:
+        unplanned_workitems.append(create_workitem(
+            workitems_by_id[work_item]
+        ))
 
     response = PlanningItemsList(
-        items=result,
+        items=planning,
+        unplanned_engineers=unplanned_engineers,
+        unplanned_workitems=unplanned_workitems,
         links=HALSelfRef(f'{request.url_root}plannings')
     )
 
     return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
 
 
-def create_planning_item(engineer, workitem_entity):
+def create_planning_item(engineers_by_id, workitems_by_id, planning_item):
+    engineer = engineers_by_id[planning_item['engineer']]
+    workitem_entity = workitems_by_id[planning_item['workitem']]
+
     workitem = WorkItem.from_dict({
         **HALSelfRef(
             path=f'{request.url_root}workitems/{workitem_entity.key.id_or_name}'

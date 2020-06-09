@@ -15,13 +15,15 @@ class Engineer(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, links=None, id=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, license_plate=None, division=None, business_unit=None):  # noqa: E501
+    def __init__(self, links=None, id=None, token=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, license_plate=None, division=None, business_unit=None):  # noqa: E501
         """Engineer - a model defined in OpenAPI
 
         :param links: The links of this Engineer.  # noqa: E501
         :type links: object
         :param id: The id of this Engineer.  # noqa: E501
         :type id: str
+        :param token: The token of this Engineer.  # noqa: E501
+        :type token: str
         :param administration: The administration of this Engineer.  # noqa: E501
         :type administration: str
         :param driver_name: The driver_name of this Engineer.  # noqa: E501
@@ -40,6 +42,7 @@ class Engineer(Model):
         self.openapi_types = {
             'links': object,
             'id': str,
+            'token': str,
             'administration': str,
             'driver_name': str,
             'driver_skill': str,
@@ -52,6 +55,7 @@ class Engineer(Model):
         self.attribute_map = {
             'links': '_links',
             'id': 'id',
+            'token': 'token',
             'administration': 'administration',
             'driver_name': 'driver_name',
             'driver_skill': 'driver_skill',
@@ -63,6 +67,7 @@ class Engineer(Model):
 
         self._links = links
         self._id = id
+        self._token = token
         self._administration = administration
         self._driver_name = driver_name
         self._driver_skill = driver_skill
@@ -123,6 +128,27 @@ class Engineer(Model):
         """
 
         self._id = id
+
+    @property
+    def token(self):
+        """Gets the token of this Engineer.
+
+
+        :return: The token of this Engineer.
+        :rtype: str
+        """
+        return self._token
+
+    @token.setter
+    def token(self, token):
+        """Sets the token of this Engineer.
+
+
+        :param token: The token of this Engineer.
+        :type token: str
+        """
+
+        self._token = token
 
     @property
     def administration(self):

@@ -15,35 +15,17 @@ info:
 servers:
 - url: /
 paths:
-  /cars:
+  /engineers:
     get:
-      description: Get a list of all cars and their driver information.
-      operationId: cars_list
+      description: Get a list of all engineers.
+      operationId: engineers_list
       parameters:
-      - description: The license_plate of the car.
-        explode: true
-        in: query
-        name: license_plate
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: Time offset range in hours for retrieving entries
-        explode: true
-        in: query
-        name: offset
-        required: false
-        schema:
-          default: 168
-          type: integer
-        style: form
-      - description: Business unit the car and driver belong to.
+      - description: Business unit the engineer belongs to.
         explode: true
         in: query
         name: business_unit
         required: false
         schema:
-          default: service
           enum:
           - service
           - nls
@@ -55,112 +37,83 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarsList'
+                $ref: '#/components/schemas/EngineersList'
           description: |
-            Successful response Returns an array of locations with info
+            Successful response Returns an array of engineers with info
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner
-      summary: Get car info
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
+      summary: Get info of all engineers
+      x-openapi-router-controller: openapi_server.controllers.engineers_controller
     post:
-      description: Post a list of all car geolocations with info
-      operationId: cars_post
+      description: Create or update the information for an engineer.
+      operationId: engineers_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Car'
+              $ref: '#/components/schemas/Engineer'
         required: true
       responses:
         "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Car'
+                $ref: '#/components/schemas/Engineer'
           description: Successful POST
         "400":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          description: There is an error with the data posted, for instance, a car
-            with the specified hyrde token already exists.
+          description: There is an error with the data posted, for instance, an engineer
+            related to the specified hyrde token already exists.
       security:
       - OAuth2AzureAD:
         - snbplanningapi.editor
-      summary: Post car info
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /cars/distances:
+      summary: Post Engineer
+      x-openapi-router-controller: openapi_server.controllers.engineers_controller
+  /engineers/{engineerId}:
     get:
-      description: |
-        Get a list of Hyrde car tokens along with the distance and travel time from the specified point. Optionally, a list of car tokens can be supplied, for which to calculate the distance. If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
-        When passing a list of car tokens, make sure that 1. All tokens are linked to a car info. 2. All cars have been updated within the time determined by
-           offset (defaults to 168 hours, or 1 week)
-
-        Otherwise, these cars will not be accounted for in the response.
-      operationId: car_distances_list
+      description: Get the info of an engineer.
+      operationId: get_engineer
       parameters:
-      - description: The workitem for which to find the nearest car locations
-        explode: true
-        in: query
-        name: work_item
+      - description: The id of the engineer to retrieve
+        explode: false
+        in: path
+        name: engineerId
         required: true
         schema:
           type: string
-        style: form
-      - description: |
-          A comma separated list of car tokens to for which to calculate the distance.
-        explode: true
-        in: query
-        name: cars
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: Time offset range in hours for retrieving entries
-        explode: true
-        in: query
-        name: offset
-        required: false
-        schema:
-          default: 168
-          type: integer
-        style: form
-      - description: Sort results by distance or travel time.
-        explode: true
-        in: query
-        name: sort
-        required: false
-        schema:
-          default: travel_time
-          enum:
-          - travel_time
-          - distance
-          type: string
-        style: form
-      - description: Total numer of distances to return.
-        explode: true
-        in: query
-        name: limit
-        required: false
-        schema:
-          default: 3
-          type: integer
-        style: form
+        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarDistances'
-          description: Successful response - returns an array of distances
+                $ref: '#/components/schemas/Engineer'
+          description: |
+            Successful response Returns an array of engineers with info
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: There is an error with the data posted, for instance, the engineer
+            id specified is not an integer
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: No engineer was found for the specified id.
       security:
       - OAuth2AzureAD:
         - snbplanningapi.planner
-      summary: Get car distances from a point or workitem
-      x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /cars/locations:
+      summary: Get info of a single engineer
+      x-openapi-router-controller: openapi_server.controllers.engineers_controller
+    x-eac-ignore: true
+  /locations/cars:
     get:
       description: |
         Get a list of all car geolocations, with their linked Hyrde tokens.
@@ -209,75 +162,18 @@ paths:
         - snbplanningapi.read
       summary: Get car locations
       x-openapi-router-controller: openapi_server.controllers.cars_controller
-  /engineers:
+  /map-configurations:
     get:
-      description: Get a list of all engineers.
-      operationId: engineers_list
-      parameters:
-      - description: Business unit the engineer belongs to.
-        explode: true
-        in: query
-        name: business_unit
-        required: false
-        schema:
-          enum:
-          - service
-          - nls
-          - ftth
-          type: string
-        style: form
+      description: This endpoint returns the map configuration api key.
+      operationId: map_configurations_get
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EngineersList'
-          description: |
-            Successful response Returns an array of engineers with info
+          description: OK
       security:
-      - OAuth2AzureAD:
-        - snbplanningapi.planner
-      summary: Get info of all engineers
-      x-openapi-router-controller: openapi_server.controllers.engineers_controller
-  /engineers/{engineerId}:
-    get:
-      description: Get the info of an engineer.
-      operationId: get_engineer
-      parameters:
-      - description: The id of the engineer to retrieve
-        explode: false
-        in: path
-        name: engineerId
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Engineer'
-          description: |
-            Successful response Returns an array of engineers with info
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: There is an error with the data posted, for instance, the engineer
-            id specified is not an integer
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: No engineer was found for the specified id.
-      security:
-      - OAuth2AzureAD:
-        - snbplanningapi.planner
-      summary: Get info of a single engineer
-      x-openapi-router-controller: openapi_server.controllers.engineers_controller
+        - OAuth2AzureAD:
+            - snbplanningapi.read
+      summary: Get the map configurations
+      x-openapi-router-controller: openapi_server.controllers.cars_controller
   /plannings:
     get:
       description: This endpoint returns planning-items for the next morning.
@@ -303,7 +199,7 @@ paths:
         - snbplanningapi.planner
       summary: Retrieve planning items from the planning engine
       x-openapi-router-controller: openapi_server.controllers.plannings_controller
-      x-eac-ignore: true
+    x-eac-ignore: true
   /tokens:
     get:
       description: List of tokens
@@ -387,7 +283,6 @@ paths:
         - snbplanningapi.planner
       summary: Get a list of work items
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      x-eac-ignore: true
   /workitems/{WorkItemId}:
     get:
       description: Get a single work item
@@ -429,7 +324,83 @@ paths:
         - snbplanningapi.planner
       summary: Get a work item
       x-openapi-router-controller: openapi_server.controllers.workitems_controller
-      x-eac-ignore: true
+    x-eac-ignore: true
+  /workitems/{workitem_id}/distances:
+    get:
+      description: |
+        Get a list of Hyrde car tokens along with the distance and travel time from the specified point. Optionally, a list of car tokens can be supplied, for which to calculate the distance. If no list is supplied, this endpoint will query all cars. Only returns tokens linked to cars.
+        When passing a list of car tokens, make sure that 1. All tokens are linked to a car info. 2. All cars have been updated within the time determined by
+           offset (defaults to 168 hours, or 1 week)
+
+        Otherwise, these cars will not be accounted for in the response.
+      operationId: car_distances_list
+      parameters:
+      - description: The workitem for which to find the nearest car locations
+        explode: false
+        in: path
+        name: workitem_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: |
+          A comma separated list of car tokens to for which to calculate the distance.
+        explode: true
+        in: query
+        name: cars
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Time offset range in hours for retrieving entries
+        explode: true
+        in: query
+        name: offset
+        required: false
+        schema:
+          default: 168
+          type: integer
+        style: form
+      - description: Sort results by distance or travel time.
+        explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
+          default: travel_time
+          enum:
+          - travel_time
+          - distance
+          type: string
+        style: form
+      - description: Total numer of distances to return.
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 3
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDistances'
+          description: Successful response - returns an array of distances
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Workitem not found.
+      security:
+      - OAuth2AzureAD:
+        - snbplanningapi.planner
+      summary: Get car distances from a point or workitem
+      x-openapi-router-controller: openapi_server.controllers.workitems_controller
+    x-eac-ignore: true
 components:
   schemas:
     Error:
@@ -551,82 +522,6 @@ components:
       - coordinates
       - type
       type: object
-    CarsList:
-      description: A list of Cars.
-      example:
-        items:
-        - driver_name: Billy Gates
-          division: "90117"
-          license_plate: AA-123-BB
-          administration: Klantteam Noord
-          id: "123456789"
-          driver_skill: Metende
-          business_unit: NLS
-          driver_employee_number: "1234"
-          token: vwt/hyrde/12345
-        - driver_name: Billy Gates
-          division: "90117"
-          license_plate: AA-123-BB
-          administration: Klantteam Noord
-          id: "123456789"
-          driver_skill: Metende
-          business_unit: NLS
-          driver_employee_number: "1234"
-          token: vwt/hyrde/12345
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/Car'
-          type: array
-      required:
-      - items
-      type: object
-    Car:
-      description: Information on a car and their driver
-      example:
-        driver_name: Billy Gates
-        division: "90117"
-        license_plate: AA-123-BB
-        administration: Klantteam Noord
-        id: "123456789"
-        driver_skill: Metende
-        business_unit: NLS
-        driver_employee_number: "1234"
-        token: vwt/hyrde/12345
-      properties:
-        id:
-          example: "123456789"
-          type: string
-        administration:
-          example: Klantteam Noord
-          type: string
-        driver_name:
-          example: Billy Gates
-          readOnly: true
-          type: string
-        driver_skill:
-          example: Metende
-          type: string
-        driver_employee_number:
-          example: "1234"
-          type: string
-        license_plate:
-          example: AA-123-BB
-          readOnly: true
-          type: string
-        token:
-          example: vwt/hyrde/12345
-          type: string
-        division:
-          example: "90117"
-          readOnly: true
-          type: string
-        business_unit:
-          example: NLS
-          readOnly: true
-          type: string
-      required:
-      - token
     EngineersList:
       description: A list of Engineers.
       example:
@@ -640,6 +535,7 @@ components:
           id: "123456789"
           driver_skill: Metende
           business_unit: NLS
+          token: hyrde/token/302010
           driver_employee_number: "1234"
         - driver_name: Billy Gates
           division: "90117"
@@ -649,6 +545,7 @@ components:
           id: "123456789"
           driver_skill: Metende
           business_unit: NLS
+          token: hyrde/token/302010
           driver_employee_number: "1234"
       properties:
         _links:
@@ -676,6 +573,7 @@ components:
         id: "123456789"
         driver_skill: Metende
         business_unit: NLS
+        token: hyrde/token/302010
         driver_employee_number: "1234"
       properties:
         _links:
@@ -685,8 +583,12 @@ components:
                 href:
                   example: /engineers/1
                   type: string
+          readOnly: true
         id:
           example: "123456789"
+          type: string
+        token:
+          example: hyrde/token/302010
           type: string
         administration:
           example: Klantteam Noord
@@ -694,7 +596,6 @@ components:
           type: string
         driver_name:
           example: Billy Gates
-          readOnly: true
           type: string
         driver_skill:
           example: Metende
@@ -714,7 +615,6 @@ components:
           type: string
         business_unit:
           example: NLS
-          readOnly: true
           type: string
     TokensList:
       description: List of hyrde car tokens
@@ -908,10 +808,90 @@ components:
     PlanningItemsList:
       description: A collection of planned items.
       example:
+        unplanned_workitems:
+        - _links: '{}'
+          start_timestamp: 2000-01-23T04:56:07.000+00:00
+          city: city
+          administration: administration
+          project: project
+          description: description
+          resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+          house: house
+          end_timestamp: 2000-01-23T04:56:07.000+00:00
+          street: street
+          extra: extra
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          zip: zip
+          last_updated: 2000-01-23T04:56:07.000+00:00
+          employee_name: employee_name
+          sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          is_geocoded: true
+          stagnation: true
+          employee_number: employee_number
+          geometry:
+            type: Point
+            coordinates:
+            - 5.2
+            - 52.4
+          l2_guid: l2_guid
+          category: category
+          task_type: task_type
+          order_id: order_id
+          status: status
+        - _links: '{}'
+          start_timestamp: 2000-01-23T04:56:07.000+00:00
+          city: city
+          administration: administration
+          project: project
+          description: description
+          resolve_before_timestamp: 2000-01-23T04:56:07.000+00:00
+          house: house
+          end_timestamp: 2000-01-23T04:56:07.000+00:00
+          street: street
+          extra: extra
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          zip: zip
+          last_updated: 2000-01-23T04:56:07.000+00:00
+          employee_name: employee_name
+          sub_order_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          is_geocoded: true
+          stagnation: true
+          employee_number: employee_number
+          geometry:
+            type: Point
+            coordinates:
+            - 5.2
+            - 52.4
+          l2_guid: l2_guid
+          category: category
+          task_type: task_type
+          order_id: order_id
+          status: status
         _links: '{}'
         items:
         - _embedded: '{}'
         - _embedded: '{}'
+        unplanned_engineers:
+        - driver_name: Billy Gates
+          division: "90117"
+          license_plate: AA-123-BB
+          _links: '{}'
+          administration: Klantteam Noord
+          id: "123456789"
+          driver_skill: Metende
+          business_unit: NLS
+          token: hyrde/token/302010
+          driver_employee_number: "1234"
+        - driver_name: Billy Gates
+          division: "90117"
+          license_plate: AA-123-BB
+          _links: '{}'
+          administration: Klantteam Noord
+          id: "123456789"
+          driver_skill: Metende
+          business_unit: NLS
+          token: hyrde/token/302010
+          driver_employee_number: "1234"
       properties:
         _links:
           properties:
@@ -923,6 +903,14 @@ components:
         items:
           items:
             $ref: '#/components/schemas/PlanningItem'
+          type: array
+        unplanned_engineers:
+          items:
+            $ref: '#/components/schemas/Engineer'
+          type: array
+        unplanned_workitems:
+          items:
+            $ref: '#/components/schemas/WorkItem'
           type: array
     PlanningItem:
       description: A single planned item generated by the SNBPlanning Engine.

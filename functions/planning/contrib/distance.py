@@ -87,7 +87,7 @@ def calculate_travel_times(to_entity, from_entities):
     for index, value in enumerate(result['rows']):
         element = value['elements'][0]
         distances.append({
-            'token': from_entities[index].key.id_or_name,
+            'token': from_entities[index]['id'],
             'distance': round(element['distance']['value'] / 1000, 2),
             'travel_time': element['duration']['value']
         })

@@ -14,7 +14,7 @@ class DBProcessor(object):
         batch = self.client.batch()
         batch.begin()
 
-        for shift in payload['shifts']:
+        for shift in payload['shift']:
             availability = self.get_availability(shift)
 
             # Check if get_car_location returned an entity.

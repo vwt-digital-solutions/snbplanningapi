@@ -63,7 +63,7 @@ def parse_date(date_string, local_time_zone=pytz.timezone('Europe/Amsterdam')):
     """
     if not date_string:
         return ''
-    date = datetime.datetime.strptime(date_string, '%d-%m-%Y %H:%M:%S')
+    date = datetime.strptime(date_string, '%d-%m-%Y %H:%M:%S')
     date = local_time_zone.localize(date)
     date = date.astimezone(pytz.utc)
 

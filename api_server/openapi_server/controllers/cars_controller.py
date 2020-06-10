@@ -87,4 +87,4 @@ def map_configurations_get():
     """Get the map configurations
     :rtype: str
     """
-    return make_response(jsonify(config.GEO_API_KEY), 200)
+    return make_response(jsonify(config.MAPS_API_KEY), 200)

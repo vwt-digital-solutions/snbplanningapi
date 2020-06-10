@@ -8,26 +8,29 @@ import logging
 class DBProcessor(object):
     def __init__(self):
         self.client = datastore.Client()
-        pass
+        self.updated_availabilities = {}
 
     def process(self, payload):
         batch = self.client.batch()
         batch.begin()
 
-        for appointments in payload['appointments']:
-            availability = self.get_availability(appointments)
+        for appointment in payload['appointments']:
+            self.update_availability(appointment)
 
-            # Check if get_car_location returned an entity.
-            if availability is not None:
-                batch.put(availability)
+        for (key, availability) in self.updated_availabilities.items():
+            batch.put(availability)
 
         batch.commit()
 
-    def get_availability(self, appointment):
+    def update_availability(self, appointment):
         id = '{0}-{1}'.format(appointment['userId'],
                               datetime.strptime(appointment['startDate'], '%d-%m-%Y %H:%M:%S').date())
-        key = self.client.key('EmployeeAvailability', id)
-        entity = self.client.get(key)
+
+        entity = self.updated_availabilities.get(id, None)
+
+        if entity is None:
+            key = self.client.key('EmployeeAvailability', id)
+            entity = self.client.get(key)
 
         if entity is None:
             entity = datastore.Entity(key=key)
@@ -51,6 +54,8 @@ class DBProcessor(object):
         })
 
         logging.debug('Populate availability with appointment {}'.format(entity.key))
+
+        self.updated_availabilities[id] = entity
 
         return entity
 

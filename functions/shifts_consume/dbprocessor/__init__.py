@@ -23,30 +23,29 @@ class DBProcessor(object):
 
         batch.commit()
 
+    def get_availability(self, shift):
+        id = '{0}-{1}'.format(shift['userId'], datetime.strptime(shift['startDate'], '%d-%m-%Y %H:%M:%S').date())
+        key = self.client.key('EmployeeAvailability', id)
+        entity = self.client.get(key)
 
-def get_availability(self, shift):
-    id = '{0}-{1}'.format(shift['userId'], datetime.strptime(shift['startDate'], '%d-%m-%Y %H:%M:%S').date())
-    key = self.client.key('EmployeeAvailability', id)
-    entity = self.client.get(key)
+        if entity is None:
+            entity = datastore.Entity(key=key)
 
-    if entity is None:
-        entity = datastore.Entity(key=key)
+        start_date = parse_date(shift['startDate'])
+        end_date = parse_date(shift['endDate'])
 
-    start_date = parse_date(shift['startDate'])
-    end_date = parse_date(shift['endDate'])
+        entity.update({
+            'employee_number': shift['userId'],
+            'shift_date': start_date,
+            'shift_start_date': end_date,
+            'shift_end_date': shift['userShiftEndDate'],
+            'active': shift['isActive'],
+            'name': shift['name'],
+        })
 
-    entity.update({
-        'employee_number': shift['userId'],
-        'shift_date': start_date,
-        'shift_start_date': end_date,
-        'shift_end_date': shift['userShiftEndDate'],
-        'active': shift['isActive'],
-        'name': shift['name'],
-    })
+        logging.debug('Populate shift {}'.format(entity.key))
 
-    logging.debug('Populate shift {}'.format(entity.key))
-
-    return entity
+        return entity
 
 
 def parse_date(date_string, local_time_zone=pytz.timezone('Europe/Amsterdam')):

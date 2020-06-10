@@ -23,37 +23,36 @@ class DBProcessor(object):
 
         batch.commit()
 
+    def get_availability(self, appointment):
+        id = '{0}-{1}'.format(appointment['userId'],
+                              datetime.strptime(appointment['startDate'], '%d-%m-%Y %H:%M:%S').date())
+        key = self.client.key('EmployeeAvailability', id)
+        entity = self.client.get(key)
 
-def get_availability(self, appointment):
-    id = '{0}-{1}'.format(appointment['userId'],
-                          datetime.strptime(appointment['startDate'], '%d-%m-%Y %H:%M:%S').date())
-    key = self.client.key('EmployeeAvailability', id)
-    entity = self.client.get(key)
+        if entity is None:
+            entity = datastore.Entity(key=key)
 
-    if entity is None:
-        entity = datastore.Entity(key=key)
+        appointments = entity.get('appointments', [])
 
-    appointments = entity.get('appointments', [])
+        appointments.append({
+            'created_on': parse_date(appointment['createdOn']),
+            'start_date': parse_date(appointment['startDate']),
+            'end_date': parse_date(appointment['endDate']),
+            'description': appointment['description'],
+            'user_id': appointment['userId'],
+            'type_id': appointment['typeId'],
+            'state': appointment['state'],
+            'fullname': appointment['fullname'],
+            'employee_number': appointment['registratienummer'],
+        })
 
-    appointments.append({
-        'created_on': parse_date(appointment['createdOn']),
-        'start_date': parse_date(appointment['startDate']),
-        'end_date': parse_date(appointment['endDate']),
-        'description': appointment['description'],
-        'user_id': appointment['userId'],
-        'type_id': appointment['typeId'],
-        'state': appointment['state'],
-        'fullname': appointment['fullname'],
-        'employee_number': appointment['registratienummer'],
-    })
+        entity.update({
+            'appointments': appointments,
+        })
 
-    entity.update({
-        'appointments': appointments,
-    })
+        logging.debug('Populate availability with appointment {}'.format(entity.key))
 
-    logging.debug('Populate availability with appointment {}'.format(entity.key))
-
-    return entity
+        return entity
 
 
 def parse_date(date_string, local_time_zone=pytz.timezone('Europe/Amsterdam')):

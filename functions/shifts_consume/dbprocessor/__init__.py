@@ -37,7 +37,7 @@ class DBProcessor(object):
 
         entity.update({
             'employee_number': shift['registratienummer'],
-            'shift_date': shift_date,
+            'shift_date': str(shift_date),
             'shift_start_date': start_date,
             'shift_end_date': end_date,
             'active': shift['isActive'],

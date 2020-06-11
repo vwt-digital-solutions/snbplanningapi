@@ -170,8 +170,8 @@ paths:
         "200":
           description: OK
       security:
-        - OAuth2AzureAD:
-            - snbplanningapi.read
+      - OAuth2AzureAD:
+        - snbplanningapi.read
       summary: Get the map configurations
       x-openapi-router-controller: openapi_server.controllers.cars_controller
   /plannings:
@@ -527,26 +527,26 @@ components:
       example:
         _links: '{}'
         items:
-        - driver_name: Billy Gates
-          division: "90117"
+        - division: "90117"
+          role: Metende
           license_plate: AA-123-BB
           _links: '{}'
           administration: Klantteam Noord
+          name: Billy Gates
+          employee_number: "1234"
           id: "123456789"
-          driver_skill: Metende
           business_unit: NLS
           token: hyrde/token/302010
-          driver_employee_number: "1234"
-        - driver_name: Billy Gates
-          division: "90117"
+        - division: "90117"
+          role: Metende
           license_plate: AA-123-BB
           _links: '{}'
           administration: Klantteam Noord
+          name: Billy Gates
+          employee_number: "1234"
           id: "123456789"
-          driver_skill: Metende
           business_unit: NLS
           token: hyrde/token/302010
-          driver_employee_number: "1234"
       properties:
         _links:
           properties:
@@ -565,16 +565,16 @@ components:
     Engineer:
       description: Information about an Engineer
       example:
-        driver_name: Billy Gates
         division: "90117"
+        role: Metende
         license_plate: AA-123-BB
         _links: '{}'
         administration: Klantteam Noord
+        name: Billy Gates
+        employee_number: "1234"
         id: "123456789"
-        driver_skill: Metende
         business_unit: NLS
         token: hyrde/token/302010
-        driver_employee_number: "1234"
       properties:
         _links:
           properties:
@@ -594,14 +594,14 @@ components:
           example: Klantteam Noord
           nullable: true
           type: string
-        driver_name:
+        name:
           example: Billy Gates
           type: string
-        driver_skill:
+        role:
           example: Metende
           nullable: true
           type: string
-        driver_employee_number:
+        employee_number:
           example: "1234"
           type: string
         license_plate:
@@ -872,26 +872,26 @@ components:
         - _embedded: '{}'
         - _embedded: '{}'
         unplanned_engineers:
-        - driver_name: Billy Gates
-          division: "90117"
+        - division: "90117"
+          role: Metende
           license_plate: AA-123-BB
           _links: '{}'
           administration: Klantteam Noord
+          name: Billy Gates
+          employee_number: "1234"
           id: "123456789"
-          driver_skill: Metende
           business_unit: NLS
           token: hyrde/token/302010
-          driver_employee_number: "1234"
-        - driver_name: Billy Gates
-          division: "90117"
+        - division: "90117"
+          role: Metende
           license_plate: AA-123-BB
           _links: '{}'
           administration: Klantteam Noord
+          name: Billy Gates
+          employee_number: "1234"
           id: "123456789"
-          driver_skill: Metende
           business_unit: NLS
           token: hyrde/token/302010
-          driver_employee_number: "1234"
       properties:
         _links:
           properties:

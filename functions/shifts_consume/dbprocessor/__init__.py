@@ -25,7 +25,7 @@ class DBProcessor(object):
 
     def get_availability(self, shift):
         shift_date = datetime.strptime(shift['startDate'], '%d-%m-%Y %H:%M:%S').date(),
-        id = '{0}-{1}'.format(shift['userId'], shift_date)
+        id = '{0}-{1}'.format(shift['registratienummer'], shift_date)
         key = self.client.key('EmployeeAvailability', id)
         entity = self.client.get(key)
 
@@ -36,7 +36,7 @@ class DBProcessor(object):
         end_date = parse_date(shift['endDate'])
 
         entity.update({
-            'employee_number': shift['userId'],
+            'employee_number': shift['registratienummer'],
             'shift_date': shift_date,
             'shift_start_date': start_date,
             'shift_end_date': end_date,

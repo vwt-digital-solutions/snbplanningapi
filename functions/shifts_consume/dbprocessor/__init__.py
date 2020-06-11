@@ -24,8 +24,8 @@ class DBProcessor(object):
         batch.commit()
 
     def get_availability(self, shift):
-        shift_date = datetime.strptime(shift['startDate'], '%d-%m-%Y %H:%M:%S').date(),
-        id = '{0}-{1}'.format(shift['registratienummer'], shift_date)
+        shift_date = datetime.strptime(shift['startDate'], '%d-%m-%Y %H:%M:%S').date()
+        id = '{0}-{1}'.format(shift_date, shift['registratienummer'])
         key = self.client.key('EmployeeAvailability', id)
         entity = self.client.get(key)
 

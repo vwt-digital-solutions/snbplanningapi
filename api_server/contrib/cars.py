@@ -60,7 +60,7 @@ def get_car_info_tokens(db_client: datastore.Client):
     :rtype a list of strings
 
     """
-    cars_query = db_client.query(kind='CarInfo')
+    cars_query = db_client.query(kind='Engineer')
 
     car_tokens = [car_info['token'] for
                   car_info in cars_query.fetch()

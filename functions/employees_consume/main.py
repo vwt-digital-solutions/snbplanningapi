@@ -1,7 +1,22 @@
 import logging
 import pandas as pd
+from google.cloud import datastore
 
-from dbprocessor import DBProcessor
+
+class DBProcessor(object):
+    def __init__(self):
+        self.client = datastore.Client()
+
+    def process(self, payload):
+        batch = self.client.batch()
+        batch.begin()
+
+        for employee_dict in payload['employees']:
+            engineer = datastore.Entity(self.client.key('Engineer', int(employee_dict['driver_employee_number'])))
+            engineer.update({**employee_dict})
+            batch.put(engineer)
+            logging.debug('Updating engineer {}'.format(engineer.key))
+        batch.commit()
 
 
 def process_csv_file(data, context):
@@ -13,16 +28,15 @@ def process_csv_file(data, context):
     Mainly because this allows us to easily switch to a PubSub messaging based consume function.
     """
 
-    if 'vwtelecom_divisions' not in data['name']:
+    if 'employees.csv' not in data['name']:
         return
 
     filename = 'gs://{0}/{1}'.format(data['bucket'], data['name'])
-
     parser = DBProcessor()
 
     try:
         df = pd.read_csv(filename)
-        parser.process({'divisions': df.to_dict('records')})
+        parser.process({'employees': df.to_dict('records')})
     except Exception as e:
         logging.info('Processing of divisions failed.')
         logging.debug(e)

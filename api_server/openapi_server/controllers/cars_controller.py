@@ -25,7 +25,7 @@ def car_locations_list(offset):
     Get a list of all car geolocations.
 
     :return: Returns a GEOJSON FeatureCollection object.
-    This function only includes CarLocations whose token is assigned to a CarInfo.
+    This function only includes CarLocations whose token is assigned to a Engineer.
 
     :rtype: Cars
     """
@@ -53,8 +53,8 @@ def car_locations_list(offset):
 def list_tokens(offset, assigned=None):
     """Enumerate tokens
 
-    :param assigned: When set to true, only return tokens that have already been assigned a CarInfo entity.
-    When set to false, only return tokens that have not been assigned a CarInfo entity.
+    :param assigned: When set to true, only return tokens that have already been assigned a Engineer entity.
+    When set to false, only return tokens that have not been assigned a Engineer entity.
     When not set, returns all tokens.
 
     :rtype list of strings

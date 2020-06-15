@@ -20,12 +20,12 @@ def is_assigned(token, car_tokens, assigned=None):
     return True
 
 
-def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, offset=None):
+def get_car_locations(db_client: datastore.Client, assigned_to_engineer=True, offset=None):
     """
     Retrieve a list of carLocations from CarLocations
 
     :param db_client: The datastore Client.
-    :param assigned_to_car_info: Determines wether to return locations linked to a car info object or not.
+    :param assigned_to_engineer: Determines wether to return locations linked to a car info object or not.
     :param offset: Maximum number of hours since the CarLocation was last updated.
 
     :rtype a list of CarLocation entities
@@ -42,7 +42,7 @@ def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, of
     query_iter = query.fetch()
 
     # Filter query on CarInfo tokens
-    if assigned_to_car_info:
+    if assigned_to_engineer:
         car_info_tokens = get_car_info_tokens(db_client)
         query_iter = [car_location for car_location in query_iter
                       if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]

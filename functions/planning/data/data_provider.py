@@ -33,7 +33,7 @@ def get_work_items(work_items=None):
 
 def get_cars(car_locations=None):
     if car_locations is None:
-        engineers = get_car_locations(db_client, assigned_to_car_info=True)
+        engineers = get_car_locations(db_client, assigned_to_engineer=True)
         engineers = [add_key_as_id(engineer) for engineer in engineers]
     else:
         engineers = car_locations
@@ -47,12 +47,38 @@ def get_cars(car_locations=None):
     return [Node(NodeType.car, engineer['id'], engineer) for engineer in engineers]
 
 
-def get_car_info(car_info=None):
-    if car_info is None:
-        query = db_client.query(kind='CarInfo')
+def get_engineers(engineers=None):
+    if engineers is None:
+        query = db_client.query(kind='Engineer')
 
-        car_info_list = query.fetch()
+        engineers_list = query.fetch()
 
-        return [add_key_as_id(entity) for entity in car_info_list]
+        return [add_key_as_id(entity) for entity in engineers_list]
 
-    return car_info
+    return engineers
+
+
+def set_priority_for_work_item(node):
+    work_item = node.entity
+    if 'task_type' in work_item and 'Premium' in work_item['task_type']:
+        priority = 4
+    elif 'category' in work_item and work_item['category'] == 'Storing':
+        priority = 3
+    elif 'category' in work_item and work_item['category'] == 'Schade':
+        priority = 2
+    else:
+        priority = 1
+
+    work_item['priority'] = priority
+
+    return node
+
+
+def prioritize_and_filter_work_items(work_items, engineers):
+    """ The algorithm can run into some issues when there are is a disproportionate amount of workitems
+     compared to the number of engineers. This function will add a priority value to every workitem,
+     sort them by priority, and only return the most urgent workitems.
+    """
+    work_items = [set_priority_for_work_item(work_item) for work_item in work_items]
+
+    return work_items

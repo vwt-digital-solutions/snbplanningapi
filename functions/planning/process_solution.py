@@ -35,7 +35,7 @@ def print_solution(data_model: DataModel, manager, routing, solution):
 
 
 def process_solution(data_model: DataModel, manager, routing, solution, calculate_distance):
-    car_info_dict_by_token = data_model.car_info_dict_by_token
+    engineers_dict_by_token = data_model.engineers_dict_by_token
 
     entities = []
     travel_times = []
@@ -46,7 +46,7 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
 
     for vehicle_id in range(data_model.number_of_cars):
         car_location = data_model.nodes[vehicle_id].entity
-        car_info = car_info_dict_by_token[car_location['id']]
+        engineer = engineers_dict_by_token[car_location['id']]
 
         index = routing.Start(vehicle_id)
 
@@ -74,7 +74,7 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
                      }
 
                 travel_times.append({
-                    'engineer': car_info['id'],
+                    'engineer': engineer['id'],
                     'euclidean_distance': distance,
                     'from': from_node.entity['id'],
                     'to': to_node.entity['id'],
@@ -86,12 +86,12 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
                 planned_workitems.add(to_node.entity['id'])
                 engineer_is_planned = True
                 entities.append({
-                    'engineer': car_info['id'],
+                    'engineer': engineer['id'],
                     'workitem': to_node.entity['id'],
                 })
 
         if not engineer_is_planned:
-            unplanned_engineers.append(car_info['id'])
+            unplanned_engineers.append(engineer['id'])
 
     unplanned_workitems = [work_item.entity['id'] for work_item in
                            data_model.work_items

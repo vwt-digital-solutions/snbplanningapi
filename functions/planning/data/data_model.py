@@ -8,10 +8,10 @@ class DataModel:
     locations to be visited, the distance matrix between them, their capacity etc.
     """
     cars = []
-    car_info_list = []
+    engineers_list = []
     work_items = []
 
-    car_info_dict_by_token = {}
+    engineers_dict_by_token = {}
 
     distance_matrix = []
 
@@ -58,4 +58,4 @@ class DataModel:
         """
         Returns the capacity for each car i.e. the total number of jobs they can do each day.
         """
-        return [2] * self.number_of_cars
+        return [1] * self.number_of_cars

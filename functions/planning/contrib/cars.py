@@ -20,12 +20,12 @@ def is_assigned(token, car_tokens, assigned=None):
     return True
 
 
-def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, offset=None):
+def get_car_locations(db_client: datastore.Client, assigned_to_engineer=True, offset=None):
     """
     Retrieve a list of carLocations from CarLocations
 
     :param db_client: The datastore Client.
-    :param assigned_to_car_info: Determines wether to return locations linked to a car info object or not.
+    :param assigned_to_engineer: Determines wether to return locations linked to a car info object or not.
     :param offset: Maximum number of hours since the CarLocation was last updated.
 
     :rtype a list of CarLocation entities
@@ -42,17 +42,17 @@ def get_car_locations(db_client: datastore.Client, assigned_to_car_info=True, of
     query_iter = query.fetch()
 
     # Filter query on CarInfo tokens
-    if assigned_to_car_info:
-        car_info_tokens = get_car_info_tokens(db_client)
+    if assigned_to_engineer:
+        engineers_tokens = get_engineers_tokens(db_client)
         query_iter = [car_location for car_location in query_iter
-                      if is_assigned(car_location.key.id_or_name, car_info_tokens, True)]
+                      if is_assigned(car_location.key.id_or_name, engineers_tokens, True)]
     else:
         query_iter = list(query_iter)
 
     return query_iter
 
 
-def get_car_info_tokens(db_client: datastore.Client):
+def get_engineers_tokens(db_client: datastore.Client):
     """Retrieve a list of tokens from CarInfo
 
     :param db_client: The datastore Client.
@@ -60,10 +60,10 @@ def get_car_info_tokens(db_client: datastore.Client):
     :rtype a list of strings
 
     """
-    cars_query = db_client.query(kind='CarInfo')
+    engineers_query = db_client.query(kind='Engineer')
 
-    car_tokens = [car_info['token'] for
-                  car_info in cars_query.fetch()
-                  if 'token' in car_info is not None and len(car_info['token']) > 0]
+    car_tokens = [engineer['token'] for
+                  engineer in engineers_query.fetch()
+                  if 'token' in engineer and engineer['token'] is not None and len(engineer['token']) > 0]
 
     return car_tokens

@@ -584,6 +584,8 @@ components:
           format: uuid
         l2_guid:
           type: string
+        counter_id:
+          type: string
         administration:
           type: string
         category:

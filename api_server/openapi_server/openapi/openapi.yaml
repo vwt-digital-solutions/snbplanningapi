@@ -660,6 +660,7 @@ components:
           street: street
           extra: extra
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          counter_id: counter_id
           zip: zip
           last_updated: 2000-01-23T04:56:07.000+00:00
           employee_name: employee_name
@@ -689,6 +690,7 @@ components:
           street: street
           extra: extra
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          counter_id: counter_id
           zip: zip
           last_updated: 2000-01-23T04:56:07.000+00:00
           employee_name: employee_name
@@ -726,6 +728,7 @@ components:
         street: street
         extra: extra
         id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        counter_id: counter_id
         zip: zip
         last_updated: 2000-01-23T04:56:07.000+00:00
         employee_name: employee_name
@@ -755,6 +758,8 @@ components:
           format: uuid
           type: string
         l2_guid:
+          type: string
+        counter_id:
           type: string
         administration:
           type: string
@@ -821,6 +826,7 @@ components:
           street: street
           extra: extra
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          counter_id: counter_id
           zip: zip
           last_updated: 2000-01-23T04:56:07.000+00:00
           employee_name: employee_name
@@ -850,6 +856,7 @@ components:
           street: street
           extra: extra
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          counter_id: counter_id
           zip: zip
           last_updated: 2000-01-23T04:56:07.000+00:00
           employee_name: employee_name

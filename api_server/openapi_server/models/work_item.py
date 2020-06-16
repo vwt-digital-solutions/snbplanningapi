@@ -17,7 +17,7 @@ class WorkItem(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, links=None, id=None, l2_guid=None, administration=None, category=None, task_type=None, project=None, status=None, description=None, start_timestamp=None, end_timestamp=None, last_updated=None, resolve_before_timestamp=None, city=None, zip=None, house=None, street=None, extra=None, is_geocoded=None, geometry=None, employee_name=None, employee_number=None, order_id=None, sub_order_id=None, stagnation=None):  # noqa: E501
+    def __init__(self, links=None, id=None, l2_guid=None, counter_id=None, administration=None, category=None, task_type=None, project=None, status=None, description=None, start_timestamp=None, end_timestamp=None, last_updated=None, resolve_before_timestamp=None, city=None, zip=None, house=None, street=None, extra=None, is_geocoded=None, geometry=None, employee_name=None, employee_number=None, order_id=None, sub_order_id=None, stagnation=None):  # noqa: E501
         """WorkItem - a model defined in OpenAPI
 
         :param links: The links of this WorkItem.  # noqa: E501
@@ -26,6 +26,8 @@ class WorkItem(Model):
         :type id: str
         :param l2_guid: The l2_guid of this WorkItem.  # noqa: E501
         :type l2_guid: str
+        :param counter_id: The counter_id of this WorkItem.  # noqa: E501
+        :type counter_id: str
         :param administration: The administration of this WorkItem.  # noqa: E501
         :type administration: str
         :param category: The category of this WorkItem.  # noqa: E501
@@ -75,6 +77,7 @@ class WorkItem(Model):
             'links': object,
             'id': str,
             'l2_guid': str,
+            'counter_id': str,
             'administration': str,
             'category': str,
             'task_type': str,
@@ -103,6 +106,7 @@ class WorkItem(Model):
             'links': '_links',
             'id': 'id',
             'l2_guid': 'l2_guid',
+            'counter_id': 'counter_id',
             'administration': 'administration',
             'category': 'category',
             'task_type': 'task_type',
@@ -130,6 +134,7 @@ class WorkItem(Model):
         self._links = links
         self._id = id
         self._l2_guid = l2_guid
+        self._counter_id = counter_id
         self._administration = administration
         self._category = category
         self._task_type = task_type
@@ -226,6 +231,27 @@ class WorkItem(Model):
         """
 
         self._l2_guid = l2_guid
+
+    @property
+    def counter_id(self):
+        """Gets the counter_id of this WorkItem.
+
+
+        :return: The counter_id of this WorkItem.
+        :rtype: str
+        """
+        return self._counter_id
+
+    @counter_id.setter
+    def counter_id(self, counter_id):
+        """Sets the counter_id of this WorkItem.
+
+
+        :param counter_id: The counter_id of this WorkItem.
+        :type counter_id: str
+        """
+
+        self._counter_id = counter_id
 
     @property
     def administration(self):

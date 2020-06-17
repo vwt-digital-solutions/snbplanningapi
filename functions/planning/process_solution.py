@@ -94,7 +94,7 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
             unplanned_engineers.append(engineer['id'])
 
     unplanned_workitems = [work_item.entity['id'] for work_item in
-                           data_model.work_items
-                           if work_item.entity['id'] in planned_workitems]
+                           data_model.all_work_items
+                           if work_item.entity['id'] not in planned_workitems]
 
     return entities, unplanned_engineers, unplanned_workitems, {'travel_times': travel_times}

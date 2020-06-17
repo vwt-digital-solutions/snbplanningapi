@@ -17,6 +17,8 @@ class DataModel:
 
     _nodes = None
 
+    all_work_items = []
+
     @property
     def nodes(self) -> [Node]:
         if not self._nodes or len(self._nodes) != len(self.cars) + len(self.work_items):

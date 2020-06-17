@@ -1,3 +1,6 @@
+from datetime import datetime
+import dateutil.parser
+
 from google.cloud import datastore
 
 from node import Node, NodeType
@@ -60,7 +63,9 @@ def get_engineers(engineers=None):
 
 def set_priority_for_work_item(node):
     work_item = node.entity
-    if 'task_type' in work_item and 'Premium' in work_item['task_type']:
+    if 'dgs' in work_item and work_item['dgs']:
+        priority = 5
+    elif 'task_type' in work_item and 'Premium' in work_item['task_type']:
         priority = 4
     elif 'category' in work_item and work_item['category'] == 'Storing':
         priority = 3
@@ -74,6 +79,21 @@ def set_priority_for_work_item(node):
     return node
 
 
+def convert_to_date_or_none(date_to_convert):
+    if isinstance(date_to_convert, datetime):
+        return date_to_convert
+    if isinstance(date_to_convert, str):
+        try:
+            return dateutil.parser.isoparse(date_to_convert)
+        except ValueError:
+            # Invalid date string
+            return None
+        except OverflowError:
+            # Date is bigger than largest int
+            return None
+    return None
+
+
 def prioritize_and_filter_work_items(work_items, engineers):
     """ The algorithm can run into some issues when there are is a disproportionate amount of workitems
      compared to the number of engineers. This function will add a priority value to every workitem,
@@ -81,4 +101,26 @@ def prioritize_and_filter_work_items(work_items, engineers):
     """
     work_items = [set_priority_for_work_item(work_item) for work_item in work_items]
 
-    return work_items
+    work_items_storing = [work_item for work_item in work_items if work_item.entity.get('category', None) == 'Schade']
+    work_items_schade = [work_item for work_item in work_items if work_item.entity.get('category', None) == 'Storing']
+    other_work_items = [work_item for work_item in work_items if work_item.entity.get('category', None) != 'Storing'
+                        and work_item.entity.get('category', None) != 'Schade']
+
+    engineers_schade = [engineer for engineer in engineers if engineer.get('role', None) == 'Lasser']
+    engineers_storing = [engineer for engineer in engineers if engineer.get('role', None) == 'Metende']
+
+    work_items_schade = sorted(work_items_schade,
+                               key=lambda i: (-i.entity['priority'],
+                                              convert_to_date_or_none(i.entity['resolve_before_timestamp']) is None,
+                                              convert_to_date_or_none(i.entity['resolve_before_timestamp'])
+                                              ))
+    work_items_storing = sorted(work_items_storing,
+                                key=lambda i: (-i.entity['priority'],
+                                               convert_to_date_or_none(i.entity['start_timestamp']) is None,
+                                               convert_to_date_or_none(i.entity['start_timestamp'])))
+
+    filtered_work_items = work_items_schade[:len(engineers_schade)] + \
+                          work_items_storing[:len(engineers_storing)] + \
+                          other_work_items
+
+    return filtered_work_items

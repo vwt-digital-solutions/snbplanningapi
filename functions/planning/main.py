@@ -4,7 +4,6 @@ from datetime import datetime
 
 import config
 from constraints.is_allowed_to_visit_constraint import IsAllowedToVisitConstraint
-from data.data_provider import prioritize_and_filter_work_items
 from flask import json
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
@@ -23,10 +22,10 @@ def create_data_model(engineers=None, car_locations=None, workitems=None) -> Dat
     print('getting Cars')
     data_model.cars = data_provider.get_cars(car_locations)
     print('getting Workitems')
-    data_model.work_items = data_provider.get_work_items(workitems)
+    data_model.all_work_items = data_provider.get_work_items(workitems)
     print('getting CarInfo')
     data_model.engineers_list = data_provider.get_engineers(engineers)
-    data_model.work_items = prioritize_and_filter_work_items(data_model.work_items, data_model.engineers_list)
+    data_model.work_items = data_provider.prioritize_and_filter_work_items(data_model.all_work_items, data_model.engineers_list)
     data_model.engineers_dict_by_token = {e['token']: e for e in data_model.engineers_list}
 
     print(data_model.number_of_cars, ' cars')

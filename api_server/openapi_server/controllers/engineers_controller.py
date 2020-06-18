@@ -22,7 +22,7 @@ def engineers_list(business_unit=None):
     """
 
     # !NOTE We might want to change the datastore entity to Engineers
-    query = db_client.query(kind="CarInfo")
+    query = db_client.query(kind='Engineer')
 
     if business_unit:
         query.add_filter('business_unit', '=', business_unit)
@@ -72,7 +72,7 @@ def engineers_post(body):
     # for unknown reason attribute 'id' is received as 'id_'
     if 'id' in body and body['id'] is not None:
         try:
-            car_info_key = db_client.key('CarInfo', int(body['id']))
+            car_info_key = db_client.key('Engineer', int(body['id']))
         except ValueError:
             logger.warning(f"String to int conversion on {engineers_post().__name__} with {body['id']}")
             return make_response(jsonify("The client should not repeat this request without modification."), 400)
@@ -81,13 +81,13 @@ def engineers_post(body):
             entity = datastore.Entity(key=car_info_key)
     else:
         # Check if an Engineer with that token already exists.
-        query = db_client.query(kind='CarInfo')
+        query = db_client.query(kind='Engineer')
         query.add_filter('token', '=', body['token'])
         if len(list(query.fetch())) > 0:
             error = Error('400', 'A Car with that token already exists.')
             return make_response(jsonify(error), 400)
 
-        entity = datastore.Entity(db_client.key('CarInfo'))
+        entity = datastore.Entity(db_client.key('Engineer'))
 
     entity.update(car_info)
     db_client.put(entity)
@@ -120,7 +120,7 @@ def get_engineer(engineer_id):
         return make_response(jsonify(response), 400)
 
     # !NOTE We might want to change the datastore entity to Engineers
-    key = db_client.key("CarInfo", engineer_id)
+    key = db_client.key("Engineer", engineer_id)
     engineer = None
     try:
         engineer = db_client.get(key=key)
@@ -147,5 +147,5 @@ def create_engineer(engineer):
             path=f'{request.url_root}engineers/{engineer.key.id_or_name}'
         ),
         **engineer,
-        "id": engineer.key.id_or_name
+        "id": engineer.key.id_or_name,
     })

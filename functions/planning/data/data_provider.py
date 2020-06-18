@@ -1,3 +1,6 @@
+from datetime import datetime
+import dateutil.parser
+
 from google.cloud import datastore
 
 from node import Node, NodeType
@@ -33,7 +36,7 @@ def get_work_items(work_items=None):
 
 def get_cars(car_locations=None):
     if car_locations is None:
-        engineers = get_car_locations(db_client, assigned_to_car_info=True)
+        engineers = get_car_locations(db_client, assigned_to_engineer=True)
         engineers = [add_key_as_id(engineer) for engineer in engineers]
     else:
         engineers = car_locations
@@ -47,12 +50,77 @@ def get_cars(car_locations=None):
     return [Node(NodeType.car, engineer['id'], engineer) for engineer in engineers]
 
 
-def get_car_info(car_info=None):
-    if car_info is None:
-        query = db_client.query(kind='CarInfo')
+def get_engineers(engineers=None):
+    if engineers is None:
+        query = db_client.query(kind='Engineer')
 
-        car_info_list = query.fetch()
+        engineers_list = query.fetch()
 
-        return [add_key_as_id(entity) for entity in car_info_list]
+        return [add_key_as_id(entity) for entity in engineers_list]
 
-    return car_info
+    return engineers
+
+
+def set_priority_for_work_item(node):
+    work_item = node.entity
+    if 'dgs' in work_item and work_item['dgs']:
+        priority = 5
+    elif 'task_type' in work_item and 'Premium' in work_item['task_type']:
+        priority = 4
+    elif 'category' in work_item and work_item['category'] == 'Storing':
+        priority = 3
+    elif 'category' in work_item and work_item['category'] == 'Schade':
+        priority = 2
+    else:
+        priority = 1
+
+    work_item['priority'] = priority
+
+    return node
+
+
+def convert_to_date_or_none(date_to_convert):
+    if isinstance(date_to_convert, datetime):
+        return date_to_convert
+    if isinstance(date_to_convert, str):
+        try:
+            return dateutil.parser.isoparse(date_to_convert)
+        except ValueError:
+            # Invalid date string
+            return None
+        except OverflowError:
+            # Date is bigger than largest int
+            return None
+    return None
+
+
+def prioritize_and_filter_work_items(work_items, engineers):
+    """ The algorithm can run into some issues when there are is a disproportionate amount of workitems
+     compared to the number of engineers. This function will add a priority value to every workitem,
+     sort them by priority, and only return the most urgent workitems.
+    """
+    work_items = [set_priority_for_work_item(work_item) for work_item in work_items]
+
+    work_items_storing = [work_item for work_item in work_items if work_item.entity.get('category', None) == 'Schade']
+    work_items_schade = [work_item for work_item in work_items if work_item.entity.get('category', None) == 'Storing']
+    other_work_items = [work_item for work_item in work_items if work_item.entity.get('category', None) != 'Storing'
+                        and work_item.entity.get('category', None) != 'Schade']
+
+    engineers_schade = [engineer for engineer in engineers if engineer.get('role', None) == 'Lasser']
+    engineers_storing = [engineer for engineer in engineers if engineer.get('role', None) == 'Metende']
+
+    work_items_schade = sorted(work_items_schade,
+                               key=lambda i: (-i.entity['priority'],
+                                              convert_to_date_or_none(i.entity['resolve_before_timestamp']) is None,
+                                              convert_to_date_or_none(i.entity['resolve_before_timestamp'])
+                                              ))
+    work_items_storing = sorted(work_items_storing,
+                                key=lambda i: (-i.entity['priority'],
+                                               convert_to_date_or_none(i.entity['start_timestamp']) is None,
+                                               convert_to_date_or_none(i.entity['start_timestamp'])))
+
+    filtered_work_items = work_items_schade[:len(engineers_schade)] + \
+                          work_items_storing[:len(engineers_storing)] + \
+                          other_work_items
+
+    return filtered_work_items

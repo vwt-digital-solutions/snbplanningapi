@@ -37,8 +37,7 @@ def list_planning_items():  # noqa: E501
     workitems_query = db_client.query(kind='WorkItem')
     workitems = list(workitems_query.fetch())
 
-    # !NOTE: The CarInfo entity might become an Engineer entity later!
-    engineer_query = db_client.query(kind='CarInfo')
+    engineer_query = db_client.query(kind='Engineer')
     engineers = list(engineer_query.fetch())
 
     engineers_by_id = {engineer.key.id_or_name: engineer for engineer in engineers}

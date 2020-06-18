@@ -15,7 +15,7 @@ class Engineer(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, links=None, id=None, token=None, administration=None, driver_name=None, driver_skill=None, driver_employee_number=None, license_plate=None, division=None, business_unit=None):  # noqa: E501
+    def __init__(self, links=None, id=None, token=None, administration=None, name=None, role=None, employee_number=None, license_plate=None, division=None, business_unit=None):  # noqa: E501
         """Engineer - a model defined in OpenAPI
 
         :param links: The links of this Engineer.  # noqa: E501
@@ -26,12 +26,12 @@ class Engineer(Model):
         :type token: str
         :param administration: The administration of this Engineer.  # noqa: E501
         :type administration: str
-        :param driver_name: The driver_name of this Engineer.  # noqa: E501
-        :type driver_name: str
-        :param driver_skill: The driver_skill of this Engineer.  # noqa: E501
-        :type driver_skill: str
-        :param driver_employee_number: The driver_employee_number of this Engineer.  # noqa: E501
-        :type driver_employee_number: str
+        :param name: The name of this Engineer.  # noqa: E501
+        :type name: str
+        :param role: The role of this Engineer.  # noqa: E501
+        :type role: str
+        :param employee_number: The employee_number of this Engineer.  # noqa: E501
+        :type employee_number: str
         :param license_plate: The license_plate of this Engineer.  # noqa: E501
         :type license_plate: str
         :param division: The division of this Engineer.  # noqa: E501
@@ -44,9 +44,9 @@ class Engineer(Model):
             'id': str,
             'token': str,
             'administration': str,
-            'driver_name': str,
-            'driver_skill': str,
-            'driver_employee_number': str,
+            'name': str,
+            'role': str,
+            'employee_number': str,
             'license_plate': str,
             'division': str,
             'business_unit': str
@@ -57,9 +57,9 @@ class Engineer(Model):
             'id': 'id',
             'token': 'token',
             'administration': 'administration',
-            'driver_name': 'driver_name',
-            'driver_skill': 'driver_skill',
-            'driver_employee_number': 'driver_employee_number',
+            'name': 'name',
+            'role': 'role',
+            'employee_number': 'employee_number',
             'license_plate': 'license_plate',
             'division': 'division',
             'business_unit': 'business_unit'
@@ -69,9 +69,9 @@ class Engineer(Model):
         self._id = id
         self._token = token
         self._administration = administration
-        self._driver_name = driver_name
-        self._driver_skill = driver_skill
-        self._driver_employee_number = driver_employee_number
+        self._name = name
+        self._role = role
+        self._employee_number = employee_number
         self._license_plate = license_plate
         self._division = division
         self._business_unit = business_unit
@@ -172,67 +172,67 @@ class Engineer(Model):
         self._administration = administration
 
     @property
-    def driver_name(self):
-        """Gets the driver_name of this Engineer.
+    def name(self):
+        """Gets the name of this Engineer.
 
 
-        :return: The driver_name of this Engineer.
+        :return: The name of this Engineer.
         :rtype: str
         """
-        return self._driver_name
+        return self._name
 
-    @driver_name.setter
-    def driver_name(self, driver_name):
-        """Sets the driver_name of this Engineer.
+    @name.setter
+    def name(self, name):
+        """Sets the name of this Engineer.
 
 
-        :param driver_name: The driver_name of this Engineer.
-        :type driver_name: str
+        :param name: The name of this Engineer.
+        :type name: str
         """
 
-        self._driver_name = driver_name
+        self._name = name
 
     @property
-    def driver_skill(self):
-        """Gets the driver_skill of this Engineer.
+    def role(self):
+        """Gets the role of this Engineer.
 
 
-        :return: The driver_skill of this Engineer.
+        :return: The role of this Engineer.
         :rtype: str
         """
-        return self._driver_skill
+        return self._role
 
-    @driver_skill.setter
-    def driver_skill(self, driver_skill):
-        """Sets the driver_skill of this Engineer.
+    @role.setter
+    def role(self, role):
+        """Sets the role of this Engineer.
 
 
-        :param driver_skill: The driver_skill of this Engineer.
-        :type driver_skill: str
+        :param role: The role of this Engineer.
+        :type role: str
         """
 
-        self._driver_skill = driver_skill
+        self._role = role
 
     @property
-    def driver_employee_number(self):
-        """Gets the driver_employee_number of this Engineer.
+    def employee_number(self):
+        """Gets the employee_number of this Engineer.
 
 
-        :return: The driver_employee_number of this Engineer.
+        :return: The employee_number of this Engineer.
         :rtype: str
         """
-        return self._driver_employee_number
+        return self._employee_number
 
-    @driver_employee_number.setter
-    def driver_employee_number(self, driver_employee_number):
-        """Sets the driver_employee_number of this Engineer.
+    @employee_number.setter
+    def employee_number(self, employee_number):
+        """Sets the employee_number of this Engineer.
 
 
-        :param driver_employee_number: The driver_employee_number of this Engineer.
-        :type driver_employee_number: str
+        :param employee_number: The employee_number of this Engineer.
+        :type employee_number: str
         """
 
-        self._driver_employee_number = driver_employee_number
+        self._employee_number = employee_number
 
     @property
     def license_plate(self):

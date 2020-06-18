@@ -516,16 +516,16 @@ components:
           type: string
           example: Klantteam Noord
           nullable: true
-        driver_name:
+        name:
           type: string
           example: Billy Gates
-        driver_skill:
+        role:
           type: string
           # enum: ["", null, "Metende", "Lasser", "Leerling",
           # "Kraanmachinist", "Overig", "NLS", "Cluster"]
           example: Metende
           nullable: true
-        driver_employee_number:
+        employee_number:
           type: string
           example: 1234
         license_plate:
@@ -583,6 +583,8 @@ components:
           type: string
           format: uuid
         l2_guid:
+          type: string
+        counter_id:
           type: string
         administration:
           type: string

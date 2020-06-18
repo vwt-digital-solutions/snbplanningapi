@@ -17,15 +17,16 @@ from helpers.distance import calculate_distance_matrix
 from process_solution import process_solution, print_solution
 
 
-def create_data_model(car_info=None, car_locations=None, workitems=None) -> DataModel:
+def create_data_model(engineers=None, car_locations=None, workitems=None) -> DataModel:
     data_model = DataModel()
     print('getting Cars')
     data_model.cars = data_provider.get_cars(car_locations)
     print('getting Workitems')
-    data_model.work_items = data_provider.get_work_items(workitems)
+    data_model.all_work_items = data_provider.get_work_items(workitems)
     print('getting CarInfo')
-    data_model.car_info_list = data_provider.get_car_info(car_info)
-    data_model.car_info_dict_by_token = {e['token']: e for e in data_model.car_info_list}
+    data_model.engineers_list = data_provider.get_engineers(engineers)
+    data_model.work_items = data_provider.prioritize_and_filter_work_items(data_model.all_work_items, data_model.engineers_list)
+    data_model.engineers_dict_by_token = {e['token']: e for e in data_model.engineers_list}
 
     print(data_model.number_of_cars, ' cars')
     print(data_model.number_of_workitems, ' workitems')
@@ -99,7 +100,8 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
         return process_solution(data_model, manager, routing, solution, calculate_distance)
     else:
         print('No solution found')
-        return [], [engineer['id'] for engineer in data_model.car_info_list], \
+
+        return [], [engineer['id'] for engineer in data_model.engineers_list], \
                [work_item['id'] for work_item in data_model.work_items], {}
 
 
@@ -122,7 +124,7 @@ def perform_request(request):
     timeout = request_json.get('timeout', 60)
     verbose = request_json.get('verbose', False)
     calculate_distance = request_json.get('calculate_distances', False)
-    engineers = request_json.get('car_info', None)
+    engineers = request_json.get('engineers', None)
     car_locations = request_json.get('car_locations', None)
     work_items = request_json.get('work_items', None)
 
@@ -142,6 +144,9 @@ def perform_request(request):
 
 
 if __name__ == '__main__':
+    generate_planning(20, True, False)
+
+    """
     with open('tests/data/engineers.json') as json_file:
         engineers = json.load(json_file)
 
@@ -152,3 +157,4 @@ if __name__ == '__main__':
         car_locations = json.load(json_file)
 
     generate_planning(20, True, False, work_items=work_items, car_locations=car_locations, engineers=engineers)
+    """

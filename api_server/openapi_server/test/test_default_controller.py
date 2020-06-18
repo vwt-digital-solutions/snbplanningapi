@@ -93,7 +93,7 @@ class TestDefaultController(BaseTestCase):
         body = {
             "id": "123456789",
             "administration": "Klantteam Noord",
-            "driver_skill": "Metende",
+            "role": "Metende",
             "token": "some-token-value"
         }
         headers = {

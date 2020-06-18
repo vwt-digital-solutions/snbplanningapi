@@ -13,7 +13,11 @@ def process_csv_file(data, context):
     Mainly because this allows us to easily switch to a PubSub messaging based consume function.
     """
 
+    if 'vwtelecom_divisions' not in data['name']:
+        return
+
     filename = 'gs://{0}/{1}'.format(data['bucket'], data['name'])
+
     parser = DBProcessor()
 
     try:

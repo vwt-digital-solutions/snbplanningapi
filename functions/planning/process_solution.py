@@ -1,7 +1,8 @@
 from contrib.distance import calculate_travel_times
-from google.cloud import datastore
 from data.data_model import DataModel
 from node import NodeType
+
+from google.cloud import datastore
 
 db_client = datastore.Client()
 
@@ -10,9 +11,9 @@ def print_solution(data_model: DataModel, manager, routing, solution):
     """Prints solution on console."""
     total_distance = 0
     total_load = 0
-    for vehicle_id in range(data_model.number_of_cars):
+    for vehicle_id in range(data_model.number_of_engineers):
         index = routing.Start(vehicle_id)
-        plan_output = 'Route for vehicle {}:\n'.format(data_model.nodes[vehicle_id].entity['id'])
+        plan_output = 'Route for engineer {}:\n'.format(data_model.nodes[vehicle_id].entity['id'])
         route_distance = 0
         route_load = 0
         while not routing.IsEnd(index):
@@ -35,18 +36,15 @@ def print_solution(data_model: DataModel, manager, routing, solution):
 
 
 def process_solution(data_model: DataModel, manager, routing, solution, calculate_distance):
-    engineers_dict_by_token = data_model.engineers_dict_by_token
-
-    entities = []
+    planned_workitems = []
     travel_times = []
 
     # Construct a set here, so that we can build unplanned work_items in O(n) time instead of O(n^2)
-    planned_workitems = set()
+    planned_workitems_set = set()
     unplanned_engineers = []
 
-    for vehicle_id in range(data_model.number_of_cars):
-        car_location = data_model.nodes[vehicle_id].entity
-        engineer = engineers_dict_by_token[car_location['id']]
+    for vehicle_id in range(data_model.number_of_engineers):
+        engineer = data_model.engineers[vehicle_id].entity
 
         index = routing.Start(vehicle_id)
 
@@ -83,9 +81,9 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
                 })
 
             if to_node.type == NodeType.location:
-                planned_workitems.add(to_node.entity['id'])
+                planned_workitems_set.add(to_node.entity['id'])
                 engineer_is_planned = True
-                entities.append({
+                planned_workitems.append({
                     'engineer': engineer['id'],
                     'workitem': to_node.entity['id'],
                 })
@@ -95,6 +93,6 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
 
     unplanned_workitems = [work_item.entity['id'] for work_item in
                            data_model.all_work_items
-                           if work_item.entity['id'] not in planned_workitems]
+                           if work_item.entity['id'] not in planned_workitems_set]
 
-    return entities, unplanned_engineers, unplanned_workitems, {'travel_times': travel_times}
+    return planned_workitems, unplanned_engineers, unplanned_workitems, {'travel_times': travel_times}

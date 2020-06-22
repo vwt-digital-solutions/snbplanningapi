@@ -10,8 +10,6 @@ from node import Node, NodeType
 
 import config
 
-from contrib.cars import get_car_locations
-
 db_client = datastore.Client()
 gmaps = googlemaps.Client(key=config.GEO_API_KEY)
 
@@ -38,22 +36,6 @@ def get_work_items(work_items=None):
     return [Node(NodeType.location, work_item['id'], work_item) for work_item in work_items]
 
 
-def get_cars(car_locations=None):
-    if car_locations is None:
-        engineers = get_car_locations(db_client, assigned_to_engineer=True)
-        engineers = [add_key_as_id(engineer) for engineer in engineers]
-    else:
-        engineers = car_locations
-
-    try:
-        if config.PLANNING_ENGINE_DEBUG:
-            engineers = engineers[:100]
-    except AttributeError:
-        pass
-
-    return [Node(NodeType.car, engineer['id'], engineer) for engineer in engineers]
-
-
 def get_engineers(engineers=None):
     if engineers is None:
         query = db_client.query(kind='Engineer')
@@ -66,7 +48,7 @@ def get_engineers(engineers=None):
         if 'geometry' not in engineer:
             engineer = geocode_address(gmaps, engineer)
 
-    return engineers
+    return [Node(NodeType.engineer, engineer['id'], engineer) for engineer in engineers]
 
 
 def set_priority_for_work_item(node):
@@ -114,8 +96,8 @@ def prioritize_and_filter_work_items(work_items, engineers):
     other_work_items = [work_item for work_item in work_items if work_item.entity.get('category', None) != 'Storing'
                         and work_item.entity.get('category', None) != 'Schade']
 
-    engineers_schade = [engineer for engineer in engineers if engineer.get('role', None) == 'Lasser']
-    engineers_storing = [engineer for engineer in engineers if engineer.get('role', None) == 'Metende']
+    engineers_schade = [engineer for engineer in engineers if engineer.entity.get('role', None) == 'Lasser']
+    engineers_storing = [engineer for engineer in engineers if engineer.entity.get('role', None) == 'Metende']
 
     work_items_schade = sorted(work_items_schade,
                                key=lambda i: (-i.entity['priority'],

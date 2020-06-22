@@ -7,8 +7,7 @@
     "id": 1,
     "division": "",
     "license_plate": "",
-    "city": "Utrecht",
-    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+    "city": "Utrecht"
   },
   {
     "name": "Monteur 2",
@@ -18,8 +17,7 @@
     "id": 2,
     "division": "",
     "license_plate": "",
-    "city": "Den Haag",
-    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+    "city": "Den Haag"
   },
   {
     "name": "Monteur 3",
@@ -29,8 +27,7 @@
     "id": 3,
     "division": "",
     "license_plate": "",
-    "city": "Amsterdam",
-    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+    "city": "Amsterdam"
   },
   {
     "name": "Monteur 4",
@@ -40,8 +37,7 @@
     "id": 4,
     "division": "",
     "license_plate": "",
-    "city": "Groningen",
-    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+    "city": "Groningen"
   },
   {
     "name": "Monteur 5",
@@ -51,7 +47,6 @@
     "id": 5,
     "division": "",
     "license_plate": "",
-    "city": "Amsterdam",
     "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
   },
   {
@@ -62,7 +57,6 @@
     "id": 6,
     "division": "",
     "license_plate": "",
-    "city": "Amsterdam",
     "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
   },
   {
@@ -73,7 +67,6 @@
     "id": 7,
     "division": "",
     "license_plate": "",
-    "city": "Maastricht",
     "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
   },
   {
@@ -84,7 +77,6 @@
     "id": 8,
     "division": "",
     "license_plate": "",
-    "city": "Maastricht",
     "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
   },
   {
@@ -95,7 +87,6 @@
     "id": 9,
     "division": "",
     "license_plate": "",
-    "city": "Haarlem",
     "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
   },
   {
@@ -106,7 +97,6 @@
     "id": 10,
     "division": "",
     "license_plate": "",
-    "city": "Amersfoort",
     "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
   }
 ]

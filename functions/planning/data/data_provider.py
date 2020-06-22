@@ -1,7 +1,10 @@
+from contrib.geocoding import geocode_address
+
 from datetime import datetime
 import dateutil.parser
 
 from google.cloud import datastore
+import googlemaps
 
 from node import Node, NodeType
 
@@ -10,6 +13,7 @@ import config
 from contrib.cars import get_car_locations
 
 db_client = datastore.Client()
+gmaps = googlemaps.Client(key=config.GEO_API_KEY)
 
 
 def add_key_as_id(entity):
@@ -56,7 +60,11 @@ def get_engineers(engineers=None):
 
         engineers_list = query.fetch()
 
-        return [add_key_as_id(entity) for entity in engineers_list]
+        engineers = [add_key_as_id(entity) for entity in engineers_list]
+
+    for engineer in engineers:
+        if 'geometry' not in engineer:
+            engineer = geocode_address(gmaps, engineer)
 
     return engineers
 
@@ -120,7 +128,7 @@ def prioritize_and_filter_work_items(work_items, engineers):
                                                convert_to_date_or_none(i.entity['start_timestamp'])))
 
     filtered_work_items = work_items_schade[:len(engineers_schade)] + \
-                          work_items_storing[:len(engineers_storing)] + \
-                          other_work_items
+        work_items_storing[:len(engineers_storing)] + \
+        other_work_items
 
     return filtered_work_items

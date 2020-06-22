@@ -1,17 +1,23 @@
-from flask import jsonify, make_response, request
-from google.cloud import datastore
+import config
+from contrib.geocoding import geocode_address
 
-from cache import cache
-import logging
 from openapi_server.models import Engineer, EngineersList, Error
 from openapi_server.controllers.util import HALSelfRef, HALEmbedded
 
+from flask import jsonify, make_response, request
+
+from google.cloud import datastore
+import googlemaps
+
+from cache import cache
+import logging
 
 """
 API endpoints.
 """
 db_client = datastore.Client()
 logger = logging.getLogger(__name__)
+gmaps = googlemaps.Client(key=config.GEO_API_KEY)
 
 
 @cache.memoize(timeout=300)
@@ -60,12 +66,12 @@ def engineers_post(body):
     :rtype: CarInfo id
 
     """
-    car_info = Engineer.from_dict(body).to_dict()
+    engineer = Engineer.from_dict(body).to_dict()
 
     # Remove unnecessary and read-only fields.
-    del car_info['id']
-    del car_info['license_plate']
-    del car_info['division']
+    del engineer['id']
+    del engineer['license_plate']
+    del engineer['division']
 
     entity = None
 
@@ -89,7 +95,9 @@ def engineers_post(body):
 
         entity = datastore.Entity(db_client.key('Engineer'))
 
-    entity.update(car_info)
+    entity.update(engineer)
+    entity = geocode_address(gmaps=gmaps, entity=entity)
+
     db_client.put(entity)
 
     car = Engineer.from_dict(entity)

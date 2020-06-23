@@ -82,7 +82,7 @@ class DBProcessor(object):
                     "isGeocoded": True
                 })
 
-        entity['dgc'] = 'contact' in work_item and 'DGS' in 'contact'
+        entity['dgs'] = 'contact' in work_item and work_item['contact'] is not None and 'DGS' in work_item['contact']
 
         entity.update(work_item)
         logging.debug('Populate work item {} - {}'.format(entity.key, entity))

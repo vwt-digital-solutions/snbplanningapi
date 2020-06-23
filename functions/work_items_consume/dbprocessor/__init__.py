@@ -82,6 +82,8 @@ class DBProcessor(object):
                     "isGeocoded": True
                 })
 
+        entity['dgc'] = 'contact' in work_item and 'DGS' in 'contact'
+
         entity.update(work_item)
         logging.debug('Populate work item {} - {}'.format(entity.key, entity))
         return entity

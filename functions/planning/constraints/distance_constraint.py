@@ -25,7 +25,7 @@ class DistanceConstraint(Constraint):
         distance_dimension = routing.GetDimensionOrDie(dimension_name)
         distance_dimension.SetGlobalSpanCostCoefficient(100)
 
-        for i in range(data_model.number_of_cars):
+        for i in range(data_model.number_of_engineers):
             routing.AddVariableMinimizedByFinalizer(
                 distance_dimension.CumulVar(routing.Start(i)))
             routing.AddVariableMinimizedByFinalizer(

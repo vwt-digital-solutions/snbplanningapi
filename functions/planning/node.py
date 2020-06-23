@@ -5,7 +5,8 @@ from google.cloud.datastore import Entity
 
 class NodeType(Enum):
     location = 'Location',
-    car = 'Car'
+    car = 'CarLocation'
+    engineer = 'EngineerAddress'
 
 
 class Node:

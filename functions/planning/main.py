@@ -19,16 +19,13 @@ from process_solution import process_solution, print_solution
 
 def create_data_model(engineers=None, car_locations=None, workitems=None) -> DataModel:
     data_model = DataModel()
-    print('getting Cars')
-    data_model.cars = data_provider.get_cars(car_locations)
     print('getting Workitems')
     data_model.all_work_items = data_provider.get_work_items(workitems)
-    print('getting CarInfo')
-    data_model.engineers_list = data_provider.get_engineers(engineers)
-    data_model.work_items = data_provider.prioritize_and_filter_work_items(data_model.all_work_items, data_model.engineers_list)
-    data_model.engineers_dict_by_token = {e['token']: e for e in data_model.engineers_list}
+    print('getting Engineers')
+    data_model.engineers = data_provider.get_engineers(engineers)
+    data_model.work_items = data_provider.prioritize_and_filter_work_items(data_model.all_work_items, data_model.engineers)
 
-    print(data_model.number_of_cars, ' cars')
+    print(data_model.number_of_engineers, ' engineers')
     print(data_model.number_of_workitems, ' workitems')
 
     print('Calculating distance matrix')
@@ -62,7 +59,7 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
 
     print('Creating manager')
     manager = pywrapcp.RoutingIndexManager(data_model.number_of_nodes,
-                                           data_model.number_of_cars,
+                                           data_model.number_of_engineers,
                                            data_model.start_positions,
                                            data_model.end_positions)
 
@@ -101,7 +98,7 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
     else:
         print('No solution found')
 
-        return [], [engineer['id'] for engineer in data_model.engineers_list], \
+        return [], [engineer['id'] for engineer in data_model.engineers], \
                [work_item['id'] for work_item in data_model.work_items], {}
 
 

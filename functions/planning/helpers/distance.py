@@ -1,6 +1,5 @@
-from contrib import distance
 from contrib.distance import get_coordinates_from_entity
-from node import Node, NodeType
+from node import Node
 
 import numpy as np
 
@@ -73,15 +72,3 @@ def calculate_distance_matrix(nodes: [Node]):
     distance_matrix = np.nan_to_num(distance_matrix, nan=20)
 
     return distance_matrix
-
-
-def get_distance(from_node: Node, to_node: Node):
-    # Distance from and to the same place is always 0
-    if from_node.type == to_node.type and from_node.id == to_node.id:
-        return 0
-
-    # Distance from engineer to engineer is always infinity
-    if from_node.type == to_node.type == NodeType.car:
-        return INFINITY
-
-    return distance.calculate_distance(from_node.entity, to_node.entity)

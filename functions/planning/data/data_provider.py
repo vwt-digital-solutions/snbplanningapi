@@ -1,15 +1,17 @@
+from contrib.geocoding import geocode_address
+
 from datetime import datetime
 import dateutil.parser
 
 from google.cloud import datastore
+import googlemaps
 
 from node import Node, NodeType
 
 import config
 
-from contrib.cars import get_car_locations
-
 db_client = datastore.Client()
+gmaps = googlemaps.Client(key=config.GEO_API_KEY)
 
 
 def add_key_as_id(entity):
@@ -34,31 +36,19 @@ def get_work_items(work_items=None):
     return [Node(NodeType.location, work_item['id'], work_item) for work_item in work_items]
 
 
-def get_cars(car_locations=None):
-    if car_locations is None:
-        engineers = get_car_locations(db_client, assigned_to_engineer=True)
-        engineers = [add_key_as_id(engineer) for engineer in engineers]
-    else:
-        engineers = car_locations
-
-    try:
-        if config.PLANNING_ENGINE_DEBUG:
-            engineers = engineers[:100]
-    except AttributeError:
-        pass
-
-    return [Node(NodeType.car, engineer['id'], engineer) for engineer in engineers]
-
-
 def get_engineers(engineers=None):
     if engineers is None:
         query = db_client.query(kind='Engineer')
 
         engineers_list = query.fetch()
 
-        return [add_key_as_id(entity) for entity in engineers_list]
+        engineers = [add_key_as_id(entity) for entity in engineers_list]
 
-    return engineers
+    for engineer in engineers:
+        if 'geometry' not in engineer:
+            engineer = geocode_address(gmaps, engineer)
+
+    return [Node(NodeType.engineer, engineer['id'], engineer) for engineer in engineers]
 
 
 def set_priority_for_work_item(node):
@@ -106,8 +96,8 @@ def prioritize_and_filter_work_items(work_items, engineers):
     other_work_items = [work_item for work_item in work_items if work_item.entity.get('category', None) != 'Storing'
                         and work_item.entity.get('category', None) != 'Schade']
 
-    engineers_schade = [engineer for engineer in engineers if engineer.get('role', None) == 'Lasser']
-    engineers_storing = [engineer for engineer in engineers if engineer.get('role', None) == 'Metende']
+    engineers_schade = [engineer for engineer in engineers if engineer.entity.get('role', None) == 'Lasser']
+    engineers_storing = [engineer for engineer in engineers if engineer.entity.get('role', None) == 'Metende']
 
     work_items_schade = sorted(work_items_schade,
                                key=lambda i: (-i.entity['priority'],
@@ -120,7 +110,7 @@ def prioritize_and_filter_work_items(work_items, engineers):
                                                convert_to_date_or_none(i.entity['start_timestamp'])))
 
     filtered_work_items = work_items_schade[:len(engineers_schade)] + \
-                          work_items_storing[:len(engineers_storing)] + \
-                          other_work_items
+        work_items_storing[:len(engineers_storing)] + \
+        other_work_items
 
     return filtered_work_items

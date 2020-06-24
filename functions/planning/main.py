@@ -22,8 +22,10 @@ def create_data_model(engineers=None, car_locations=None, workitems=None) -> Dat
     print('getting Workitems')
     data_model.all_work_items = data_provider.get_work_items(workitems)
     print('getting Engineers')
-    data_model.engineers = data_provider.get_engineers(engineers)
-    data_model.work_items = data_provider.prioritize_and_filter_work_items(data_model.all_work_items, data_model.engineers)
+    data_model.engineers, data_model.unplanned_engineers \
+        = data_provider.get_engineers(engineers)
+    data_model.work_items, data_model.unplanned_workitems \
+        = data_provider.prioritize_and_filter_work_items(data_model.all_work_items, data_model.engineers)
 
     print(data_model.number_of_engineers, ' engineers')
     print(data_model.number_of_workitems, ' workitems')

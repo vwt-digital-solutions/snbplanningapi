@@ -10,6 +10,8 @@ class DataModel:
 
     engineers = []
     work_items = []
+    unplanned_engineers = []
+    unplanned_workitems = []
 
     distance_matrix = []
 

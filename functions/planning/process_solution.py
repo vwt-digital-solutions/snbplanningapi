@@ -35,13 +35,15 @@ def print_solution(data_model: DataModel, manager, routing, solution):
     print('Total load of all routes: {}'.format(total_load))
 
 
-def process_solution(data_model: DataModel, manager, routing, solution, calculate_distance):
+def process_solution(data_model: DataModel, manager, routing, solution, calculate_distance, verbose=False):
+    if verbose:
+        print_solution(data_model, manager, routing, solution)
     planned_workitems = []
     travel_times = []
 
     # Construct a set here, so that we can build unplanned work_items in O(n) time instead of O(n^2)
     planned_workitems_set = set()
-    unplanned_engineers = []
+    unplanned_engineers = data_model.unplanned_engineers
 
     for vehicle_id in range(data_model.number_of_engineers):
         engineer = data_model.engineers[vehicle_id].entity
@@ -66,6 +68,8 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
                 try:
                     travel_time = calculate_travel_times(to_node.entity, [from_node.entity])[0]
                 except KeyError:
+                    # TODO: This error occurs when either of the two nodes don't have a valid geometry.
+                    #  We should try to avoid working with unknown locations, since it can throw off the planning.
                     travel_time = {
                         'distance': 'NaN',
                         'travel_time': 'NaN'

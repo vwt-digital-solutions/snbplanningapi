@@ -9,6 +9,8 @@ def geocode_address(gmaps, entity):
         if 'street' in entity and entity['street'] != '':
             address = entity['street'] + ',' + address
         location = gmaps.geocode(address)
+    else:
+        location = []
 
     entity.update({'geometry': {
         "type": "Point",

@@ -44,11 +44,19 @@ def get_engineers(engineers=None):
 
         engineers = [add_key_as_id(entity) for entity in engineers_list]
 
-    for engineer in engineers:
-        if 'geometry' not in engineer:
-            engineer = geocode_address(gmaps, engineer)
+    plannable_engineers = []
+    unplannable_engineers = []
 
-    return [Node(NodeType.engineer, engineer['id'], engineer) for engineer in engineers]
+    for engineer in engineers:
+        try:
+            if 'geometry' not in engineer:
+                engineer = geocode_address(gmaps, engineer)
+                plannable_engineers.append(engineer)
+        except IndexError:
+            unplannable_engineers.append(engineer)
+
+    return [Node(NodeType.engineer, engineer['id'], engineer) for engineer in plannable_engineers], \
+        unplannable_engineers
 
 
 def set_priority_for_work_item(node):
@@ -113,4 +121,4 @@ def prioritize_and_filter_work_items(work_items, engineers):
         work_items_storing[:len(engineers_storing)] + \
         other_work_items
 
-    return filtered_work_items
+    return filtered_work_items, [work_item for work_item in work_items if work_item not in filtered_work_items]

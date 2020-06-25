@@ -53,7 +53,7 @@ def get_engineers(engineers=None):
                 engineer = geocode_address(gmaps, engineer)
                 plannable_engineers.append(engineer)
         except IndexError:
-            unplannable_engineers.append(engineer)
+            unplannable_engineers.append(engineer['id'])
 
     return [Node(NodeType.engineer, engineer['id'], engineer) for engineer in plannable_engineers], \
         unplannable_engineers

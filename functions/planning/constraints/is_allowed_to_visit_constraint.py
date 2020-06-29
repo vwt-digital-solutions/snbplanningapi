@@ -8,7 +8,7 @@ from node import Node
 class IsAllowedToVisitConstraint(Constraint):
     def apply(self, manager:  pywrapcp.RoutingIndexManager, routing: pywrapcp.RoutingModel, data_model: DataModel):
         nodes = data_model.nodes
-        engineers = data_model.engineers
+        engineers = data_model.engineers_to_plan
 
         for index in range(0, data_model.number_of_nodes):
             if index < data_model.number_of_engineers:
@@ -19,8 +19,7 @@ class IsAllowedToVisitConstraint(Constraint):
 
         return routing
 
-    def can_visit(self, data_model: DataModel, location_node: Node, engineer_node: Node):
-        engineer = engineer_node.entity
+    def can_visit(self, data_model: DataModel, location_node: Node, engineer):
         role = engineer.get('role', '')
 
         if 'category' not in location_node.entity:

@@ -2,7 +2,6 @@ from __future__ import print_function
 
 from datetime import datetime
 
-import config
 from constraints.is_allowed_to_visit_constraint import IsAllowedToVisitConstraint
 from flask import json
 from ortools.constraint_solver import routing_enums_pb2
@@ -14,19 +13,15 @@ from data.data_model import DataModel
 from constraints import PenaltyConstraint, CapacityConstraint, DistanceConstraint
 
 from helpers.distance import calculate_distance_matrix
-from process_solution import process_solution, print_solution
+from process_solution import process_solution
 
 
-def create_data_model(engineers=None, car_locations=None, workitems=None) -> DataModel:
-    data_model = DataModel()
-    print('getting Workitems')
-    data_model.all_work_items = data_provider.get_work_items(workitems)
-    print('getting Engineers')
-    data_model.engineers, data_model.unplanned_engineers \
-        = data_provider.get_engineers(engineers)
-    data_model.work_items, data_model.unplanned_workitems \
-        = data_provider.prioritize_and_filter_work_items(data_model.all_work_items, data_model.engineers)
+def create_data_model(engineers=None, car_locations=None, work_items=None) -> DataModel:
+    work_items = data_provider.get_work_items(work_items)
+    engineers = data_provider.get_engineers(engineers)
+    car_locations = []
 
+    data_model = DataModel(engineers=engineers, work_items=work_items, car_locations=car_locations)
     print(data_model.number_of_engineers, ' engineers')
     print(data_model.number_of_workitems, ' workitems')
 
@@ -48,14 +43,6 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
     :return:
     """
     print("Timeout set to", timeout)
-    try:
-        print('Debug is set to:', config.PLANNING_ENGINE_DEBUG)
-        if config.PLANNING_ENGINE_DEBUG:
-            print('Will use only a subset of workitems and employees.')
-    except AttributeError:
-        print('Debug not set')
-        print('Will use the full set of workitems and employees.')
-
     print('Creating datamodel')
     data_model = create_data_model(engineers, car_locations, work_items)
 
@@ -94,9 +81,8 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
     print('Solution calculated')
     if solution:
         print('Processing solution')
-        if verbose:
-            print_solution(data_model, manager, routing, solution)
-        return process_solution(data_model, manager, routing, solution, calculate_distance)
+        planning = process_solution(data_model, manager, routing, solution, calculate_distance)
+        return planning
     else:
         print('No solution found')
 

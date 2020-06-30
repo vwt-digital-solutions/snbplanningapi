@@ -41,7 +41,7 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
     travel_times = []
 
     planned_workitems = data_model.preplanned_work_items
-    unplanned_engineers = data_model.unplannable_engineers
+    unplanned_engineers = [engineer['id'] for engineer in data_model.unplannable_engineers]
 
     for vehicle_id in range(data_model.number_of_engineers):
         engineer = data_model.engineers_to_plan[vehicle_id]

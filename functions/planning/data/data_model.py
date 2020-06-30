@@ -70,14 +70,14 @@ class DataModel:
          sort them by priority, and only return the most urgent workitems.
         """
         self.work_items = [self.set_priority_for_workitem(work_item) for work_item in self.work_items]
-        work_items_to_plan = [work_item for work_item in self.work_items if work_item['status'] == "Te Plannen"]
+        work_items_to_plan = [work_item for work_item in self.work_items if work_item['status'] == 'Te Plannen']
 
         engineer_ids = [engineer['id'] for engineer in self.engineers]
 
         self.preplanned_work_items = [{
             'engineer': work_item['employee_number'],
             'workitem': work_item['id'],
-        } for work_item in self.work_items if work_item['status'] == "Niet Gereed"
+        } for work_item in self.work_items if work_item['status'] == 'Niet Gereed'
                                               and work_item['employee_number'] in engineer_ids]
 
         work_items_storing = [work_item for work_item in work_items_to_plan if
@@ -108,7 +108,9 @@ class DataModel:
 
     def filter_engineers(self):
         self.unplannable_engineers = [engineer for engineer in self.engineers if
-                                      'geometry' not in engineer or engineer['geometry'] is None]
+                                      'geometry' not in engineer or engineer['geometry'] is None or
+                                      'role' not in engineer or
+                                      engineer['role'] not in ['Metende', 'Lasser']]
 
         preplanned_engineer_ids = [planning_item.get('engineer', None) for
                                    planning_item in self.preplanned_work_items]

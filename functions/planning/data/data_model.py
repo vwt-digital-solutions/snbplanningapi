@@ -72,10 +72,13 @@ class DataModel:
         self.work_items = [self.set_priority_for_workitem(work_item) for work_item in self.work_items]
         work_items_to_plan = [work_item for work_item in self.work_items if work_item['status'] == "Te Plannen"]
 
+        engineer_ids = [engineer['id'] for engineer in self.engineers]
+
         self.preplanned_work_items = [{
             'engineer': work_item['employee_number'],
             'workitem': work_item['id'],
-        } for work_item in self.work_items if work_item['status'] == "Niet Gereed"]
+        } for work_item in self.work_items if work_item['status'] == "Niet Gereed"
+                                              and work_item['employee_number'] in engineer_ids]
 
         work_items_storing = [work_item for work_item in work_items_to_plan if
                               work_item.get('category', None) == 'Schade']
@@ -99,8 +102,8 @@ class DataModel:
                                                    self.convert_to_date_or_none(i['start_timestamp']) is None,
                                                    self.convert_to_date_or_none(i['start_timestamp'])))
 
-        self.work_items_to_plan = work_items_schade[:len(engineers_schade)] + \
-            work_items_storing[:len(engineers_storing)] + \
+        self.work_items_to_plan = work_items_schade[:len(engineers_schade) * 2] + \
+            work_items_storing[:len(engineers_storing) * 2] + \
             other_work_items
 
     def filter_engineers(self):

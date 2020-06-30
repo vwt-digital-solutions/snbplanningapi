@@ -31,9 +31,6 @@ def list_planning_items():  # noqa: E501
     # Provide the token in the request to the receiving function
     function_headers = {'Authorization': f'bearer {service_account_token}'}
 
-    response = Error(500, 'Er is een fout opgetreden bij het genereren van de planning.')
-    return make_response(jsonify(response), 500)
-
     res = requests.get(function_url, headers=function_headers)
 
     if 200 <= res.status_code < 300:

@@ -51,7 +51,7 @@ class TestPlanning(unittest.TestCase):
                                                        18, 19, 20, 21, 22, 23, 24, 25, 26, 27])
 
     def test_home_address_planning(self):
-        engineers, work_items, car_locations = load_data_from_files('generic')
+        engineers, work_items, car_locations = load_data_from_files('home_addresses')
 
         planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
             generate_planning(20,
@@ -62,6 +62,22 @@ class TestPlanning(unittest.TestCase):
                               engineers=engineers)
 
         self.assertEqual(unplanned_engineers, [])
+        self.assertEqual(len(planned_workitems), 10)
+
+    def test_niet_gereed_planning(self):
+        engineers, work_items, car_locations = load_data_from_files('niet_gereed')
+
+        planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
+            generate_planning(5,
+                              False,
+                              False,
+                              work_items=work_items,
+                              car_locations=car_locations,
+                              engineers=engineers)
+
+        self.assertEqual(unplanned_engineers, [])
+        self.assertEqual(len(unplanned_workitems), 1)
+        self.assertEqual(unplanned_workitems[0], 5)
         self.assertEqual(len(planned_workitems), 10)
 
 

@@ -1,5 +1,8 @@
 from node import Node, NodeType
 
+from datetime import datetime
+import dateutil.parser
+
 
 class DataModel:
     """ This class serves as a general data model for the planning engine.
@@ -8,22 +11,125 @@ class DataModel:
     locations to be visited, the distance matrix between them, their capacity etc.
     """
 
-    engineers = []
-    work_items = []
-    unplanned_engineers = []
-    unplanned_workitems = []
+    engineers: []
+    work_items: []
+    car_locations: []
+
+    preplanned_work_items = []
+    work_items_to_plan = []
+
+    preplanned_engineers = []
+    engineers_to_plan = []
+    unplannable_engineers = []
 
     distance_matrix = []
 
     _nodes = None
 
-    all_work_items = []
+    def __init__(self, engineers: [], work_items: [], car_locations: []):
+        self.engineers = engineers
+        self.work_items = work_items
+        self.car_locations = car_locations
+
+        self.prioritize_work_items()
+        self.filter_engineers()
+
+    def set_priority_for_workitem(self, work_item):
+        if 'dgs' in work_item and work_item['dgs']:
+            priority = 5
+        elif 'task_type' in work_item and 'Premium' in work_item['task_type']:
+            priority = 4
+        elif 'category' in work_item and work_item['category'] == 'Storing':
+            priority = 3
+        elif 'category' in work_item and work_item['category'] == 'Schade':
+            priority = 2
+        else:
+            priority = 1
+
+        work_item['priority'] = priority
+
+        return work_item
+
+    def convert_to_date_or_none(self, date_to_convert):
+        if isinstance(date_to_convert, datetime):
+            return date_to_convert
+        if isinstance(date_to_convert, str):
+            try:
+                return dateutil.parser.isoparse(date_to_convert)
+            except ValueError:
+                # Invalid date string
+                return None
+            except OverflowError:
+                # Date is bigger than largest int
+                return None
+        return None
+
+    def prioritize_work_items(self):
+        """ The algorithm can run into some issues when there are is a disproportionate amount of workitems
+         compared to the number of engineers. This function will add a priority value to every workitem,
+         sort them by priority, and only return the most urgent workitems.
+        """
+        self.work_items = [self.set_priority_for_workitem(work_item) for work_item in self.work_items]
+        work_items_to_plan = [work_item for work_item in self.work_items if work_item['status'] == 'Te Plannen']
+
+        engineer_ids = [engineer['id'] for engineer in self.engineers]
+
+        self.preplanned_work_items = [{
+            'engineer': work_item['employee_number'],
+            'workitem': work_item['id'],
+        } for work_item in self.work_items if work_item['status'] == 'Niet Gereed'
+                                              and work_item['employee_number'] in engineer_ids]
+
+        work_items_storing = [work_item for work_item in work_items_to_plan if
+                              work_item.get('category', None) == 'Schade']
+        work_items_schade = [work_item for work_item in work_items_to_plan if
+                             work_item.get('category', None) == 'Storing']
+        other_work_items = [work_item for work_item in work_items_to_plan if
+                            work_item.get('category', None) != 'Storing' and
+                            work_item.get('category', None) != 'Schade']
+
+        engineers_schade = [engineer for engineer in self.engineers if engineer.get('role', None) == 'Lasser']
+        engineers_storing = [engineer for engineer in self.engineers if engineer.get('role', None) == 'Metende']
+
+        work_items_schade = sorted(work_items_schade,
+                                   key=lambda i: (-i['priority'],
+                                                  self.convert_to_date_or_none(
+                                                      i['resolve_before_timestamp']) is None,
+                                                  self.convert_to_date_or_none(i['resolve_before_timestamp'])
+                                                  ))
+        work_items_storing = sorted(work_items_storing,
+                                    key=lambda i: (-i['priority'],
+                                                   self.convert_to_date_or_none(i['start_timestamp']) is None,
+                                                   self.convert_to_date_or_none(i['start_timestamp'])))
+
+        self.work_items_to_plan = work_items_schade[:len(engineers_schade) * 2] + \
+            work_items_storing[:len(engineers_storing) * 2] + \
+            other_work_items
+
+    def filter_engineers(self):
+        self.unplannable_engineers = [engineer for engineer in self.engineers if
+                                      'geometry' not in engineer or engineer['geometry'] is None or
+                                      'role' not in engineer or
+                                      engineer['role'] not in ['Metende', 'Lasser']]
+
+        preplanned_engineer_ids = [planning_item.get('engineer', None) for
+                                   planning_item in self.preplanned_work_items]
+        self.preplanned_engineers = [engineer for engineer in self.engineers if engineer['id']
+                                     in preplanned_engineer_ids]
+
+        self.engineers_to_plan = [engineer for engineer in self.engineers
+                                  if engineer not in self.preplanned_engineers and
+                                  engineer not in self.unplannable_engineers]
+
+    # Properties
 
     @property
     def nodes(self) -> [Node]:
         if not self._nodes or \
-                len(self._nodes) != len(self.engineers) + len(self.work_items):
-            self._nodes = self.engineers + self.work_items
+                len(self._nodes) != self.number_of_engineers + self.number_of_workitems:
+            self._nodes = \
+                [Node(NodeType.engineer, engineer['id'], engineer) for engineer in self.engineers_to_plan] + \
+                [Node(NodeType.location, work_item['id'], work_item) for work_item in self.work_items_to_plan]
         return self._nodes
 
     @property
@@ -32,11 +138,11 @@ class DataModel:
 
     @property
     def number_of_workitems(self) -> int:
-        return len(self.work_items)
+        return len(self.work_items_to_plan)
 
     @property
     def number_of_engineers(self) -> int:
-        return len(self.engineers)
+        return len(self.engineers_to_plan)
 
     @property
     def start_positions(self) -> [int]:

@@ -38,15 +38,13 @@ def print_solution(data_model: DataModel, manager, routing, solution):
 def process_solution(data_model: DataModel, manager, routing, solution, calculate_distance, verbose=False):
     if verbose:
         print_solution(data_model, manager, routing, solution)
-    planned_workitems = []
     travel_times = []
 
-    # Construct a set here, so that we can build unplanned work_items in O(n) time instead of O(n^2)
-    planned_workitems_set = set()
-    unplanned_engineers = data_model.unplanned_engineers
+    planned_workitems = data_model.preplanned_work_items
+    unplanned_engineers = [engineer['id'] for engineer in data_model.unplannable_engineers]
 
     for vehicle_id in range(data_model.number_of_engineers):
-        engineer = data_model.engineers[vehicle_id].entity
+        engineer = data_model.engineers_to_plan[vehicle_id]
 
         index = routing.Start(vehicle_id)
 
@@ -85,7 +83,6 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
                 })
 
             if to_node.type == NodeType.location:
-                planned_workitems_set.add(to_node.entity['id'])
                 engineer_is_planned = True
                 planned_workitems.append({
                     'engineer': engineer['id'],
@@ -95,8 +92,10 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
         if not engineer_is_planned:
             unplanned_engineers.append(engineer['id'])
 
-    unplanned_workitems = [work_item.entity['id'] for work_item in
-                           data_model.all_work_items
-                           if work_item.entity['id'] not in planned_workitems_set]
+    # Construct a set here, so that we can build unplanned work_items in O(n) time instead of O(n^2)
+    planned_workitems_set = set([planning_item['workitem'] for planning_item in planned_workitems])
+    unplanned_workitems = [work_item['id'] for work_item in
+                           data_model.work_items if
+                           work_item['id'] not in planned_workitems_set]
 
     return planned_workitems, unplanned_engineers, unplanned_workitems, {'travel_times': travel_times}

@@ -14,7 +14,7 @@ from openapi_server.controllers.engineers_controller import create_engineer
 from openapi_server.controllers.workitems_controller import create_workitem
 from openapi_server.controllers.util import HALSelfRef, HALEmbedded
 
-from openapi_server.models import PlanningItem, PlanningItemsList, WorkItem
+from openapi_server.models import PlanningItem, PlanningItemsList, WorkItem, Error
 
 db_client = datastore.Client()
 
@@ -32,45 +32,50 @@ def list_planning_items():  # noqa: E501
     function_headers = {'Authorization': f'bearer {service_account_token}'}
 
     res = requests.get(function_url, headers=function_headers)
-    res = json.loads(res.content)
 
-    workitems_query = db_client.query(kind='WorkItem')
-    workitems = list(workitems_query.fetch())
+    if 200 <= res.status_code < 300:
+        res = json.loads(res.content)
 
-    engineer_query = db_client.query(kind='Engineer')
-    engineers = list(engineer_query.fetch())
+        workitems_query = db_client.query(kind='WorkItem')
+        workitems = list(workitems_query.fetch())
 
-    engineers_by_id = {engineer.key.id_or_name: engineer for engineer in engineers}
-    workitems_by_id = {workitem.key.id_or_name: workitem for workitem in workitems}
+        engineer_query = db_client.query(kind='Engineer')
+        engineers = list(engineer_query.fetch())
 
-    planning = []
-    for planning_item in res['result']:
-        planning.append(create_planning_item(
-            engineers_by_id,
-            workitems_by_id,
-            planning_item
-        ))
+        engineers_by_id = {engineer.key.id_or_name: engineer for engineer in engineers}
+        workitems_by_id = {workitem.key.id_or_name: workitem for workitem in workitems}
 
-    unplanned_engineers = []
-    for engineer_item in res['unplanned_engineers']:
-        unplanned_engineers.append(create_engineer(
-            engineers_by_id[engineer_item]
-        ))
+        planning = []
+        for planning_item in res['result']:
+            planning.append(create_planning_item(
+                engineers_by_id,
+                workitems_by_id,
+                planning_item
+            ))
 
-    unplanned_workitems = []
-    for work_item in res['unplanned_workitems']:
-        unplanned_workitems.append(create_workitem(
-            workitems_by_id[work_item]
-        ))
+        unplanned_engineers = []
+        for engineer_item in res['unplanned_engineers']:
+            unplanned_engineers.append(create_engineer(
+                engineers_by_id[engineer_item]
+            ))
 
-    response = PlanningItemsList(
-        items=planning,
-        unplanned_engineers=unplanned_engineers,
-        unplanned_workitems=unplanned_workitems,
-        links=HALSelfRef(f'{request.url_root}plannings')
-    )
+        unplanned_workitems = []
+        for work_item in res['unplanned_workitems']:
+            unplanned_workitems.append(create_workitem(
+                workitems_by_id[work_item]
+            ))
 
-    return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
+        response = PlanningItemsList(
+            items=planning,
+            unplanned_engineers=unplanned_engineers,
+            unplanned_workitems=unplanned_workitems,
+            links=HALSelfRef(f'{request.url_root}plannings')
+        )
+
+        return make_response(jsonify(response), 200, {'Cache-Control': 'private, max-age=300'})
+    else:
+        response = Error(500, 'Er is een fout opgetreden bij het genereren van de planning')
+        return make_response(response, 500)
 
 
 def create_planning_item(engineers_by_id, workitems_by_id, planning_item):

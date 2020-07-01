@@ -1,7 +1,10 @@
+from datetime import datetime, date, timedelta
+
 from contrib.geocoding import geocode_address
 
 from google.cloud import datastore
 import googlemaps
+import pytz
 
 import config
 
@@ -20,9 +23,24 @@ def get_work_items(work_items=None):
         work_items_query.add_filter('task_type', '>=', 'Service Koper')
 
         work_items = list(work_items_query.fetch())
-        work_items = [add_key_as_id(work_item) for work_item in work_items if
-                      work_item['status'] == 'Te Plannen' or
-                      work_item['status'] == 'Niet Gereed']
+
+        date_to_select = (datetime.combine(date.today(), datetime.min.time()) + timedelta(days=1)).astimezone(pytz.utc)
+        date_after_tomorrow = date_to_select + timedelta(days=1)
+
+        work_items_niet_gereed = [work_item for work_item in work_items if work_item['status'] == 'Niet Gereed']
+        work_items_te_plannen = [work_item for work_item in work_items if work_item['status'] == 'Te Plannen']
+
+        work_items_schade = [work_item for work_item in work_items_te_plannen
+                             if work_item.get('category', None) == 'Schade'
+                             and work_item.get('resolve_before_timestamp', None)
+                             and date_to_select < work_item.get('resolve_before_timestamp', None) > date_after_tomorrow]
+        work_items_storing = [work_item for work_item in work_items_te_plannen
+                              if work_item.get('category', None) == 'Storing'
+                              and work_item.get('start_timestamp', None)
+                              and date_to_select < work_item.get('start_timestamp', None) > date_after_tomorrow]
+
+        work_items = [add_key_as_id(work_item) for work_item in
+                      work_items_niet_gereed + work_items_schade + work_items_storing]
 
     return work_items
 

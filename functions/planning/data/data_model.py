@@ -14,6 +14,7 @@ class DataModel:
     engineers: []
     work_items: []
     car_locations: []
+    availabilities: {}
 
     preplanned_work_items = []
     work_items_to_plan = []
@@ -26,10 +27,11 @@ class DataModel:
 
     _nodes = None
 
-    def __init__(self, engineers: [], work_items: [], car_locations: []):
+    def __init__(self, engineers: [], work_items: [], car_locations: [], availabilities: {}):
         self.engineers = engineers
         self.work_items = work_items
         self.car_locations = car_locations
+        self.availabilities = availabilities
 
         self.prioritize_work_items()
         self.filter_engineers()
@@ -107,10 +109,21 @@ class DataModel:
             other_work_items
 
     def filter_engineers(self):
-        self.unplannable_engineers = [engineer for engineer in self.engineers if
-                                      'geometry' not in engineer or engineer['geometry'] is None or
-                                      'role' not in engineer or
-                                      engineer['role'] not in ['Metende', 'Lasser']]
+        def engineer_is_plannable(engineer):
+            if 'geometry' not in engineer or engineer['geometry'] is None:
+                return False
+            if 'role' not in 'role' not in engineer or engineer['role'] not in ['Metende', 'Lasser']:
+                return False
+            # TODO: Normally, we'd filter out any engineer that does not have a defined availability.
+            #  Right now, availabilities are somewhat broken, so we leave this out and instead assume
+            #  every engineer is available at all times.
+            #
+            # if not self.availabilities.get(engineer['id'], False):
+            #     return False
+
+            return True
+
+        self.unplannable_engineers = [engineer for engineer in self.engineers if not engineer_is_plannable(engineer)]
 
         preplanned_engineer_ids = [planning_item.get('engineer', None) for
                                    planning_item in self.preplanned_work_items]

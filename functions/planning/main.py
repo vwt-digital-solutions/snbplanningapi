@@ -16,12 +16,14 @@ from helpers.distance import calculate_distance_matrix
 from process_solution import process_solution
 
 
-def create_data_model(engineers=None, car_locations=None, work_items=None) -> DataModel:
+def create_data_model(engineers=None, car_locations=None, work_items=None, availabilities=None) -> DataModel:
     work_items = data_provider.get_work_items(work_items)
     engineers = data_provider.get_engineers(engineers)
+    availabilities = data_provider.get_availabilities(availabilities)
     car_locations = []
 
-    data_model = DataModel(engineers=engineers, work_items=work_items, car_locations=car_locations)
+    data_model = DataModel(engineers=engineers, work_items=work_items,
+                           car_locations=car_locations, availabilities=availabilities)
     print(data_model.number_of_engineers, ' engineers')
     print(data_model.number_of_workitems, ' workitems')
 
@@ -31,7 +33,8 @@ def create_data_model(engineers=None, car_locations=None, work_items=None) -> Da
     return data_model
 
 
-def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_locations=None, work_items=None):
+def generate_planning(timeout, verbose, calculate_distance,
+                      engineers=None, car_locations=None, work_items=None, availabilities=None):
     """
     The main planning function. This function does the following:
         - Create a datamodel for the routing manager to reference.
@@ -44,7 +47,7 @@ def generate_planning(timeout, verbose, calculate_distance, engineers=None, car_
     """
     print("Timeout set to", timeout)
     print('Creating datamodel')
-    data_model = create_data_model(engineers, car_locations, work_items)
+    data_model = create_data_model(engineers, car_locations, work_items, availabilities)
 
     print('Creating manager')
     manager = pywrapcp.RoutingIndexManager(data_model.number_of_nodes,
@@ -112,13 +115,15 @@ def perform_request(request):
     engineers = request_json.get('engineers', None)
     car_locations = request_json.get('car_locations', None)
     work_items = request_json.get('work_items', None)
+    availabilities = request_json.get('availabilities', None)
 
     result, unplanned_engineers, unplanned_work_items, metadata = generate_planning(timeout,
                                                                                     verbose,
                                                                                     calculate_distance,
                                                                                     engineers=engineers,
                                                                                     car_locations=car_locations,
-                                                                                    work_items=work_items)
+                                                                                    work_items=work_items,
+                                                                                    availabilities=availabilities)
 
     return json.dumps({
         'result': result,

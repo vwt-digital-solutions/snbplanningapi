@@ -64,3 +64,17 @@ def get_engineers(engineers=None):
         geocoded_engineers.append(engineer)
 
     return geocoded_engineers
+
+
+def get_availabilities(availabilities=None):
+    if availabilities is None:
+        query = db_client.query(kind='EmployeeAvailability')
+
+        date_to_select = (datetime.combine(date.today(), datetime.min.time()) + timedelta(days=1)).astimezone(pytz.utc)
+        query.add_filter('shift_date', '=', date_to_select)
+
+        availability_list = query.fetch()
+
+        availabilities = [add_key_as_id(entity) for entity in availability_list]
+
+    return {availability['employee_number']: availability for availability in availabilities}

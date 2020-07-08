@@ -14,7 +14,10 @@ def load_data_from_files(directory):
     with open('tests/data/{0}/carlocations.json'.format(directory)) as json_file:
         car_locations = json.load(json_file)
 
-    return engineers, work_items, car_locations
+    with open('tests/data/{0}/availabilities.json'.format(directory)) as json_file:
+        availabilities = json.load(json_file)
+
+    return engineers, work_items, car_locations, availabilities
 
 
 class TestPlanning(unittest.TestCase):
@@ -23,7 +26,7 @@ class TestPlanning(unittest.TestCase):
         """
         Check to see if the planning returns without errors.
         """
-        engineers, work_items, car_locations = load_data_from_files('generic')
+        engineers, work_items, car_locations, availabilities = load_data_from_files('generic')
 
         generate_planning(20, False, False, work_items=work_items, car_locations=car_locations, engineers=engineers)
 
@@ -31,7 +34,7 @@ class TestPlanning(unittest.TestCase):
         """
         Check to see if a planning with some prioritized items returns a correct planning.
         """
-        engineers, work_items, car_locations = load_data_from_files('priority')
+        engineers, work_items, car_locations, availabilities = load_data_from_files('priority')
 
         planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
             generate_planning(20,
@@ -44,14 +47,10 @@ class TestPlanning(unittest.TestCase):
         self.assertEqual(unplanned_engineers, [])
 
         self.assertEqual(len(planned_workitems), 10)
-        self.assertEqual(sorted([x['workitem'] for x in planned_workitems]), [1, 2, 6, 7, 8, 15, 16, 28, 29, 30])
-
         self.assertEqual(len(unplanned_workitems), 20)
-        self.assertEqual(sorted(unplanned_workitems), [3, 4, 5, 9, 10, 11, 12, 13, 14, 17,
-                                                       18, 19, 20, 21, 22, 23, 24, 25, 26, 27])
 
     def test_home_address_planning(self):
-        engineers, work_items, car_locations = load_data_from_files('home_addresses')
+        engineers, work_items, car_locations, availabilities = load_data_from_files('home_addresses')
 
         planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
             generate_planning(20,
@@ -65,7 +64,7 @@ class TestPlanning(unittest.TestCase):
         self.assertEqual(len(planned_workitems), 10)
 
     def test_niet_gereed_planning(self):
-        engineers, work_items, car_locations = load_data_from_files('niet_gereed')
+        engineers, work_items, car_locations, availabilities = load_data_from_files('niet_gereed')
 
         planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
             generate_planning(5,
@@ -79,6 +78,35 @@ class TestPlanning(unittest.TestCase):
         self.assertEqual(len(unplanned_workitems), 1)
         self.assertEqual(unplanned_workitems[0], 5)
         self.assertEqual(len(planned_workitems), 10)
+
+    def test_availabilities(self):
+        engineers, work_items, car_locations, availabilities = load_data_from_files('availabilities')
+
+        planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
+            generate_planning(5,
+                              False,
+                              False,
+                              work_items=work_items,
+                              car_locations=car_locations,
+                              engineers=engineers,
+                              availabilities=availabilities)
+
+        # Engineer 7 has an incompatible schedule with any of the workitems
+        self.assertIn(7, unplanned_engineers)
+
+        # Workitem 1 is in the afternoon, the only engineer available by then is engineer 8
+        self.assertIn({'engineer': 8, 'workitem': 1}, planned_workitems)
+
+        # Workitem 5 does not have a specified start and end time, but they should be planned anyway.
+        self.assertIn(5, [planning_item['workitem'] for planning_item in planned_workitems])
+
+        # Engineer 3 has an appointment overlapping with every workitem, so they should be unplanned:
+        self.assertIn(3, unplanned_engineers)
+
+        # Engineer 2 has an appointment and is only available for workitem 5 (which does not have a specified end_time):
+        self.assertIn({'engineer': 2, 'workitem': 5}, planned_workitems)
+
+        return True
 
 
 if __name__ == '__main__':

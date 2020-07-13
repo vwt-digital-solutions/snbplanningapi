@@ -77,20 +77,23 @@ def generate_planning(timeout, verbose, calculate_distance,
     routing.AddAtSolutionCallback(record_solution)
 
     print('Calculating solutions')
-    solution = routing.SolveWithParameters(search_parameters)
-    # solution = routing.SolveFromAssignmentWithParameters(
-    #    initial_solution, search_parameters)
-    print(solution.ObjectiveValue())
-    print('Solution calculated')
-    if solution:
-        print('Processing solution')
-        planning = process_solution(data_model, manager, routing, solution, calculate_distance)
-        return planning
-    else:
-        print('No solution found')
+    for i in range(0, 3):
+        solution = routing.SolveWithParameters(search_parameters)
+        # solution = routing.SolveFromAssignmentWithParameters(
+        #    initial_solution, search_parameters)
+        print(solution.ObjectiveValue())
+        print('Solution calculated')
+        if solution:
+            print('Processing solution')
+            planning = process_solution(data_model, manager, routing, solution, calculate_distance)
+            if data_model.verify_planning(planning, solution):
+                break
+        else:
+            print('No solution found')
+            return [], [engineer['id'] for engineer in data_model.engineers], \
+                   [work_item['id'] for work_item in data_model.work_items], {}
 
-        return [], [engineer['id'] for engineer in data_model.engineers], \
-               [work_item['id'] for work_item in data_model.work_items], {}
+    return data_model.best_planning
 
 
 def perform_request(request):
@@ -117,26 +120,24 @@ def perform_request(request):
     work_items = request_json.get('work_items', None)
     availabilities = request_json.get('availabilities', None)
 
-    result, unplanned_engineers, unplanned_work_items, metadata = generate_planning(timeout,
-                                                                                    verbose,
-                                                                                    calculate_distance,
-                                                                                    engineers=engineers,
-                                                                                    car_locations=car_locations,
-                                                                                    work_items=work_items,
-                                                                                    availabilities=availabilities)
+    planning = generate_planning(timeout,
+                                 verbose,
+                                 calculate_distance,
+                                 engineers=engineers,
+                                 car_locations=car_locations,
+                                 work_items=work_items,
+                                 availabilities=availabilities)
 
     return json.dumps({
-        'result': result,
-        'unplanned_engineers': unplanned_engineers,
-        'unplanned_workitems': unplanned_work_items,
-        'metadata': metadata
+        'result': planning.result,
+        'unplanned_engineers': planning.unplanned_engineers,
+        'unplanned_workitems': planning.unplanned_work_items,
+        'metadata': planning.metadata
     })
 
 
 if __name__ == '__main__':
-    generate_planning(20, True, False)
 
-    """
     with open('tests/data/engineers.json') as json_file:
         engineers = json.load(json_file)
 
@@ -146,5 +147,4 @@ if __name__ == '__main__':
     with open('tests/data/carlocations.json') as json_file:
         car_locations = json.load(json_file)
 
-    generate_planning(20, True, False, work_items=work_items, car_locations=car_locations, engineers=engineers)
-    """
+    generate_planning(20, True, True, work_items=work_items, car_locations=car_locations, engineers=engineers)

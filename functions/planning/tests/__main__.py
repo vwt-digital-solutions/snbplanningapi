@@ -36,7 +36,7 @@ class TestPlanning(unittest.TestCase):
         """
         engineers, work_items, car_locations, availabilities = load_data_from_files('priority')
 
-        planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
+        planning = \
             generate_planning(20,
                               False,
                               False,
@@ -44,15 +44,15 @@ class TestPlanning(unittest.TestCase):
                               car_locations=car_locations,
                               engineers=engineers)
 
-        self.assertEqual(unplanned_engineers, [])
+        self.assertEqual(planning.unplanned_engineers, [])
 
-        self.assertEqual(len(planned_workitems), 10)
-        self.assertEqual(len(unplanned_workitems), 20)
+        self.assertEqual(len(planning.result), 10)
+        self.assertEqual(len(planning.unplanned_workitems), 20)
 
     def test_home_address_planning(self):
         engineers, work_items, car_locations, availabilities = load_data_from_files('home_addresses')
 
-        planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
+        planning = \
             generate_planning(20,
                               False,
                               False,
@@ -60,13 +60,13 @@ class TestPlanning(unittest.TestCase):
                               car_locations=car_locations,
                               engineers=engineers)
 
-        self.assertEqual(unplanned_engineers, [])
-        self.assertEqual(len(planned_workitems), 10)
+        self.assertEqual(planning.unplanned_engineers, [])
+        self.assertEqual(len(planning.result), 10)
 
     def test_niet_gereed_planning(self):
         engineers, work_items, car_locations, availabilities = load_data_from_files('niet_gereed')
 
-        planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
+        planning = \
             generate_planning(5,
                               False,
                               False,
@@ -74,15 +74,15 @@ class TestPlanning(unittest.TestCase):
                               car_locations=car_locations,
                               engineers=engineers)
 
-        self.assertEqual(unplanned_engineers, [])
-        self.assertEqual(len(unplanned_workitems), 1)
-        self.assertEqual(unplanned_workitems[0], 5)
-        self.assertEqual(len(planned_workitems), 10)
+        self.assertEqual(planning.unplanned_engineers, [])
+        self.assertEqual(len(planning.unplanned_workitems), 1)
+        self.assertEqual(planning.unplanned_workitems[0], 5)
+        self.assertEqual(len(planning.result), 10)
 
     def test_availabilities(self):
         engineers, work_items, car_locations, availabilities = load_data_from_files('availabilities')
 
-        planned_workitems, unplanned_engineers, unplanned_workitems, metadata = \
+        planning = \
             generate_planning(5,
                               False,
                               False,
@@ -92,19 +92,19 @@ class TestPlanning(unittest.TestCase):
                               availabilities=availabilities)
 
         # Engineer 7 has an incompatible schedule with any of the workitems
-        self.assertIn(7, unplanned_engineers)
+        self.assertIn(7, planning.unplanned_engineers)
 
         # Workitem 1 is in the afternoon, the only engineer available by then is engineer 8
-        self.assertIn({'engineer': 8, 'workitem': 1}, planned_workitems)
+        self.assertEqual(1, len([item for item in planning.result if item.workitem == 1 and item.engineer == 8]))
 
         # Workitem 5 does not have a specified start and end time, but they should be planned anyway.
-        self.assertIn(5, [planning_item['workitem'] for planning_item in planned_workitems])
+        self.assertIn(5, [planning_item.workitem for planning_item in planning.result])
 
         # Engineer 3 has an appointment overlapping with every workitem, so they should be unplanned:
-        self.assertIn(3, unplanned_engineers)
+        self.assertIn(3, planning.unplanned_engineers)
 
         # Engineer 2 has an appointment and is only available for workitem 5 (which does not have a specified end_time):
-        self.assertIn({'engineer': 2, 'workitem': 5}, planned_workitems)
+        self.assertEqual(1, len([item for item in planning.result if item.workitem == 5 and item.engineer == 2]))
 
         return True
 

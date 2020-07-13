@@ -1,3 +1,5 @@
+from contrib.distance import calculate_distance
+from data.models import PlanningItem, Planning, TravelTime
 from node import Node, NodeType
 
 from datetime import datetime
@@ -19,11 +21,15 @@ class DataModel:
     preplanned_work_items = []
     work_items_to_plan = []
 
-    preplanned_engineers = []
+    preplanned_engineers: [PlanningItem] = []
     engineers_to_plan = []
     unplannable_engineers = []
 
     distance_matrix = []
+
+    solution_valid = False
+    best_solution = None
+    best_planning = None
 
     _nodes = None
 
@@ -76,16 +82,14 @@ class DataModel:
 
         engineer_ids = [engineer['id'] for engineer in self.engineers]
 
-        self.preplanned_work_items = [{
-            'engineer': work_item['employee_number'],
-            'workitem': work_item['id'],
-        } for work_item in self.work_items if work_item['status'] == 'Niet Gereed'
-                                              and work_item['employee_number'] in engineer_ids]
+        self.preplanned_work_items = [PlanningItem(work_item['employee_number'], work_item['id'])
+                                      for work_item in self.work_items if work_item['status'] == 'Niet Gereed'
+                                      and work_item.get('employee_number', None) in engineer_ids]
 
         work_items_storing = [work_item for work_item in work_items_to_plan if
-                              work_item.get('category', None) == 'Schade']
+                              work_item.get('category', None) == 'Storing']
         work_items_schade = [work_item for work_item in work_items_to_plan if
-                             work_item.get('category', None) == 'Storing']
+                             work_item.get('category', None) == 'Schade']
         other_work_items = [work_item for work_item in work_items_to_plan if
                             work_item.get('category', None) != 'Storing' and
                             work_item.get('category', None) != 'Schade']
@@ -125,7 +129,7 @@ class DataModel:
 
         self.unplannable_engineers = [engineer for engineer in self.engineers if not engineer_is_plannable(engineer)]
 
-        preplanned_engineer_ids = [planning_item.get('engineer', None) for
+        preplanned_engineer_ids = [planning_item.engineer for
                                    planning_item in self.preplanned_work_items]
         self.preplanned_engineers = [engineer for engineer in self.engineers if engineer['id']
                                      in preplanned_engineer_ids]
@@ -134,15 +138,46 @@ class DataModel:
                                   if engineer not in self.preplanned_engineers and
                                   engineer not in self.unplannable_engineers]
 
-    # Properties
+    def verify_planning(self, planning: Planning, solution):
+        """
+        This function will verify a planning created by the algorithm.
+        In this case, that means the traveltimes of all routes will be checked.
+        For every distance that deviates too much, we'll recalculate the actual distance.
+        """
 
+        if self.best_solution is None or solution.ObjectiveValue() > self.best_solution.ObjectiveValue():
+            self.best_solution = solution
+            self.best_planning = planning
+
+        def time_deviates(time: TravelTime):
+            if time.distance > time.euclidean_distance * 2 and time.distance > time.euclidean_distance + 10:
+                return True
+
+        deviating_times = [time for time in planning.metadata.travel_times]
+
+        # No deviating travel_times
+        if not planning.metadata.travel_times or \
+                len([time for time in planning.metadata.travel_times if time_deviates(time)]) == 0:
+            return True
+
+        for deviating_time in deviating_times:
+            from_node = deviating_time.from_node
+            to_node = deviating_time.to_node
+            distance = calculate_distance(from_node.entity, to_node.entity)
+            self.distance_matrix[from_node.distance_matrix_index][to_node.distance_matrix_index] = distance
+
+        return False
+
+    # Properties
     @property
     def nodes(self) -> [Node]:
         if not self._nodes or \
                 len(self._nodes) != self.number_of_engineers + self.number_of_workitems:
             self._nodes = \
-                [Node(NodeType.engineer, engineer['id'], engineer) for engineer in self.engineers_to_plan] + \
-                [Node(NodeType.location, work_item['id'], work_item) for work_item in self.work_items_to_plan]
+                [Node(NodeType.engineer, engineer['id'], engineer, idx) for idx, engineer
+                 in enumerate(self.engineers_to_plan)] + \
+                [Node(NodeType.location, work_item['id'], work_item, idx + self.number_of_engineers)
+                 for idx, work_item in enumerate(self.work_items_to_plan)]
         return self._nodes
 
     @property

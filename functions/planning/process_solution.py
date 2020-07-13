@@ -1,6 +1,7 @@
 from contrib.distance import calculate_travel_times
 from data.data_model import DataModel
 from node import NodeType
+from data.models import TravelTime, PlanningItem, MetaData, Planning
 
 from google.cloud import datastore
 
@@ -73,29 +74,20 @@ def process_solution(data_model: DataModel, manager, routing, solution, calculat
                         'travel_time': 'NaN'
                      }
 
-                travel_times.append({
-                    'engineer': engineer['id'],
-                    'euclidean_distance': distance,
-                    'from': from_node.entity['id'],
-                    'to': to_node.entity['id'],
-                    'distance': travel_time['distance'],
-                    'travel_time': travel_time['travel_time']
-                })
+                travel_times.append(TravelTime(engineer, from_node, to_node, distance,
+                                               travel_time['distance'], travel_time['travel_time']))
 
             if to_node.type == NodeType.location:
                 engineer_is_planned = True
-                planned_workitems.append({
-                    'engineer': engineer['id'],
-                    'workitem': to_node.entity['id'],
-                })
+                planned_workitems.append(PlanningItem(engineer['id'], to_node.entity['id']))
 
         if not engineer_is_planned:
             unplanned_engineers.append(engineer['id'])
 
     # Construct a set here, so that we can build unplanned work_items in O(n) time instead of O(n^2)
-    planned_workitems_set = set([planning_item['workitem'] for planning_item in planned_workitems])
+    planned_workitems_set = set([planning_item.workitem for planning_item in planned_workitems])
     unplanned_workitems = [work_item['id'] for work_item in
                            data_model.work_items if
                            work_item['id'] not in planned_workitems_set]
 
-    return planned_workitems, unplanned_engineers, unplanned_workitems, {'travel_times': travel_times}
+    return Planning(planned_workitems, unplanned_engineers, unplanned_workitems, MetaData(travel_times))

@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Monteur 1",
+    "token": 1,
+    "role": "Metende",
+    "driver_employee_number": "",
+    "id": 1,
+    "division": "",
+    "license_plate": "",
+    "city": "Utrecht",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 2",
+    "token": 2,
+    "role": "Lasser",
+    "driver_employee_number": 123456,
+    "id": 2,
+    "division": "",
+    "license_plate": "",
+    "city": "Den Haag",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 3",
+    "token": 3,
+    "role": "Metende",
+    "driver_employee_number": 123456,
+    "id": 3,
+    "division": "",
+    "license_plate": "",
+    "city": "Amsterdam",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 4",
+    "token": 4,
+    "role": "Lasser",
+    "driver_employee_number": 123456,
+    "id": 4,
+    "division": "",
+    "license_plate": "",
+    "city": "Groningen",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 5",
+    "token": 5,
+    "role": "Metende",
+    "driver_employee_number": 123456,
+    "id": 5,
+    "division": "",
+    "license_plate": "",
+    "city": "Amsterdam",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 6",
+    "token": 6,
+    "role": "Lasser",
+    "driver_employee_number": 123456,
+    "id": 6,
+    "division": "",
+    "license_plate": "",
+    "city": "Amsterdam",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 7",
+    "token": 7,
+    "role": "Metende",
+    "driver_employee_number": 123456,
+    "id": 7,
+    "division": "",
+    "license_plate": "",
+    "city": "Maastricht",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 8",
+    "token": 8,
+    "role": "Lasser",
+    "driver_employee_number": 123456,
+    "id": 8,
+    "division": "",
+    "license_plate": "",
+    "city": "Maastricht",
+    "geometry": {"type": "Point", "coordinates": [5.00, 52.00]}
+  },
+  {
+    "name": "Monteur 9",
+    "token": 9,
+    "role": "Metende",
+    "driver_employee_number": 123456,
+    "id": 9,
+    "division": "",
+    "license_plate": "",
+    "city": "Haarlem",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  },
+  {
+    "name": "Monteur 10",
+    "token": 10,
+    "role": "Lasser",
+    "driver_employee_number": 123456,
+    "id": 10,
+    "division": "",
+    "license_plate": "",
+    "city": "Amersfoort",
+    "geometry": {"type": "Point", "coordinates": [4.00, 52.00]}
+  }
+]

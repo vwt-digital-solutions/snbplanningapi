@@ -10,5 +10,5 @@ google-cloud-datastore==1.9.0
 google-cloud-pubsub==0.45.0
 googlemaps==3.0.2
 geopy==1.21.0
-jwkaas==0.7
+jwkaas==0.9
 Werkzeug==0.16.0

@@ -1,0 +1,2 @@
+google-cloud-datastore==1.15.3
+googlemaps==4.4.5

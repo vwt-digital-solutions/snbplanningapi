@@ -9,6 +9,6 @@ google-cloud-core==1.6.0
 google-cloud-datastore==2.1.0
 googlemaps==4.4.2
 geopy==2.1.0
-jwkaas==0.9
+jwkaas==1.0.1
 swagger-ui-bundle==0.0.8
 Werkzeug==0.16.0
